@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+        <link rel="stylesheet" type="text/css" href="css/lc_switch.css">
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .reason.ng-hide { /*override for this page only*/
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+        </style>
+    </head>
+    <body ng-app="myApp" ng-controller="ManagerCtrl">
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page" >
+
+                    <br class="clear"/>
+
+                    <!-- group info Table -->
+                    <div class="ui-content no-hori-padding" id="groupInfoTable"> 
+                        <div style="width: 100%; text-align: center">
+                            <h3 data-i18n="buttons.Manager">Manager</h3>
+                        </div>
+                        <div class="ui-container ui-grid-50" style="margin: 0 auto;">
+
+                            <label for="userid" data-i18n="messages.userid">User ID:</label><input type="text" name="userid" id="userid" value="" placeholder="User ID" data-i18n="[placeholder]messages.userid"/><br/>
+                            <label for="password" data-i18n="messages.password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" data-i18n="[placeholder]messages.password"  ng-keypress="myFunct($event)"/>
+                            <button class="prevent ui-btn ui-btn-g ui-icon-carat-r ui-btn-icon-left ui-corner-all " value="Login" ng-click="login()" data-i18n="messages.login">LOGIN</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div  class="ui-content second-wrapper" id="indivInfoTable" data-ajax="false">
+                    <div class="whitecover second-page"></div>
+                    <div data-type="vertical" class="left ">
+                        <br class="clear"/>
+                        <div class="detlabel" data-i18n="messages.Village">Village</div>:<span class="detville">&nbsp;&nbsp;<b>{{ currentVillage }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+                    <br class="clear"/>
+                    <div class="">
+                        <div ng-repeat="group in groups" class="ui-grid-33 marg-btm-20 ">
+                            <a href="#" ng-click="detailview()" class="trans-blocks">
+                                <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" ng-click="changeGroup(group)"    trans-check
+                                            expected="{{ group.clientcount }}"
+                                            actual="{{ passedClientsByGroup(group) }}"
+                                            type="bg"
+                                            defaultcolor="#42A5F5"
+                                            checknow="allUpdated(group)">
+                                    <thead>
+                                        <tr>
+                                            <th class="box-header">
+                                                <div class="lineh-32 ">
+                                                {{ group.CTR_CENTER_NAME }} <span class="right"> Kelompok {{ group.CLT_GROUP_ID }}</span>
+                                                </div>
+
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="box-body">
+                                        <tr>
+                                            <td >
+                                                <div class="ui-content bold center group-block-amt" >
+                                                    <h1>{{ passedClientsByGroup(group) }} </h1>
+                                                </div>
+                                                <div class="group-client left">
+                                                    <i class="fa fa-user"></i>{{ group.clientcount }}
+                                                </div>
+                                                <div class="group-status right">
+                                                    <span></span> &nbsp; <b> </b>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </a>
+                        </div>
+                    </div>
+                    <br class="clear"/>
+                    <br class="clear"/>
+                    <a href="downpayment.html" data-ajax="false" class="acd-link">
+                        <div class="addclientdone hide" data.i18n="messages.ProceedToCollection">
+                            Lanjutkan ke koleksi
+                        </div>
+                    </a>
+                </div>
+
+                <div  class="ui-content third-wrapper" id="indivInfoTable" data-ajax="false">
+                    <div class="whitecover third-page"></div>
+                    <div data-type="vertical" class="left ">
+                        <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="detailview(-1)">Back</a>
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-corner-all asset-assess-tbl table-box">
+                        <thead class="tbl-header">
+                            <tr>
+                                <th colspan="2" class="list-first-col"  style="width:65%;">
+                                    <div class="ui-content"> 
+                                        semua klien dalam grup
+                                    </div>
+                                </th>
+                                <th style="width:35%;">
+                                    <div class="">
+
+                                        <div class="left toggle-result">
+                                            <div class="ui-btn ui-btn-gr ui-corner-all white left hori-marg" ng-class="allClients.teststatus == 'absent' ? 'ui-btn-h' : 'ui-btn-gr' " ng-click="updateSAlltatus('absent')">
+                                                <i class="fa fa-ban"></i>
+                                            </div>
+                                            <div class="ui-btn ui-corner-all white left hori-marg" ng-class="allClients.teststatus == 'fail' ? 'ui-btn-r' : 'ui-btn-gr' " ng-click="updateSAlltatus('fail')">
+                                                <i class="fa fa-times"></i>
+                                            </div>
+                                            <div class="ui-btn ui-corner-all white left hori-marg" ng-class="allClients.teststatus == 'pass' ? 'ui-btn-grn' : 'ui-btn-gr' " ng-click="updateSAlltatus('pass')">
+                                                <i class="fa fa-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table ng-repeat="client in clients | filter : {  CLT_GROUP_ID : selectedGroup.value }" data-role="table" class="ui-responsive ui-shadow table-stroke ui-corner-all asset-assess-tbl table-box">
+                        <thead class="tbl-header">
+                            <tr>
+                                <th colspan="2" class="list-first-col">
+                                    <div class="ui-content">{{ client.CLT_FULL_NAME }} </div>
+                                </th>
+                                <th>Kelompok {{ client.CLT_GROUP_ID }}</th>
+                            </tr>
+                        </thead>
+                        <tfoot style="border-top: 1px solid #CCC;">
+                            <tr>
+                                <td colspan="1">
+                                    <!-- <input id="" class="colVal" type="text" placeholder="Purpose of Loan"  /> -->
+                                </td>
+                                <td colspan="1" >
+                                    <div class="left">
+                                        <span class="test-assess" data-i18n="messages.Assessment">Penilaian&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width:35%;">
+                                    <div class="">
+                                        <div class="left toggle-result">
+
+                                            <div class="ui-btn ui-btn-gr ui-corner-all white left hori-marg" ng-class="client.teststatus == 'absent' ? 'ui-btn-h' : 'ui-btn-gr' " ng-click="updateStatus(client,'absent')">
+                                                <i class="fa fa-ban"></i>
+                                            </div>
+                                            <div class="ui-btn ui-corner-all white left hori-marg" ng-class="client.teststatus == 'fail' ? 'ui-btn-r' : 'ui-btn-gr' " ng-click="updateStatus(client,'fail')">
+                                                <i class="fa fa-times"></i>
+                                            </div>
+                                            <div class="ui-btn ui-corner-all white left hori-marg" ng-class="client.teststatus == 'pass' ? 'ui-btn-grn' : 'ui-btn-gr' " ng-click="updateStatus(client,'pass')">
+                                                <i class="fa fa-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr>
+                                <td><div class="ui-content list-first-subcol" data-i18n="messages.HousingIndex">Indeks Peru.</div></td>
+                                <td style="width: 25%;"><div class="ui-content">{{ client.loans[0].CLL_HSE_INX }}</div></td>
+                                <td><div class="ui-content"><span check-value ctype="housing" cvalue="{{ client.loans[0].CLL_HSE_INX }}"></span></div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="ui-content list-first-subcol" data-i18n="messages.IncomeIndex">Indeks penghasilan</div></td>
+                                <td><div class="ui-content">{{ getTwoDecimal(client.loans[0].CLL_INDEX_OF_INCOME); }}</div></td>
+                                <td><div class="ui-content"><span check-value ctype="income" cvalue="{{ client.loans[0].CLL_INDEX_OF_INCOME }}"></span></div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="ui-content list-first-subcol" data-i18n="messages.TotalValueofUnproductiveAssets">Nilai total aset tidak produktif</div></td>
+                                <td><div class="ui-content">{{ client.loans[0].CLL_INDEX_OF_ASSET }}</div></td>
+                                <td><div class="ui-content"><span check-value ctype="asset" cvalue="{{ client.loans[0].CLL_INDEX_OF_ASSET }}"></span></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+        <!-- scripts -->
+
+
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <!-- <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>-->
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_manager.js?V=1.1.4"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/lc_switch.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+
+    </body>
+</html>

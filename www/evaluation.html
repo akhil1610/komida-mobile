@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css?v=1.1" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .blockhide.ng-hide { /*override for this page only*/
+                display:block!important;
+                visibility:hidden;
+                position:relative!important;
+                top:0px!important;
+                left:0px!important;
+            }
+            table th.first:first-child {
+                border-radius: 10px 0 0 0;
+            }
+            table th.last:last-child {
+                border-radius: 0 10px 0 0;
+            }
+        </style>
+    </head>
+    <body ng-controller="clientCtrl">
+        <form id="newEvalForm" name="newEvalForm" ng-submit="actionSubmit()" novalidate>
+
+            <!--General Question-->
+            <div data-role="header" class="header"></div>
+
+            <div data-role="page" id="pageGeneralQuestion">
+                <div class="ui-content">
+                    <span ng-show="loanstatus==59 ||loanstatus==18 || loanstatus == 13 || loanstatus == 17" class="label clear bold uppercase" data-i18n="messages.Monitoring">Monitoring</span><br class="clear"/>
+                    <span ng-show="loanstatus==19" class="label clear bold uppercase" data-i18n="messages.SecondReview">Second Review</span><br class="clear"/>
+                </div>
+                <div id="content" data-role="main" class="ui-content" data-ajax="false" > 
+                    <span class="label clear bold uppercase" data-i18n="messages.GeneralQuestion">General Question</span><br class="clear"/>
+                    <!--<div id="testdata">{{finaldata}}</div>-->
+                    <div class="ui-content no-hori-padding" style="text-align:center;" >
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke" ng-show="secondreview">
+                            <thead>
+                                <tr>
+                                    <th class="first" colspan="4" >
+                                        <!-- <div class="ui-content">
+                                            <h2>{{client.CLT_FULL_NAME}}</h2>
+                                            <span style="font-weight: 300;">{{client.CLT_CLEINT_ID}}</span>
+                                        </div> -->
+                                        <div class="ui-content">
+                                            <h2>{{ eval.general.loanname | translate }}</h2>
+                                            <span style="font-weight: 300;">{{ eval.general.loanid }}</span>
+                                        </div>
+                                    </th> 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width:25%">
+                                        <div class="ui-content">
+                                            Klien
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div class="ui-content" >
+                                            <p style="margin-bottom:0;"><b>{{ client.CLT_FULL_NAME }}</b></p>
+                                            <p style="margin-top:0">{{client.CLT_CLEINT_ID}}</p>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        
+                                    </td>
+                                    <td style="width:25%">
+                                         
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:25%">
+                                        <div class="ui-content">
+                                            Pembiayaan Ke
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div class="ui-content" >
+                                            <p style="margin-top:0">{{ eval.general.loancycle }}</p>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div class="ui-content">
+                                            Saldo Simp. Wajib
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div class="ui-content" >
+                                            {{ products.mandatory | noFractionCurrency : currloc : 0}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.LoanAmt">
+                                            Loan Amt
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            {{ eval.general.disAmt | noFractionCurrency : currloc : 0 }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            Saldo Simp. Pensuin
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content" >
+                                            {{ products.pension | noFractionCurrency : currloc : 0}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >
+                                        <div class="ui-content" >
+                                            Jangka Waktu <!-- Loan Period -->
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            {{ eval.general.loanperiod }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            Saldo Simp. Sukarela
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content" >
+                                            {{ products.voluntary | noFractionCurrency : currloc : 0}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td >
+                                        <div class="ui-content" >
+                                            Lunas Minggu ke <!-- paid off week to -->
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            {{ repay.totalweekspaid }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            Saldo Simp. Hari Raya
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content" >
+                                            {{ products.feast | noFractionCurrency : currloc : 0}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" data-i18n="messages.FinancePurpose">
+                                            Financing Purpose
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content" >
+                                            {{eval.general.purpose | translate }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            Total Simpanan
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content" >
+                                            {{ totalSavings()  | noFractionCurrency : currloc : 0}}
+                                        </div>
+                                    </td>
+                                </tr> 
+                                <!-- <tr>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.InterviewLocation">
+                                            Interview Location
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select id="GQLocation" ng-init="eval.general.disLoc='C'" ng-model="eval.general.disLoc" ng-options="option.value as option.name | translate for option in selectCodes.18"></select>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr> -->
+                                <tr ng-show="secondreview">
+                                    <td colspan="2">
+                                        <label for="eval_everinarreas" data-i18n="messages.EverInArrears">Ever In Arrears</label>
+                                        <input type="checkbox" ng-model="eval.everInArreas" name="eval_everinarreas" id="eval_everinarreas"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            Kondisi Asset non produktif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content">
+                                            <select id="GQAssetCondition" ng-init="eval.assetcondition='T'" ng-model="eval.general.disLoc" ng-options="option.value as option.name | translate for option in selectCodes.43"></select>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-show="secondreview">
+                                    <td colspan="2">
+                                        <label for="eval_everinjoint" data-i18n="messages.EverInJointResponse">Ever in Joint Responsibility</label>
+                                        <input type="checkbox" ng-model="eval.everInJointResponse" name="eval_everinjoint" id="eval_everinjoint"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                    <td>
+                                        <div class="ui-content"> 
+                                            Total Asset non produktif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="number" ng-model="eval.totalasset" name="" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td>
+                                </tr> 
+                            </tbody>
+                        </table> 
+                        <table ng-show="secondreview" data-role="table" class="ui-responsive ui-shadow table-stroke" >
+                            <thead>
+                                <tr><th colspan="4"></th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2" style="width:50%;">
+                                        <label for="eval_otherinstitues" data-i18n="messages.DoYouHaveOtherFinancingInstitues">Do you have other institutes ?</label>
+                                        <input type="checkbox" ng-model="eval.otherinstitues" name="eval_otherinstitues" id="eval_otherinstitues"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td> 
+                                    <td>
+                                        <div class="ui-content" ng-show="eval.otherinstitues == 'Y'">
+                                            <label for="eval_institutename" data-i18n="messages.NameOfInstituion">Institute's Name</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div ng-show="eval.otherinstitues == 'Y'">
+                                            <input type="text" ng-model="eval.institutename" name="eval_institutename" placeholder="" id="eval_institutename" maxlength="2000" data-inline="true" required/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.otherinstitues == 'Y'">
+                                    <td style="width:25%;">
+                                        <div class="ui-content">
+                                            <label for="eval_projectionpaid" data-i18n="messages.ProjectionPaidOff">Projection paid off</label>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%;">
+                                        <input type="text" ng-model="eval.projectionpaid" name="eval_projectionpaid" placeholder="" id="eval_projectionpaid" maxlength="2000" data-inline="true" required/>
+                                    </td> 
+                                    <td style="width:25%;">
+                                        <div class="ui-content">
+                                            <label for="eval_amountfinanced" data-i18n="messages.AmountOfFinancing">Amount of Financing</label>
+                                        </div>
+                                    </td>
+                                    <td style="width:25%;">
+                                        <input type="number" ng-model="eval.amountfinanced" name="eval_amountfinanced" placeholder="" id="eval_amountfinanced" no-decimal currency-symbol="Rp" min=0 fraction="0" maxlength="1000" data-inline="true" required/>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="width:25%;"> 
+                                        <div class="ui-content">
+                                            <label for="eval_fonote" data-i18n="messages.FONote">Note:</label>
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="text" id="eval_fonote"  ng-model="eval.general.note" name="eval_fonote" placeholder="" maxlength="2000" data-inline="true" required/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke" ng-show="secondreview">
+                            <thead>
+                                <tr>
+                                    <th colspan="4">
+                                        ANALISA KEMAMPUAN BAYA RUMAH TANGGA
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width:25%">
+                                        <div class="ui-content" data-i18n="messages.Attendance">
+                                            Attendance
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div>
+                                            {{ repay.totalweekspaid }} Bulan
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div class="ui-content" data-i18n="messages.Installment">
+                                            Installment
+                                        </div>
+                                    </td>
+                                    <td style="width:25%">
+                                        <div>
+                                            {{ repay.totalpaid | noFractionCurrency : currloc : 0 }}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content">
+                                            <label for="eval_incomes_husband" data-i18n="messages.HusbandIncome">Pendapatan Suami</label>
+                                        </div>
+                                    </td> 
+                                    <td>
+                                        <input type="number" name="eval_incomes_husband" id="eval_incomes_husband" ng-model="eval.husband_income" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td> 
+                                    <td>
+                                        <div class="ui-content">
+                                            <label for="eval_expenses_household" data-i18n="messages.HouseHoldExpense">Biaya Rumah Tangga</label>
+                                        </div>
+                                    </td> 
+                                    <td>
+                                        <input type="number" name="eval_expenses_household" id="eval_expenses_household" ng-model="eval.household_expenses" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            <label for="eval_incomes_wife" data-i18n="messages.WifeIncome">Pendapatan Istri</label>
+                                        </div>
+                                    </td> 
+                                    <td>
+                                        <input type="number" name="eval_incomes_wife" id="eval_incomes_wife" ng-model="eval.wife_income" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td> 
+                                    <td>
+                                        <div class="ui-content">
+                                            <label for="eval_expenses_education" data-i18n="messages.EducationCost">Biaya pendidikan</label>
+                                        </div>
+                                    </td> 
+                                    <td>
+                                        <input type="number" name="eval_expenses_education" id="eval_expenses_education" ng-model="eval.education_expenses" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            <label for="eval_incomes_other" data-i18n="messages.OtherIncome">Pendapatan lain-lain</label>
+                                        </div>
+                                    </td> 
+                                    <td>
+                                        <input type="number" name="eval_incomes_other" id="eval_incomes_other" ng-model="eval.other_income" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td> 
+                                    <td>
+                                        <div class="ui-content">
+                                            <label for="eval_expenses_other" data-i18n="messages.OtherExpenses">Biaya lainnya</label>
+                                        </div>
+                                    </td> 
+                                    <td><input type="number" name="eval_expenses_other" id="eval_expenses_other" ng-model="eval.extra_expenses" placeholder="" maxlength="150" data-inline="true" required/></td> 
+                                </tr> 
+                                <tr>
+                                    <td>&nbsp;</td> 
+                                    <td></td> 
+                                    <td><div class="ui-content" data-i18n="messages.KOMIDAInstallments">Angsuran di KOMIDA</div></td> 
+                                    <td>{{ repay.perweek  | noFractionCurrency : currloc : 0 }} /b</td> 
+                                </tr> 
+                                <tr>
+                                    <td>&nbsp;</td> 
+                                    <td></td> 
+                                    <td><div class="ui-content">Angsuran dilembaga lain</div></td> 
+                                    <td>
+                                        <input type="text" name="" ng-model="eval.otherinstituesrepayperweek" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td><b><div class="ui-content">Total Pendapatan Rumah Tangga(a)</div></b></td> 
+                                    <td>{{ getTotalEvalIncome()  | noFractionCurrency : currloc : 0 }} /b</td> 
+                                    <td><b><div class="ui-content">Total Biaya Rumah Tangga(b)</div></b></td> 
+                                    <td>Rp {{ getTotalEvalExpenses()  | noFractionCurrency : currloc : 0 }} /b</td> 
+                                </tr> 
+                                <tr>
+                                    <td><b><div class="ui-content">Pendapatan Bersih (c)=(a-b)</div></b></td> 
+                                    <td>{{ getTotalEvalIncome() - getTotalEvalExpenses()  | noFractionCurrency : currloc : 0 }} /b</td> 
+                                    <td><b><div class="ui-content">Kemampuan Bayar (30% x c)</div></b></td> 
+                                    <td>{{ (getTotalEvalIncome() - getTotalEvalExpenses()) * .3  | noFractionCurrency : currloc : 0 }} /b</td> 
+                                </tr> 
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                        <span ng-show="secondreview" class="label clear bold uppercase" data-i18n="messages.HousingIndex">Housing Index</span><br class="clear"/>
+                        <br class="clear"/>
+                        <div class="" ng-show="secondreview">
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                <thead>
+                                    <tr>
+                                        <th style="width:50%"><div data-i18n="messages.Homeless" class="ui-content">Homeless</div></th>
+                                        <th style="width:50%">
+                                            <label for="ncadHomeless">{{eval.homeless | translate}}</label>
+                                            <input type="checkbox" ng-change="checkHomeless()" ng-model="eval.homeless" name="ncadHomeless" id="ncadHomeless" ng-true-value='YES' ng-false-value='NO'/>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td><div data-i18n="messages.HousingSize" class="ui-content">House Size</div></td>
+                                    <td style="width:50%">
+                                        <select id="ncHSSZ" class="hsedrop" ng-model="eval.houseind[0]" ng-options="option.value as option.name | translate for option in selectHome.2" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div data-i18n="messages.HousingCondition" class="ui-content">House Condition</div></td>
+                                    <td style="width:50%">
+                                        <select id="ncCOND" class="hsedrop" ng-model="eval.houseind[1]" ng-options="option.value as option.name | translate for option in selectHome.3" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div data-i18n="messages.RoofType" class="ui-content">Roof Type</div></td>
+                                    <td style="width:50%">
+                                        <select id="ncROOF" class="hsedrop" ng-model="eval.houseind[2]" ng-options="option.value as option.name | translate for option in selectHome.4" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div data-i18n="messages.WallType" class="ui-content">Wall Type</div></td>
+                                    <td style="width:50%">
+                                        <select id="ncWALL" class="hsedrop" ng-model="eval.houseind[3]" ng-options="option.value as option.name | translate for option in selectHome.5" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><div data-i18n="messages.FloorType" class="ui-content">Floor Type</div></td>
+                                    <td style="width:50%">
+                                        <select id="ncFLOR" class="hsedrop" ng-model="eval.houseind[4]" ng-options="option.value as option.name | translate for option in selectHome.6" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                    </td>
+                                </tr>
+                                <!-- <tr><td data-i18n="messages.ElectricitySource">Electricity Source</td><td style="width:50%"><select id="ncELEC" ng-model="eval.houseind[5]" ng-options="option.value as option.name | translate  for option in selectHome.7"></select></td></tr>
+                                <tr><td data-i18n="messages.WaterSource">Water Source</td><td style="width:50%"><select id="ncWATR" ng-model="eval.houseind[6]" ng-options="option.value as option.name | translate for option in selectHome.8"></select></td></tr> -->
+                                <tbody>
+                                    <tr class="bold" style="background-color:#D6DF23"><td><h1 data-i18n="messages.Total">TOTAL</h1></td><td><h1>{{getHouseIndex()}}</h1></td>
+                                    </tr>
+                                </tbody>
+    
+                                <tbody>
+                                    <tr>
+                                        <td >
+                                            <div class="ui-content" data-i18n="messages.NoOfHouseholdMember">
+                                                No of Household members
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <input type="number" ng-model="eval.edu.householdmembers" maxlength="150" required/>
+                                        </td>
+                                    </tr>
+                                    <!-- <tr >
+                                        <td >
+                                            <div class="ui-content" data-i18n="messages.NoOfChildren">
+                                                No of Children
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <input type="number" ng-model="eval.edu.noofchildren" maxlength="150" required/>
+                                        </td>
+                                    </tr>
+                                    <tr >
+                                        <td >
+                                            <div class="ui-content" data-i18n="messages.NoOfChildrenSchooling">
+                                                No of Children in School
+                                            </div>
+                                        </td>
+                                        <td  style="width:50%">
+                                            <input type="number" ng-model="eval.edu.noofchildrenschooling" maxlength="150" required/>
+                                        </td>
+                                    </tr>  -->
+                                </tbody>
+                            </table>
+                        </div> 
+                        <br class="clear"/>
+                        <br class="clear"/>
+                        <!-- <table data-role="table" class="ui-responsive ui-shadow table-stroke" ng-show="secondreview">
+                            <thead>
+                                <tr>
+                                    <th colspan="4">
+                                        <div data-18n="messages.BorrowFund" class="ui-conent">
+                                            Borrowed Funds
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2" style="width:50%;">
+                                        <label for="eval_otherinstitues" data-i18n="messages.DoYouHaveOtherFinancingInstitues">Do you have other institutes ?</label>
+                                        <input type="checkbox" ng-model="eval.otherinstitues" name="eval_otherinstitues" id="eval_otherinstitues"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td> 
+                                    <td colspan="2" style="width:50%">
+    
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.otherinstitues == 'Y'">
+                                    <td colspan="2">
+                                        <label for="eval_institutename" data-i18n="messages.NameOfInstituion">Institute's Name</label>
+                                    </td> 
+                                    <td colspan="2">
+                                        <input type="text" ng-model="eval.institutename" name="eval_institutename" placeholder="" id="eval_institutename" maxlength="2000" data-inline="true" required/>
+                                    </td> 
+                                </tr>
+                                <tr ng-show="eval.otherinstitues == 'Y'">
+                                    <td colspan="2">
+                                        <label for="eval_projectionpaid" data-i18n="messages.ProjectionPaidOff">Projection paid off</label>
+                                    </td>
+                                    <td colspan="2">
+                                        <input type="text" ng-model="eval.projectionpaid" name="eval_projectionpaid" placeholder="" id="eval_projectionpaid" maxlength="2000" data-inline="true" required/>
+                                    </td> 
+                                </tr>
+                                <tr ng-show="eval.otherinstitues == 'Y'">
+                                    <td colspan="2">
+                                        <label for="eval_amountfinanced" data-i18n="messages.AmountOfFinancing">Amount of Financing</label>
+                                    </td>
+                                    <td colspan="2">
+                                        <input type="number" ng-model="eval.amountfinanced" name="eval_amountfinanced" placeholder="" id="eval_amountfinanced" no-decimal currency-symbol="Rp" min=0 fraction="0" maxlength="1000" data-inline="true" required/>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="width:25%;"> 
+                                        <label for="eval_fonote" data-i18n="messages.FONote">Note:</label>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="text" id="eval_fonote"  ng-model="eval.general.note" name="eval_fonote" placeholder="" maxlength="2000" data-inline="true" required/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> -->
+
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke" ng-show="!secondreview">
+                            <thead>
+                                <tr>
+                                    <th colspan="4" style="background-color:#EEE;" data-18n="messages.MonitoringResults"> 
+                                        Monitoring Results
+                                    </th>
+                                </tr>
+                            </thead>
+                            <!-- <tbody>
+                                <tr >
+                                    <td colspan="2">
+                                        <label for="eval_everinarreas" data-i18n="messages.EverInArrears">Ever In Arrears</label>
+                                        <input type="checkbox" ng-model="eval.everInArreas" name="eval_everinarreas" id="eval_everinarreas"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                    <td colspan="2">
+                                        <label for="eval_everinjoint" data-i18n="messages.EverInJointResponse">Ever in Joint Responsibility</label>
+                                        <input type="checkbox" ng-model="eval.everInJointResponse" name="eval_everinjoint" id="eval_everinjoint"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                            </tbody> -->
+                            <tbody  ng-show="loantype == 'general'">
+                                <!-- <tr >
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.IsAccordingFilingFinancing" >
+                                            Is Client in business?
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select id="GQBusiness" ng-init="eval.general.inBusiness='Y'" ng-model="eval.general.inBusiness" ng-options="option.value as option.name | translate for option in selectCodes['Business']"></select>
+                                    </td>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.Remark">
+                                            Remarks
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="eval.general.remarks" name="" placeholder="" maxlength="150" data-inline="true" required/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" data-i18n="messages.IsBusinessGoingWell">
+                                            Is business going well?
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select id="GQBusinessWell" ng-init="eval.general.isWell='Y'" ng-model="eval.general.isWell" ng-options="option.value as option.name | translate for option in selectCodes['BusinessWell']"></select>
+                                    </td>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoteHdr">
+                                            Note:
+                                        </div>
+                                    </td>
+                                    <td><input type="text" ng-model="eval.general.note" name="" placeholder="" maxlength="150" data-inline="true" required/></td>
+                                </tr>
+                                <tr>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.IfNotInBusinessYet">
+                                            If not/not yet in business, what are the reasons?
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input ng-model="eval.general.reason" maxlength="150" required/>
+                                    </td>
+                                </tr> -->
+                                <Tr>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.MonitoringResults">
+                                                Monitoring Results
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <select name="eval_usagecomplies" id="eval_usagecomplies" ng-model="eval.general.compliance">
+                                            <option value=""></option>
+                                            <option value="Y" data-i18n="messages.LoanUsageComplies">Complies</option>
+                                            <option value="N" data-i18n="messages.LoanUsageNotComply">Does not compy</option>
+                                            <option value="O" data-i18n="messages.Other">Other</option> 
+                                        </select>
+                                    </td>
+                                </Tr>
+                                <Tr ng-show="eval.general.compliance == 'O'">
+                                    <td>
+                                        <div class="ui-content" data-i18n="messages.Other">
+                                            Other
+                                        </div>
+                                    </td>
+                                    <td colspan="3">  
+                                        <input type="text" ng-model="eval.general.compliance_others" maxlength="150" required/>
+                                    </td>
+                                </Tr>
+                            </tbody>
+                            <tbody ng-show="loantype == 'education'">
+                                <tr>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoOfHouseholdMember">
+                                            No of Household members
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="number" ng-model="eval.edu.householdmembers" maxlength="150" required/>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoOfChildren">
+                                            No of Children
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="number" ng-model="eval.edu.noofchildren" maxlength="150" required/>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoOfChildrenSchooling">
+                                            No of Children in School
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="number" ng-model="eval.edu.noofchildrenschooling" maxlength="150" required/>
+                                    </td>
+                                </tr> 
+                            </tbody>
+                            <tbody  ng-show="loantype == 'arta'">
+                                <tr>
+                                    <td colspan="2"> 
+                                        <div class="ui-content" >
+                                            <label for="eval_arta_goods" data-i18n="messages.Goods">GOODS</label>
+                                            <input type="checkbox" ng-model="eval.arta.type" name="eval_arta_goods" id="eval_arta_goods" ng-change="artaLoanTypeToggle()" ng-true-value='GOODS' ng-false-value='INSTALLATION'/>
+                                        </div>
+                                    </td>
+                                    <td colspan="2"> 
+                                        <div class="ui-content" >
+                                            <label for="eval_arta_install">INSTALLATION</label>
+                                            <input type="checkbox" ng-model="eval.arta.type" name="eval_arta_install" id="eval_arta_install" ng-change="artaLoanTypeToggle()" ng-false-value='GOODS' ng-true-value='INSTALLATION'/>
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr ng-show="eval.arta.type =='INSTALLATION' ">
+                                    <td colspan="4">
+                                    <label for="eval_arta_kwh"  >KWH sebesar</label>
+                                        <input type="checkbox" ng-model="eval.arta.kwh" name="eval_arta_kwh" id="eval_arta_kwh"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.arta.type =='INSTALLATION' ">
+                                    <td colspan="4">
+                                    <label for="eval_arta_completiontime" data-i18n="messages.ArtaCompletionTime"  >Completion time of installation according to agreement</label>
+                                        <input type="checkbox" ng-model="eval.arta.completiontime" name="eval_arta_completiontime" id="eval_arta_completiontime"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.arta.type =='INSTALLATION' ">
+                                    <td colspan="4">
+                                    <label for="eval_arta_addfee" data-i18n="messages.ArtaAdditionalFee"  >There is no additional fee from the member for installation fee</label>
+                                        <input type="checkbox" ng-model="eval.arta.addfee" name="eval_arta_addfee" id="eval_arta_addfee"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.arta.type=='GOODS'">
+                                    <td colspan="4">
+                                        <div class="">
+                                            <div class="ui-content"  > 
+                                                <label for="eval_arta_goodscondition" data-i18n="messages.ArtaContentInBox">Goods in accordance with agreed specifications, the contents in the box</label>
+                                                <input type="checkbox" ng-model="eval.arta.goodscondition" name="eval_arta_goodscondition" id="eval_arta_goodscondition"  ng-false-value='N' ng-true-value='Y'/>
+                                            </div>
+                                            <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="4"  style="background-color:#EEE;"> 
+                                                            
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <div class="">
+                                                            <input type="text" ng-model="eval.arta.specs1" name="" placeholder="" maxlength="150" data-inline="true" required/>
+                                                        </div>
+                                                    </tr> 
+                                                    <tr>
+                                                        <div class="">
+                                                            <input type="text" ng-model="eval.arta.specs2" name="" placeholder="" maxlength="150" data-inline="true" required/>
+                                                        </div>
+                                                    </tr> 
+                                                    <tr>
+                                                        <div class="">
+                                                            <input type="text" ng-model="eval.arta.specs3" name="" placeholder="" maxlength="150" data-inline="true" required/>
+                                                        </div>
+                                                    </tr> 
+                                                    <tr>
+                                                        <div class="">
+                                                            <input type="text" ng-model="eval.arta.specs4" name="" placeholder="" maxlength="150" data-inline="true" required/>
+                                                        </div>
+                                                    </tr> 
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.arta.type=='GOODS'">
+                                    <td colspan="4">
+                                        <label for="eval_arta_conditionofgoods" data-i18n="messages.ArtaConditionOfGoods">The condition of the goods is good and complete (still sealed)</label>
+                                        <input type="checkbox" ng-model="eval.arta.conditionOfGoods" name="eval_arta_conditionofgoods" id="eval_arta_conditionofgoods"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.arta.type=='GOODS'">
+                                    <td colspan="4">
+                                        <label for="eval_arta_noshipcost" data-i18n="messages.ArtaNoShippingCost">There are no additional fees from members for shipping costs</label>
+                                        <input type="checkbox" ng-model="eval.arta.noshipcost" name="eval_arta_noshipcost" id="eval_arta_noshipcost"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                                <tr ng-show="eval.arta.type=='GOODS'">
+                                    <td colspan="4">
+                                        <label for="eval_arta_deliveryontime" data-i18n="messages.ArtaDeliveryOnTime">Time of delivery of goods in accordance with the Agreement</label>
+                                        <input type="checkbox" ng-model="eval.arta.deliveryOnTime" name="eval_arta_deliveryontime" id="eval_arta_deliveryontime"  ng-false-value='N' ng-true-value='Y'/>
+                                    </td>
+                                </tr>
+                                <tr > 
+                                    <td colspan="1">
+                                        <div class="ui-content" data-i18n="messages.ArtaComplaint">
+                                            Complaint:
+                                        </div>
+                                    </td>
+                                    <td colspan="3"><input type="text" ng-model="eval.arta.complaint" name="" placeholder="" maxlength="150" required/></td>
+                                </tr> 
+                            </tbody>
+                        </table>   
+                        <div class="" ng-show="!secondreview">
+                            <h1 data-i18n="messages.Signatures" style="text-align: left;margin: 3em 1em;font-weight: 600;">Signatures</h1>
+                            <table id="client-signatures" data-role="table" class="ui-responsive" style="    margin-bottom: 10em;" >
+                                <thead><tr><td></td></tr></thead>
+                                <tbody>
+                                    <tr  ng-init="client" style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-18n="messages.Client">
+                                                Client          
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ client.CLT_FULL_NAME }}
+                                            </div>
+                                        </td>
+                                        <td> 
+                                            <a href="#popupSign" ng-hide="client.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(client, 'client')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop">
+                                                Sign
+                                            </a>
+                                            <div class="right" ng-show="client.hasSigned">
+                                                <canvas id="the-canvas-{{client.CLT_PK}}" > 
+                                                </canvas>
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                    <tr  style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-i18n="messages.CenterLeader">
+                                                Center Leader
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content" ng-show="!ctr_lead.hasSigned">
+                                              <select 
+                                                    ng-model="selectedCtrLeader"
+                                                    ng-change="updateCtrLeader()"
+                                                    ng-options="(item) as (item.CLT_FULL_NAME||item) for item in ctr_lead.ctr_leaders">
+
+                                              </select>
+                                            </div>
+                                            <div class="ui-content" ng-show="ctr_lead.hasSigned">
+                                                {{ ctr_lead.ctr_lead_name }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <!-- hide if already signed || if haven't select group leader -->
+                                            <a  
+                                                href="#popupSign" 
+                                                ng-hide="ctr_lead.hasSigned || !selectedCtrLeader" 
+                                                class="ui-btn white ui-btn-bl ui-corner-all" 
+                                                ng-click="emitLoadSignature(ctr_lead, 'ctr_lead')" 
+                                                data-rel="popup" 
+                                                data-position-to="window" 
+                                                data-theme="a" 
+                                                data-transition="pop"
+                                            >
+                                                Sign
+                                            </a> 
+                                            <div class="right" ng-show="ctr_lead.hasSigned">
+                                                <canvas id="the-canvas-ctr_lead" >
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ user.userName }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a  
+                                                href="#popupSign" 
+                                                ng-hide="user.hasSigned" 
+                                                class="ui-btn white ui-btn-bl ui-corner-all" 
+                                                ng-click="emitLoadSignature(user, 'officer')" 
+                                                data-rel="popup" 
+                                                data-position-to="window" 
+                                                data-theme="a" 
+                                                data-transition="pop"
+                                            >
+                                                Sign
+                                            </a> 
+                                            <div class="right" ng-show="user.hasSigned">
+                                                <canvas id="the-canvas-officer" >
+                                                </canvas>
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                    <tr style="background: transparent;height: 100px;" ng-show="MGR.mgrname != '' && ( MGR.Signature != '' || !MGR.hasSigned )" >
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ MGR.mgrname }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index, 'mgr')" ng-hide="MGR.hasSigned && MGR.Signature != ''" data-i18n="messages.Sign">
+                                                Sign
+                                            </div>
+                                            <div class="right" ng-show="MGR.Signature != ''">
+                                                <canvas id="the-canvas-mgr" >
+
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                        <!-- <td>
+                                            <div class="ui-btn ui-btn-r white ui-corner-all" ng-show="MGR.Signature != ''" ng-click="clearSignature($index, 'mgr')">
+                                                <i class="fa fa-times"></i>
+                                            </div>
+                                        </td> -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div class="ui-content no-hori-padding signature-screen" ng-show="showSign" >
+                                <canvas id="the-canvas" >
+
+                                </canvas>
+                                <div id="signature" style="text-align:center;">
+
+                                </div>
+                                <p id="signingperson"></p>
+                                <br><br>
+                                <p id="sigbtn" style="display:none;">
+                                    <button type="button" ng-click="clearSigPad()" data-i18n="messages.clear">Clear</button>
+                                    <button type="button" ng-click="importImg()" data-i18n="messages.ConfirmSignature">Confirm Signature</button>
+                                </p>
+                                <div class="displayarea"></div>
+                            </div>
+                        </div>
+
+                        <!-- <a href="#pageAssetInfo" ng-if="secondreview" check-progress title="pageGeneralQuestion" class="ui-btn-next ui-btn ui-shadow ui-corner-all " data-i18n="messages.Next">Next</a> -->
+                        <a href="#" ng-click="submitForm()" ng-if="!secondreview" class="ui-btn-next ui-btn ui-shadow ui-corner-all " data-i18n="messages.Submit">Submit</a>
+                        <a href="#" ng-click="submitSecondForm()" ng-if="secondreview" class="ui-btn-next ui-btn ui-shadow ui-corner-all " data-i18n="messages.Submit">Submit</a>
+                        <a href="#" ng-if="loanstatus==59" ng-click="skipEval()" class="ui-btn-next ui-btn ui-shadow ui-corner-all " data-i18n="messages.SkipthisReview">Skip This Review</a>
+                    </div>
+
+                </div>
+
+                <div data-role="footer" class="footer" style="text-align:center;"></div>
+                
+                <!-- Signature popup -->
+                <div id="signaturePops">
+                    <style>
+                        #popupSign-popup {
+                            width: 80%;
+                        }
+                        #popup-signingperson {
+                            text-align: center;
+                        }
+                    </style>
+                    
+                    <div data-role="popup" id="popupSign" class="ui-corner-all" ng-controller="signCtrl" >
+                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <h1>Sign</h1>
+                        <div class="ui-content no-hori-padding signature-screen" >
+                            <canvas id="popup-the-canvas" ng-show="showCanvas">
+                        
+                            </canvas>
+                            <div id="popup-signature" style="text-align:center;">
+                        
+                            </div>
+                            <p id="popup-signingperson"></p>
+                            <br><br>
+                            <p id="popup-sigbtn">
+                                <button type="button" ng-click="clearSigPad()">Clear</button>
+                                <button type="button" ng-click="importImg()">Confirm Signature</button>
+                            </p>
+                            <div class="popup-displayarea"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-role="page" id="pageFamilyBizInfo">
+                <div id="contentfbi" data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.FamilyBusinessInformation">Information about Family Business</span><br class="clear"/>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow">
+                        <thead>
+                            <tr>
+                                <th data-18n="messages.IncomeSource">Source</th>
+                                <th data-18n="messages.IncomeFixed">Fixed(Rp per Month)</th>
+                                <th data-18n="messages.IncomeVariable">Variable(Rp per Month)</th>
+                                <th data-18n="messages.IncomeSourceDetail" colspan="2">Details</th>
+                                <th data-18n="messages.IncomeTotal">Total(Rp per Month)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody ng-repeat="income in houseIncomes" ng-init="income" ng-show="showSelect(income)">
+                            <tr >
+                                <td><div class="ui-content">{{ income.source }}</div></td>
+                                <td>
+                                    <input id="inc{{income.source}}" class="colVal" ng-currency ng-model="income.fixed" onclick="this.select();"  type="tel" ng-blur="checkNegative(income)" placeholder="" max="9999999999999999" required />
+                                </td>
+                                <td>
+                                    <input id="incv{{income.source}}" class="colVal" ng-currency ng-model="income.variable" onclick="this.select();" ng-blur="checkNegative(income)" type="tel" placeholder="" max="9999999999999999" required />
+                                </td>
+                                <td>
+                                    <div id="incd{{income.source}}" class="colVal" ng-show="income.inctype == 'LAND' && income.detaildesc != null && income.detaildesc != '' ">
+                                        <input ng-model="income.details" onclick="this.select();"  type="tel" placeholder="" max="9999999999999999" required />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="incs{{income.source}}" class="colVal"  ng-show="income.inctype == 'LAND'">
+                                    <select ng-model="income.detaildesc"
+                                        id="incs{{$index}}"
+                                        class="detaildesc"
+                                        ng-change="changing('incs'+{{$index}})"
+                                        ng-init="incomeDetailoptions[0]"
+                                        ng-options="item.value as item.label for item in incomeDetailoptions"
+                                        my-change />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-content">Rp {{income.fixed + income.variable | currency }}/mth</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="tfoot">
+                                <th colspan="3" style="text-align:right;"></th>
+                                <th colspan="2">
+                                    <div class="ui-content" data-18n="messages.IncomeNet">Net Income</div>
+                                </th>
+                                <th>
+                                    <div class="ui-content">Rp {{ getTotalIncome() }} /mth</div>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- <a href="#pageGeneralQuestion" data-ajax="false"  class="ui-btn-back ui-btn ui-shadow ui-corner-all ">Back</a> -->
+                    <a href="#pageAssetInfo" data-ajax="false" check-progress title='pageGeneralQuestion' class="ui-btn-next ui-btn ui-shadow ui-corner-all ">Next</a>
+                </div>
+                <div data-role="footer" class="footer" style="text-align:center;"></div>
+            </div>
+
+            <!--Family Biz Info-->
+            <div data-role="page" id="pageAssetInfo">
+                <div id="contentfbi" data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.Asset">Asset</span><br class="clear"/>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow">
+                        <thead>
+                            <tr>
+                                <!-- <th  >No.</th> -->
+                                <th data-i18n="messages.Asset">Asset</th>
+                                <th data-i18n="messages.PresentValue">Present Value</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr class="tfoot">
+                                <!-- <th></th> -->
+                                <th  style="text-align:right;" data-i18n="messages.TotalValueofUnproductiveAssets">Total Value of Unproductive Assets</td>
+                                <th>{{ getTotalUnproVal() | noFractionCurrency : currloc : 0 }}</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr ng-repeat="upa in unproassets | filter: { isNew: false }" >
+                                <!-- <td style="text-align: center;">{{ upa.index }}</td>  -->
+                                <td>
+                                    <input id="" class="colVal" ng-blur=""  onclick="this.select();" type="text" ng-model="upa.asset" />
+
+                                </td>
+                                <td>
+                                    <input id="" class="colVal" ng-blur=""  onclick="this.select();" ng-click="addNewUpro(upa.index)" type="tel" ng-model="upa.value"  no-decimal currency-symbol="Rp" min=0 fraction="0"   />
+                                </td>
+                            </tr>
+                            <tr ng-repeat="upa in unproassets  | filter: { isNew: true }" >
+                                <!-- <td style="text-align: center;">{{ upa.index }}</td>  -->
+                                <td>
+                                    <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                                        <input id="" class="colVal" ng-blur=""  onclick="this.select();" type="text" ng-model="upa.asset" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                                        <input id="" class="colVal" ng-blur=""  onclick="this.select();" ng-click="addNewUpro(upa.index)" type="tel" ng-model="upa.value"  no-decimal currency-symbol="Rp" min=0 fraction="0"     />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a href="#" ng-click="addNewUpro(unproassets.length)" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left" data-i18n="buttons.AddNewAsset">Add New Asset</a>
+                    <br>
+                    <p class="center"><i class="fa fa-info" aria-hidden="true"></i><small data-i18n="messages.NoSaveEmptyAssets"></small></p>
+                    <a href="#pageGeneralQuestion" data-ajax="false"  class="ui-btn-back ui-btn ui-shadow ui-corner-all ">Back</a>
+                    <a href="#pageHousingIndex" data-ajax="false" check-progress title='pageAssetInfo' class="ui-btn-next ui-btn ui-shadow ui-corner-all ">Next</a>
+                </div>
+                <div data-role="footer" class="footer" style="text-align:center;"></div>
+            </div> 
+
+            <!--Use of Working Capital-->
+            <div data-role="page" id="pageUse">
+                <div data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.WorkCapitalUse">Use of Working Capital</span><br class="clear"/>
+                    <div class="ui-content">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="messages.WorkCapitalUse">Use of Working Capital</th>
+                                    <th data-i18n="messages.YesNo">1. Yes 2. No</th>
+                                    <th data-i18n="messages.HowMuch">How much? (Rp .000)</th>
+                                    <th data-i18n="messages.WorkCapitalUse">Use of Working Capital</th>
+                                    <th data-i18n="messages.YesNo">1. Yes 2. No</th>
+                                    <th data-i18n="messages.HowMuch">How much? (Rp .000)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usage">
+                                <tr>
+                                    <td data-i18n="messages.SchoolFeeExpense">1. School fees/expenses</td>
+                                    <td><select id="WC0" name="" ng-model="eval.usage[0].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(0)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[0].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                    <td data-i18n="messages.CRF1">7. CRF</td>
+                                    <td><select id="WC6" name="" ng-model="eval.usage[6].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(6)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[6].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="messages.HouseRepairImprovement">2. House repair/improvement</td>
+                                    <td><select id="WC1" name="" ng-model="eval.usage[1].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(1)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[1].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                    <td data-i18n="messages.GiveLendOtherPerson">8. Give/lend to other person</td>
+                                    <td><select id="WC7" name="" ng-model="eval.usage[7].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(7)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[7].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="messages.HomeUtensilEquipment">3. Home utensils/equipment</td>
+                                    <td><select id="WC2" name="" ng-model="eval.usage[2].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(2)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[2].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                    <td data-i18n="messages.SaveForEmergency">9. Save for emergency</td>
+                                    <td><select id="WC8" name="" ng-model="eval.usage[8].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(8)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[8].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="messages.ClotheShoe">4. Clothes/shoes</td>
+                                    <td><select id="WC3" name="" ng-model="eval.usage[3].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(3)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[3].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                    <td data-i18n="messages.RepayDebt">10. Repay Debts</td>
+                                    <td><select id="WC9" name="" ng-model="eval.usage[9].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(9)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[9].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="messages.MedicineClinicDoctor">5. Medicine, clinic, doctor</td>
+                                    <td><select id="WC4" name="" ng-model="eval.usage[4].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(4)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[4].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                    <td data-i18n="messages.UsedByOtherPerson">11. Used by other person</td>
+                                    <td><select id="WC10" name="" ng-model="eval.usage[10].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(10)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[10].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="messages.FoodForFamily">6. Food for family</td>
+                                    <td><select id="WC5" name="" ng-model="eval.usage[5].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required></td>
+                                        <td><div ng-show="checkYes(5)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[5].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                    <td data-i18n="messages.Other1">12. Other <input type="text" ng-model="eval.usage[11].other" name="" id="" placeholder="Other:" data-inline="true" maxlength="150" required/></td>
+                                    <td><select id="WC11" name="" ng-model="eval.usage[11].yesno" ng-options="option.value as option.name | translate for option in selectCodes.5" required/></td>
+                                        <td><div ng-show="checkYes(11)"><input ng-currency type="tel" onclick="this.select();" ng-model="eval.usage[11].amt" name="" placeholder="" data-inline="true" max="9999999999999999" required/></div></td>
+                                </tr>
+                                <tr>
+                                    <th data-i18n="messages.TotalConsumption">Total for Consumption</th>
+                                    <th>&nbsp;</th>
+                                    <th>{{totalConsumption() | currency}}</th>
+                                    <th data-i18n="messages.TotalSavedRepaidDebt">Total saved/ repaid debt</th>
+                                    <th>&nbsp;</th>
+                                    <th>{{totalRepaid() | currency}}</th>
+                                </tr>
+                                <tr>
+                                    <th data-i18n="messages.Percent">Percent</th>
+                                    <th>&nbsp;</th>
+                                    <th>{{(totalConsumption()/eval.general.disAmt*100).toFixed(2)}}%</th>
+                                    <th data-i18n="messages.Percent">Percent</th>
+                                    <th>&nbsp;</th>
+                                    <th>{{(totalRepaid()/eval.general.disAmt*100).toFixed(2)}}%</th>
+                                </tr>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                    <th data-i18n="messages.TotalPercent">Total Percent</th>
+                                    <th>&nbsp;</th>
+                                    <th>{{((totalConsumption()+totalRepaid())/eval.general.disAmt*100).toFixed(2)}}%</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                     <a href="#pageFamilyBizInfo" data-ajax="false"  class="ui-btn-back ui-btn ui-shadow ui-corner-all ">Back</a>
+                        <a href="#pageHousingIndex" data-ajax="false"  check-progress title='pageUse' class="ui-btn-next ui-btn ui-shadow ui-corner-all ">Next</a>
+                </div>
+                <div class="footer" data-role="footer"></div>
+            </div>
+
+            <!--Housing Index-->
+            <div data-role="page" id="pageHousingIndex">
+                <div data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.HousingIndex">Housing Index</span><br class="clear"/>
+                    <div class="ui-content">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="messages.Homeless">Homeless</th>
+                                    <th>
+                                        <label for="ncadHomeless">{{eval.homeless | translate}}</label>
+                                        <input type="checkbox" ng-change="checkHomeless()" ng-model="eval.homeless" name="ncadHomeless" id="ncadHomeless" ng-true-value='YES' ng-false-value='NO'/>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td data-i18n="messages.HousingSize">House Size</td>
+                                <td style="width:50%">
+                                    <select id="ncHSSZ" class="hsedrop" ng-model="eval.houseind[0]" ng-options="option.value as option.name | translate for option in selectHome.2" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="messages.HousingCondition">House Condition</td>
+                                <td style="width:50%">
+                                    <select id="ncCOND" class="hsedrop" ng-model="eval.houseind[1]" ng-options="option.value as option.name | translate for option in selectHome.3" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="messages.RoofType">Roof Type</td>
+                                <td style="width:50%">
+                                    <select id="ncROOF" class="hsedrop" ng-model="eval.houseind[2]" ng-options="option.value as option.name | translate for option in selectHome.4" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="messages.WallType">Wall Type</td>
+                                <td style="width:50%">
+                                    <select id="ncWALL" class="hsedrop" ng-model="eval.houseind[3]" ng-options="option.value as option.name | translate for option in selectHome.5" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="messages.FloorType">Floor Type</td>
+                                <td style="width:50%">
+                                    <select id="ncFLOR" class="hsedrop" ng-model="eval.houseind[4]" ng-options="option.value as option.name | translate for option in selectHome.6" ng-disabled="eval.homeless == 'YES'" ng-change="chkHse()" ></select>
+                                </td>
+                            </tr>
+                            <!-- <tr><td data-i18n="messages.ElectricitySource">Electricity Source</td><td style="width:50%"><select id="ncELEC" ng-model="eval.houseind[5]" ng-options="option.value as option.name | translate  for option in selectHome.7"></select></td></tr>
+                            <tr><td data-i18n="messages.WaterSource">Water Source</td><td style="width:50%"><select id="ncWATR" ng-model="eval.houseind[6]" ng-options="option.value as option.name | translate for option in selectHome.8"></select></td></tr> -->
+                            <tbody>
+                                <tr class="bold" style="background-color:#D6DF23"><td><h1 data-i18n="messages.Total">TOTAL</h1></td><td><h1>{{getHouseIndex()}}</h1></td>
+                                </tr>
+                            </tbody>
+
+                            <tbody>
+                                <tr>
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoOfHouseholdMember">
+                                            No of Household members
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="number" ng-model="eval.edu.householdmembers" maxlength="150" required/>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoOfChildren">
+                                            No of Children
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="number" ng-model="eval.edu.noofchildren" maxlength="150" required/>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td >
+                                        <div class="ui-content" data-i18n="messages.NoOfChildrenSchooling">
+                                            No of Children in School
+                                        </div>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="number" ng-model="eval.edu.noofchildrenschooling" maxlength="150" required/>
+                                    </td>
+                                </tr> 
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="#pageUse" data-ajax="false"   class="ui-btn-back ui-btn ui-shadow ui-corner-all ">Back</a>
+                    <a href="#pageWorkingCapital"  data-ajax="false" check-progress title='pageHousingIndex' class="ui-btn-next ui-btn ui-shadow ui-corner-all ">Next</a>
+
+                </div>
+                <div class="footer" data-role="footer"></div>
+            </div>
+
+            <!--Working Capital-->
+            <div data-role="page" id="pageWorkingCapital">
+            <div data-role="main" class="ui-content" data-ajax="false">
+                <!-- <span class="label clear bold uppercase" data-i18n="messages.OwnWorkCapital">Own Working Capital</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.Applicant">Applicant</td><td><input ng-currency type="tel" onclick="this.select();" ng-model="eval.appWorkCap" placeholder="0.00" max="9999999999" required/></td></tr>
+
+                            <tr ng-show="husbandinfo.maritalstatus == 'M'"><td data-i18n="messages.Husband">Husband</td><td><input ng-currency type="tel" onclick="this.select();" ng-model="eval.husbWorkCap" placeholder="0.00" max="9999999999" required/></td></tr>
+
+                            <tr class="bold"><th class="strong" data-i18n="messages.Total">Total</th><th>{{eval.appWorkCap+eval.husbWorkCap | currency}}</th></tr>
+                        </tbody>
+                    </table>
+                </div> -->
+
+                <span class="label clear bold uppercase" data-i18n="messages.BorrowFund">Borrowed Funds</span><br class="clear"/>
+                <div class="ui-content">
+                    
+                    <!-- <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><th data-i18n="messages.LoanFrom">Loan From</th><th data-i18n="messages.LoanFromName">Loan From Name</th><th data-i18n="messages.By">by</th><th data-i18n="messages.OriginalAmt">Original Amt.</th><th data-i18n="messages.Balance">Bal.</th><th data-i18n="messages.RepaymentPerWk">Repayment/Week</th> 
+                        <th data-i18n="messages.LoanPaidOff">Loan Paid Off</th>
+                        <th data-i18n="messages.Action">Action</th></tr></thead>
+                        <tbody ng-repeat="fund in borrowedFunds">
+                            <tr ng-hide="isSelectedFund($index)" ng-click="selectFund($index)">
+                                <td>{{getBFLoanFrom(fund.loanfrom)}}</td>
+                                <td>{{fund.loanfromname}}</td>
+                                <td>{{getBFApplicant(fund.applicant) | translate }}</td>
+                                <td>{{fund.originalamt | currency}}</td>
+                                <td>{{fund.balance | currency}}</td>
+                                <td>{{fund.repaymentperwk | currency}}</td> 
+                                <td>{{fund.loanpaidoff | date}}</td>
+                                <td><a href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext" ng-click="deleteFund($index)">Delete</a></td>
+                            </tr>
+                            <tr ng-show="isSelectedFund($index)" style="background: #3399ff;">
+                                <td><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                                    <select ng-model="fund.loanfrom" data-role='none' required>
+                                        <option value="B">{{getBFLoanFrom('B')}}</option>
+                                        <option value="I">{{getBFLoanFrom('I')}}</option>
+                                        <option value="M">{{getBFLoanFrom('M')}}</option>
+                                        <option value="C">{{getBFLoanFrom('C')}}</option>
+                                    </select>
+                                    </div></td>
+                                <td><input ng-model="fund.loanfromname" type="text" placeholder="Loan From Name" maxlength="150" required /></td>
+                                <td>
+                                    <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+                                    <select ng-model="fund.applicant" data-role='none' required>
+                                    <option value="C">{{getBFApplicant('C')}}</option>
+                                    <option value="H">{{getBFApplicant('H')}}</option>
+                                    <option value="B">{{getBFApplicant('B')}}</option>
+                                    </select>
+                                    </div>
+                                </td>
+                                <td><input ng-currency ng-model="fund.originalamt" type="tel" onclick="this.select();" placeholder="0.00" max="9999999999999999" required /></td>
+                                <td><input ng-currency ng-model="fund.balance" type="tel" onclick="this.select();" placeholder="0.00" max="9999999999999999" required /></td>
+                                <td><input ng-currency ng-model="fund.repaymentperwk" type="tel" onclick="this.select();" placeholder="0.00" max="9999999999999999" required /></td>
+                                <td> 
+                                    <input ng-model="fund.laonpaidoff" type="date"  required />
+                                </td>
+                                <td><a ng-click="selectFund(-1)" href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-check ui-btn-icon-notext">Confirm</a></td>
+                            </tr>
+                        </tbody>
+ 
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select id="bfLoanFrom" ng-model="fundEntry.loanfrom" ng-init="fundEntry.loanfrom = 'B'">
+                                        <option value="B">{{getBFLoanFrom('B') | translate }}</option>
+                                        <option value="I">{{getBFLoanFrom('I') | translate }}</option>
+                                        <option value="M">{{getBFLoanFrom('M') | translate }}</option>
+                                        <option value="C">{{getBFLoanFrom('C') | translate }}</option>
+                                    </select>
+                                </td>
+                                <td><input ng-model="fundEntry.loanfromname" type="text" placeholder="Loan From" maxlength="150" data-i18n="[placeholder]messages.LoanFrom" /></td>
+                                <td>
+                                    <select id="bfLoanBy" ng-model="fundEntry.applicant" ng-init="fundEntry.applicant = 'C'">
+                                    <option value="C">{{getBFApplicant('C') | translate }}</option>
+                                    <option value="H">{{getBFApplicant('H') | translate }}</option>
+                                    <option value="B">{{getBFApplicant('B') | translate }}</option>
+                                    </select>
+                                </td>
+                                <td><input ng-currency ng-model="fundEntry.originalamt" type="tel" onclick="this.select();" placeholder="0.00" max="9999999999999999" /></td>
+                                <td><input ng-currency ng-model="fundEntry.balance" type="tel" onclick="this.select();" placeholder="0.00" max="9999999999999999" /></td>
+                                <td><input ng-currency ng-model="fundEntry.repaymentperwk" type="tel" onclick="this.select();" placeholder="0.00" max="9999999999999999" /></td> 
+                                <td> 
+                                    <input ng-model="fundEntry.loanpaidoff" type="date"  required />
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a href="#" ng-click="addFund()" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left" value="Add New Fund" data-i18n="buttons.AddNewFund">Add New Fund</a> -->
+                </div>
+                <a href="#pageHousingIndex" data-ajax="false" class="ui-btn-back ui-btn ui-shadow ui-corner-all ">Back</a>
+                <a href="#" ng-click="submitForm()" ng-if="secondreview" class="ui-btn-next ui-btn ui-shadow ui-corner-all ">Submit</a>
+                </div>
+                <div class="footer" data-role="footer"></div><!-- data-position="fixed"-->
+            </div>
+
+            <div data-role="page" data-dialog="true" id="pageCancel" style="background:black !important;">
+              <div class="ui-content" style="background:#fff">
+                  <span data-i18n="messages.ReturnToDashboardWithoutSavingClient">Return to dashboard without saving New Client?</span>
+                  <a href="dashboard.html" class="ui-btn ui-btn-r ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left" data-ajax="false" data-i18n="buttons.ReturnToDashboard">Return to Dashboard</a>
+                  <a href="#" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onclick="navBack()" data-i18n="buttons.Cancel">Cancel</a>
+              </div>
+            </div>
+            
+        </form> 
+
+        <!-- scripts -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/load_template.js?1.1.7"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <script type="text/javascript" src="js/filemanager.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_evaluation.js?V=1.9"></script>
+	    <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script> 
+        <script type="text/javascript" src="js/app_header.js?V=1.3"></script>
+        <script type="text/javascript" src="js/app_signature.js?V=1.1"></script>
+
+    </body>
+</html>

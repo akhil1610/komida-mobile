@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <body ng-app="myApp" ng-controller="ClientCtrl" >
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+               
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div data-role="header" class="header"></div>
+            <div data-role="main" class="ui-content" data-ajax="false">
+            <!-- content -->
+                <div data-role="controlgroup" data-type="horizontal" class="left" style="display:none">
+                    <a href="#" class="ui-btn ui-icon-edit ui-btn-icon-left">Update</a>
+                    <a href="#" class="ui-btn ui-icon-minus ui-btn-icon-left">Delete</a>
+                    <a href="#" class="ui-btn ui-icon-refresh ui-btn-icon-left">Reset</a>
+                </div>
+                <div data-role="controlgroup" data-type="horizontal" class="right "  >
+                    <br class="clear"/>
+                    <a href="#" class="ui-btn ui-btn-icon-left ui-icon-check ui-btn-g" data-ajax="false" ng-click="updateStatus()" data-i18n="messages.Save">Save</a>
+                </div>
+                <div data-type="vertical" class="left ui-grid-50  " >
+                    <!-- <span class="label" data-i18n="messages.UpdateStatus">Update Status</span> -->
+                    <!-- <span class="pending-alert" ng-show="taskTrain > 0">{{ taskTrain }} {{ 'Training(s) Pending' | translate }}</span> -->
+                    <br class="clear"/>
+                    <br class="clear"/>
+                    <div class="detlabel" data-i18n="messages.Village">Village:</div>:
+                    <span>&nbsp;&nbsp;<b>{{ selectedVillage.name }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="ui-grid-a">
+                        <div class="padding no-hori-padding">
+                            <span data-i18n="messages.UpdateStatusTo">
+                                Update status to:
+                            </span>
+                           <!--  <select name="updateStatus" id="updateStatus" 
+                                ui-status-select
+                                ng-model="selectTransactions.selectOption"
+                                ng-options="status as status.name | translate for status selectTransactions.options track by status.value" data-inline="true"></select> -->
+                             <select name="updateStatus" id="updateStatus"
+                                ui-status-select 
+                                ng-model="selectTransactions.selectOption"
+                                ng-options="status as status.name | translate for status in selectTransactions.options track by status.value" data-inline="true">
+                            </select>
+                        </div>
+                        <div class="ui-block-b padding">
+                            <!-- <span data-i18n="messages.Centre">
+                                Village: 
+                            </span> -->
+                            <!-- <select 
+                                ng-model="sf.CLT_VILLAGE" 
+                                name="village" id="village"  data-inline="true" 
+                                ng-options="status.value as status.name for (key, status) in selectVillage">
+                            </select> -->
+                           <!--  <span>&nbsp;&nbsp;<b>{{ selectedVillage.name }}</b></span> -->
+                            <!-- <select 
+                                name="village" id="village" data-inline="true" 
+                                ng-model="selectedVillage" 
+                                ui-select
+                                ng-options="ville as ville.name for ville in selectVillage track by ville.value">
+                            </select> -->
+                        </div>
+                    </div>
+                </div>
+                <br class="clear"/>
+                <span class="label" data-i18n="messages.SearchResult">Search Results</span>
+                <br class="clear"/>
+                <div class="ui-content no-hori-padding aniview slow"  av-animation="fadeInUp">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                    <thead><tr>
+                        <th>
+                            <input type="checkbox" id='selectAll' ng-model="selectAll" data-role='none' ng-click='doSelectAll()'/><label for="selectAll">&nbsp;</label>
+                        </th>
+                        <th data-i18n="messages.ClientName">Client Name</th><th data-i18n="messages.KTPNo">KTP No.</th><th data-i18n="messages.Status">Status</th><th data-i18n="messages.GroupID">Group ID</th><th data-i18n="messages.IsGroupLeader">Is Group Leader</th></tr></thead>
+                        <tbody>
+                            <tr ng-repeat="c in clients">
+                                <td><input type="checkbox" id='cb{{$index}}' ng-model="updates[$index]" data-role='none'/><label for="cb{{$index}}">&nbsp;</label></td>
+                                <td>{{c.CLT_FULL_NAME}}</td>
+                                <td>{{c.CLT_OTH_REG_NO}}</td>
+                               <!-- <td>{{selectTransactions.showstatus[c.CLT_STATUS].TST_NAME | translate }}</td>-->
+                               <td>{{selectTransactions.showstatus[c.CLT_STATUS].TST_KEY | translate }}</td>
+                                <td>{{c.CLL_GROUP_ID}}</td>
+                                <td>{{{"Y":"YES","N":"NO"}[c.CLL_IS_GROUP_LEADER] | translate }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div><!-- data-position="fixed"-->
+        </div>
+        
+        <!-- script -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/app_status.js"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>  
+        <script type="text/javascript" src="js/angular-translate.js"></script>      
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+    </body>
+</html>

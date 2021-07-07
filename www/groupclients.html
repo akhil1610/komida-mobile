@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <body ng-app="myApp" ng-controller="GroupCtrl">
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content " data-ajax="false">
+                <!-- content -->
+
+                <div data-type="vertical" class="left ui-grid-50" style="margin-left: 1em;">
+                    <!-- <span  style="" class="label clear bold uppercase" data-i18n="messages.Group">Group</span> -->
+                    <div ng-show="showBacktoClientBtn" class="ui-content">
+                        <div data-type="vertical" class="left">
+                            <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="redirect()"  >Back</a>
+                        </div>
+                    </div>
+                    <br class="clear"/>
+                    <!-- <div class="detlabel" data-i18n="messages.Centre">Centre:</div>
+                    <span>&nbsp;&nbsp;<b>{{ user.currentVillage }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+                </div>
+                <br class="clear"/>
+                <table  data-role="table" class=" ui-responsive ui-shadow table-stroke" >
+                    <thead>
+                        <tr><th colspan="3" >&nbsp;</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-show="countAvailable()" >
+                            <td colspan=2>
+                                <select name="createGroup" id="createGroup" ng-model="createGroup"  ng-change="changeClient(createGroup)" ng-options="idx as client.CLT_FULL_NAME for (idx,client) in available" />
+                            </td>
+                            <td colspan=1><a href="#" class='ui-btn ui-icon-plus ui-btn-icon-left ui-corner-all ui-btn-g' ng-show="countAvailable()" ng-click="createNewGroup()">{{ "Make" | translate }} {{available[createGroup].CLT_FULL_NAME}} {{ "Leader of New Group" | translate }} in {{ available[createGroup].CLT_CENTER_ID }} </a></td>
+                        </tr>
+                        <tr ng-if="savedGrps.length > 0 && countAvailable()">
+                            <td colspan=2>
+                                <select name="addToGroup" id="addToGroup" my-change ng-change="test(currGroup)" class="selgroup" ng-model="currGroup" ng-options="grp.GROUP_ID as (grp.CENTER.name + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GROUP ' + grp.GROUP_ID) for grp in savedGrps | groupFilter: available[createGroup].CLT_CENTER_ID" />
+                            </td>
+                            <td colspan=1><a href="#" class='ui-btn ui-icon-plus ui-btn-icon-left ui-corner-all ui-btn-g' ng-show="countAvailable()" ng-click="addToExistingGroup(available[createGroup])">{{ "ADD" | translate }} {{available[createGroup].CLT_FULL_NAME}} {{ "TO GROUP" | translate }} {{currGroup.GROUP_ID}}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="grid" width="100%">
+                    <div class="grid-item  ui-grid-50" ng-repeat="group in savedGrps | reverseArray | groupFilter: available[createGroup].CLT_CENTER_ID  track by $index" ng-init="parentindex = $index">
+                        <div class="ui-content">
+                            <table data-role="table" class="white-bg ui-responsive ui-shadow table-stroke" >
+                                <thead>
+                                    <tr>
+                                        <th class="lightblue-bg">{{group.CENTER.name }} 
+                                            <br>{{ grouptext }} <strong>{{group.GROUP_ID}}</strong></th>
+                                        <!-- <th class="lightblue-bg" data-i18n="messages.Member">Members</th> -->
+                                        <th class="lightblue-bg" style="width:35%;text-align:right;padding-right:1em;" > </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- existing groups -->
+                                    <tr >
+                                        <td colspan="2" class="group-members">
+                                            <div class="left width-100 " ng-if="getLeaderOf(group.GROUP_ID,group.CENTER.value) !== null">
+                                                <div class="left">
+                                                    <a href="#" class="ui-btn ui-icon-user ui-corner-all ui-btn-inline ui-btn-g ui-btn-icon-notext">
+                                                    </a>
+
+                                                </div>
+                                                <div class="left marg-top-10">
+                                                    {{getLeaderOf(group.GROUP_ID,group.CENTER.value).CLT_FULL_NAME}}
+                                                    <br><span class="subtext">{{getLeaderOf(group.GROUP_ID,group.CENTER.value).CLT_CLEINT_ID}}</span>
+                                                </div>
+                                                <div class="right" ng-if="getLeaderOf(group.GROUP_ID,group.CENTER.value).CLT_MOB_NEW==1">
+                                                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-left ui-corner-all ui-btn-inline ui-btn-r small-text white-text" ng-click="removeClient(group,getLeaderOf(group.GROUP_ID,group.CENTER.value))">Remove</a>
+                                                </div>
+                                            </div>
+                                            <div class="left width-100" ng-repeat="mem in filterGroupNames(group.MEMBERS)">
+                                                <div class="left">
+                                                    <a href="#" class="ui-btn ui-icon-user ui-corner-all ui-btn-inline ui-btn-icon-notext" ng-class="{'ui-btn-g':(mem.CLT_IS_GROUP_LEADER=='Y'),'ui-btn-tl':(mem.CLT_iS_GROUP_LEADER!='Y'&&mem.CLT_MOB_NEW==1)}" ng-click="changeLeader(mem,group)"></a>
+                                                </div>
+                                                <div class="left marg-top-10">
+                                                    <span ng-class="{bold:mem.CLT_MOB_NEW==1}">{{mem.CLT_FULL_NAME}}</span>
+                                                    <br><span ng-if="mem.CLT_CLEINT_ID !== null" class="subtext">{{mem.CLT_CLEINT_ID}}</span>
+                                                </div>
+                                                <div class="right" ng-if="mem.CLT_MOB_NEW==1">
+                                                    <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-left ui-corner-all ui-btn-inline ui-btn-r small-text white-text" ng-click="removeClient(group,mem)">Remove</a>
+                                                </div>
+                                            </div>                                       <!--  <br/><strong>{{ "Members in Group" | translate }}:</strong> {{countMembers(group)}} -->
+                                        </td><!--
+                                        <td class="loanGroup" style="width:40%">
+
+                                        </td> -->
+                                       <!--  <td style="width:20%">
+                                            <a href="#" class="ui-btn ui-icon-delete ui-btn-icon-left ui-corner-all ui-btn-inline ui-btn-r small-text white-text" ng-click="removeGroup($index)" ng-show="newInGrp(group)" data-i18n="messages.RemoveNewMembers">Remove<Br>New Members</a>
+                                        </td> -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div><!-- data-position="fixed"-->
+        </div>
+
+        <!-- script -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js?v=1.0.0"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <script type="text/javascript" src="js/filemanager.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js?v=1.0.0"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_groupclients.js?V=1.1.5"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+		<script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+		<script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/mansory.min.js"></script>
+        <script type="text/javascript" src="js/angular-mansory.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+        <script>
+            function init(){initTemplate.load(1);}
+        </script>
+    </body>
+</html>

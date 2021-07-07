@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css?V=1.1" />
+        <link rel="stylesheet" type="text/css" href="css/offline.css?V=1.1" />
+        <link rel="stylesheet" type="text/css" href="css/offline-english.css?V=1.1" />
+        <link rel="stylesheet" type="text/css" href="css/offline-indonesia.css?V=1.1" />
+        <title>TBOP MOBILE APPLICATION</title>
+
+    </head>
+
+  <body>
+    <script>
+        function focusInput (){
+            setTimeout(function() {
+                $('#syncuserid').focus();
+            }, 300);
+        }
+    </script>
+    <style>
+        .card {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            padding: 25px 2%;  
+        }
+        #content.ui-content {
+            width: 100%;
+        }
+        .loginboxes {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            background: white;
+        }
+        .loginboxes .ui-content {
+            padding: 0;
+            margin-bottom: 2em;
+        }
+        .ui-content {
+            display: inline-block;
+        }
+        .w20 {
+            width: 15%; 
+        }
+        .w35 {
+            width: 35%;
+        }
+        .w50 {
+            width: 49.75%;
+        }
+        .w100 {
+            width: 100%;
+        }
+        .w90 {
+            width: 90%;
+        }
+        .fotrigger {
+            display: none;
+        }
+        #mgrtrigger,
+        #fotrigger {
+            display: none;
+        }
+        #fotick,
+        #mgrtick {
+            display: none;
+        }
+        .circ{
+            opacity: 0;
+            stroke-dasharray: 130;
+            stroke-dashoffset: 130;
+            -webkit-transition: all 1s;
+            -moz-transition: all 1s;
+            -ms-transition: all 1s;
+            -o-transition: all 1s;
+            transition: all 1s;
+        }
+        .tick{
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+            -webkit-transition: stroke-dashoffset 1s 0.5s ease-out;
+            -moz-transition: stroke-dashoffset 1s 0.5s ease-out;
+            -ms-transition: stroke-dashoffset 1s 0.5s ease-out;
+            -o-transition: stroke-dashoffset 1s 0.5s ease-out;
+            transition: stroke-dashoffset 1s 0.5s ease-out;
+        }
+        .drawn + svg .path{
+            opacity: 1;
+            stroke-dashoffset: 0;
+        }
+        .loginbtn {
+            text-align: left;
+            display: none;
+            position: absolute;
+            z-index: 1;
+            top: 40%;
+            margin: 0 auto;
+            left: 40%;
+            width: 20%;
+        }
+        #changeipbutton {
+            position: absolute;
+            left: 10px;
+            top: -51px;
+            color: #AAA;
+        }
+        .loginbtn button {
+            text-align: left;
+        }
+        .fieldset {
+            /*height: 30vw; */
+        }
+        .footer {
+            padding: 0 10px;
+        } 
+        .ui-page-theme-a a:visited, html .ui-bar-a a:visited, html .ui-body-a a:visited, html body .ui-group-theme-a a:visited,
+        .ui-page-theme-a {
+            color: white;
+        }
+        .ui-mobile label {
+            color: #263238;
+            display: none;
+            transition: 0.3s;
+        } 
+        label.show {
+            display: block;
+        }
+
+        .fotickcontainer,
+        .mgrtickcontainer {
+            width: 20%;
+            margin: 10% auto; 
+            display: none;
+        }
+        .password i.fa-eye-slash {
+            display: none
+        }
+        .password.show i.fa-eye-slash {
+            display: block;
+        }
+        .password i.fa-eye {
+            display: block
+        }
+        .password.show i.fa-eye {
+            display: none;
+        }
+        i.fa-eye,
+        i.fa-eye-slash {
+            position: absolute;
+            bottom: 13px;
+            right: 10px;
+            color: black;
+        }
+    </style>
+    <!-- body -->
+    <div data-role="page" id="page">
+        <div data-role="header" class="header"></div>
+
+        <div id="content" data-role="main" class="ui-content bodybackground " data-ajax="false" style="padding:0px; height: 100%;margin-top:-1em;margin-bottom: 0px;">
+            <div style="position:relative;width: 100%;text-align:  center;">
+                <div style="text-align:center;margin: 0 auto;padding-top: 5em;width: 60%;"><img src="./img/Prodigy-Logo-Only.png" style="width:60vh"/></div>
+            </div>
+            <div class="loginboxes">
+                <!-- TODO: enable this for UAT failover, allow them change IP address directly -->
+                <button id="changeipbutton" class="ui-btn ui-corner-all ui-icon-tag ui-btn-icon-notext" onclick="changeIPPop()" ></button>
+                <div class="ui-content w50">
+                    <div class="card center">
+                        <h3 style="color:#009fcf;">
+                            <strong data-i18n="messages.FieldOfficerLogin">Field Officer Login</strong>
+                        </h3>
+                        <div class="ui-content w90 center" style="margin: 5px auto;text-align: left;">
+                            
+                            <div class="fotickcontainer">
+                                    <div id="fotrigger"> 
+                                    </div>
+                                <svg version="1.1" id="fotick" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                    viewBox="0 0 37 37" style="enable-background:new 0 0 37 37;" xml:space="preserve">
+                                    <path class="circ path" style="fill:none;stroke:rgb(57, 209, 26);stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" d="
+                                    M30.5,6.5L30.5,6.5c6.6,6.6,6.6,17.4,0,24l0,0c-6.6,6.6-17.4,6.6-24,0l0,0c-6.6-6.6-6.6-17.4,0-24l0,0C13.1-0.2,23.9-0.2,30.5,6.5z"
+                                    />
+                                    <polyline class="tick path" style="fill:none;stroke:rgb(57, 209, 26);stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" points="
+                                    11.6,20 15.9,24.2 26.4,13.8 "/>
+                                </svg>
+                            </div>
+                            <form method="post" id="fologin" >
+                                <fieldset >
+                                    <label for="fouserid" data-i18n="messages.userid">User ID</label><input type="text" name="fouserid" id="fouserid" value="" data-i18n="[placeholder]messages.userid"/>
+                                    <div class="password">
+                                        <label for="fopassword" data-i18n="messages.password">Password:</label><input type="password" name="fopassword" id="fopassword" placeholder="Password" value="" data-i18n="[placeholder]messages.password"/> 
+                                        <i class="fa fa-eye"></i>
+                                        <i class="fa fa-eye-slash"></i>
+                                    </div> 
+                                    
+                                    <!-- <button id="fosyncbutton" class="ui-btn ui-icon-arrow-u ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="messages.login">Login</button>  -->
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="loginbtn">
+                    <button class="prevent ui-btn ui-btn-g ui-icon-carat-r ui-btn-icon-left ui-corner-all " value="Login" onclick="syncData()" data-i18n="messages.pulldata">Pull Data</button> 
+                </div> 
+                
+                <div class="ui-content w50">
+                    <div class="card center">
+                        <h3 style="color:#009fcf;">
+                            <strong data-i18n="messages.MgrCashLogin">Manager / Cashier Login</strong>
+                        </h3>
+                        <div class="ui-content w90 center" style="margin: 5px auto;text-align: left;">
+                            <div class="mgrtickcontainer">
+                                <div id="mgrtrigger"> 
+                                </div>
+                                <svg version="1.1" id="mgrtick" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        viewBox="0 0 37 37" style="enable-background:new 0 0 37 37;" xml:space="preserve">
+                                        <path class="circ path" style="fill:none;stroke:rgb(57, 209, 26);stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" d="
+                                        M30.5,6.5L30.5,6.5c6.6,6.6,6.6,17.4,0,24l0,0c-6.6,6.6-17.4,6.6-24,0l0,0c-6.6-6.6-6.6-17.4,0-24l0,0C13.1-0.2,23.9-0.2,30.5,6.5z"
+                                        />
+                                        <polyline class="tick path" style="fill:none;stroke:rgb(57, 209, 26);stroke-width:3;stroke-linejoin:round;stroke-miterlimit:10;" points="
+                                        11.6,20 15.9,24.2 26.4,13.8 "/>
+                                </svg>
+                            </div>
+                            <form method="post" id="mgrlogin" >
+                                <fieldset >
+                                    <label for="mgruserid" data-i18n="messages.mgrcshid">Manager / Cashier ID</label><input type="text" name="mgruserid" id="mgruserid" value="" data-i18n="[placeholder]messages.mgrcshid"/>
+                                    <div class="password">
+                                        <label for="mgrpassword" data-i18n="messages.password">Password:</label>
+                                        <input type="password" name="mgrpassword" id="mgrpassword" placeholder="Password" value="" data-i18n="[placeholder]messages.password"/>
+                                        <i class="fa fa-eye"></i>
+                                        <i class="fa fa-eye-slash"></i>
+                                    </div>
+                                     
+                                    <!-- <button id="mgrsyncbutton" class="ui-btn ui-icon-arrow-u ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="messages.login">Login</button> -->
+        
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <button id="syncbutton" style="bottom: 3em;width: 50%;margin: auto;" class="ui-btn ui-icon-arrow-u ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="messages.login">Login</button>
+            </div> 
+        </div> 
+        <div data-role="footer" class="darkbackground footer">
+            <p style="text-align: left;float: left;font-size: 0.85em;">
+                <a href="" onclick="setLanguage('en')">English</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="" onclick="setLanguage('id')">Bahasa</a>
+            </p> 
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script>
+        
+    </script>
+
+    <script src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/load_template.js?v=1.1.1"></script>
+    <script type="text/javascript" src="js/properDB.js?v=1.0.0"></script>
+    <script src="js/lz-string.js" type="text/javascript"></script> 
+    <script type="text/javascript" src="js/index.js?V=4"></script>
+    <script type="text/javascript" src="js/initDB.js?V=1.1.37"></script>
+    <script type="text/javascript" src="js/moment.min.js"></script>
+    <script type="application/javascript" src="js/fastclick.js"></script> 
+    
+    <script type="text/javascript" src="js/filemanager.js"></script>
+
+    <script type="text/javascript" src="js/offline.js?v=1.1.1"></script>
+    <script type="text/javascript" src="js/app_newlogin.js?v=1.1.13"></script>
+    <script type="text/javascript" src="js/i18next-1.8.0.js?v=5"></script>
+    
+    <script type="text/javascript" src="js/ln.js?v=4"></script>
+    <script src="js/sweetalert2.min.js?V=2"></script>
+    <link rel="stylesheet" type="text/css" href="css/sweetalert2.min.css"> 
+
+  </body>
+</html>

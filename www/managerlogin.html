@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+        <link rel="stylesheet" type="text/css" href="css/lc_switch.css">
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .reason.ng-hide { /*override for this page only*/
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+        </style>
+    </head>
+    <body ng-app="myApp" ng-controller="ManagerCtrl">       
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+               
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page" >
+                    
+                    <br class="clear"/>
+
+                    <!-- group info Table -->
+                    <div class="ui-content no-hori-padding" id="groupInfoTable">
+
+                        <div class="ui-container ui-grid-50" style="margin: 0 auto;">
+
+                            <label for="userid" data-i18n="messages.userid">User ID:</label><input type="text" name="userid" id="userid" value="" placeholder="User ID" data-i18n="[placeholder]messages.userid"/><br/>
+                            <label for="password" data-i18n="messages.password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" data-i18n="[placeholder]messages.password"  ng-keypress="myFunct($event)"/>
+                            <button class="prevent ui-btn ui-btn-g ui-icon-carat-r ui-btn-icon-left ui-corner-all " value="Login" ng-click="login()" data-i18n="messages.login">LOGIN</button>
+                        </div>
+                        
+                    </div>
+                </div> 
+ 
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+        <!-- scripts -->
+        
+        
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <!-- <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>-->
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_managerlogin.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/lc_switch.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>      
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script> 
+        
+    </body>
+</html>

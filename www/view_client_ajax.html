@@ -1,0 +1,584 @@
+ 
+
+    
+        
+
+        <div  id="pageAppData" class="mini-client-details">      
+            <div  class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" ng-click="loadPicture()" data-i18n="messages.ApplicantData">Applicant's Data</span><br class="clear"/>
+                <div class="ui-grid-a ui-content vc-general" style="text-align:center;" >
+                    <div class="ui-block-a">
+                        <div class="ncadPhoto" style="background-color:#f6f6f6;border:1px solid #ddd;margin:auto;margin-top:1em;">
+                            <img class="ncadPhoto" id="ncadPhoto" ng-src="{{clientinfo.CLT_PHOTO}}" alt="" />
+                        </div>
+                    </div>
+                    <div class="ui-block-b">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead><tr><td></td><td></td></tr></thead>
+                            <tbody>
+                                <tr><td style='width:50%' data-i18n="messages.FullName">Full Name</td><td>{{clientinfo.CLT_FULL_NAME}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.NickName">Nick Name</td><td>{{clientinfo.CLT_NICK_NAME}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.FamilyCardNo">Family Card No.</td><td>{{clientinfo.CLT_FAMILY_CARD_NO}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.ClientID">Client ID</td><td>{{clientinfo.CLT_CLEINT_ID}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.KTPNo">Client KTP.</td><td>{{clientinfo.CLT_OTH_REG_NO}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.DOB">Date of Birth</td><td>{{clientinfo.CLT_BIRTHDATE}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.Age">Age</td><td>{{clientinfo.CLT_AGE}}</td></tr>
+                                <tr><td style='width:50%' data-i18n="messages.HighestEducation">Highest Education</td><td>{{CODE[3][clientinfo.CLT_HIGH_EDU]['CODE_NAME'] | translate }}<br/><div ng-show="clientinfo.CLT_HIGH_EDU==6">{{clientinfo.CLT_HIGH_EDU_OTHER}}</div></td></tr>
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                    </div>
+                </div>
+                <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                    <thead><tr><td></td><td></td></tr></thead>
+                    <tbody>
+                        <tr><td style='width:50%' data-i18n="messages.ClientID">Client ID No.</td><td>{{clientinfo.CLT_OTH_REG_NO}}</td></tr>
+                        <tr><td style='width:50%' data-i18n="messages.GroupNo">Group No.</td><td>{{loaninfo.CLL_GROUP_ID}}</td></tr>
+                        <tr><td style='width:50%' data-i18n="messages.Leader">Leader</td><td>{{CODE[5][loaninfo.CLL_IS_GROUP_LEADER]['CODE_NAME'] | translate }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    
+        <!--Husband's Info-->
+        <div id="pageAppData2" class="mini-client-details"> 
+            <div  class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.HusbandInformation">Husband's Information</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.MaritalStatus">Marital Status</td><td>{{CODE[1][clientinfo.CLT_MARITAL_STATUS]['CODE_NAME'] | translate }}</td></tr>
+                            <tr ng-show='clientinfo.CLT_MARITAL_STATUS!="S"'><td data-i18n="messages.HusbandName">Husband Name</td><td>{{clientinfo.CLT_HB_NAME}}</td></tr>
+                            <tr ng-show='clientinfo.CLT_MARITAL_STATUS!="S"'><td data-i18n="messages.HusbandIDNo">Husband ID No.</td><td>{{clientinfo.CLT_HB_ID}}</td></tr>
+                            <tr ng-show='clientinfo.CLT_MARITAL_STATUS!="S"'><td data-i18n="messages.LiveInHouse">Lives in House</td><td>{{CODE[5][clientinfo.CLT_HB_LIVE_IN_HOUSE]['CODE_NAME'] | translate }}</td></tr>
+                            <tr ng-show='clientinfo.CLT_MARITAL_STATUS!="S"'><td data-i18n="messages.WhereDoesHeLive">Where does he live?</td><td>{{clientinfo.CLT_HB_LIVE_PLACE}}</td></tr>
+                            <tr ng-show='clientinfo.CLT_MARITAL_STATUS!="S"'><td data-i18n="messages.HowOftenDoesHeComeHome">How often does he come home?</td><td>{{CODE[6][clientinfo.CLT_HB_COME_HOUSE]['CODE_NAME'] | translate }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>  
+        
+        <!--Household and Mother Info-->
+        <div  id="pageAppData3" class="mini-client-details"> 
+            <div  class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.HouseholdMotherInfo">Household and Mother Info</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.NoOfHouseholdMember">No. of Household Members</td><td>{{clientinfo.CLT_NUM_HOUSE_MEM}}</td></tr>
+                            <tr><td data-i18n="messages.NoOfChildrenLessThan18YearOld">No. of Children &lt;18yrs<br/> in the household</td><td>{{clientinfo.CLT_NUM_CHILDREN}}</td></tr>
+                            <tr><td data-i18n="messages.MotherName">Mother's Name</td><td>{{clientinfo.CLT_MOTHER_NM}}</td></tr>
+                            <tr><td data-i18n="messages.MotherDOB">Mother's Birth Date</td><td>{{clientinfo.CLT_MOTHER_BIRTHDATE}}</td></tr>
+                            <tr><td data-i18n="messages.MotherAge">Mother's Age</td><td>{{clientinfo.CLT_MOTHER_AGE}}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+        
+        <!--App Data Business Info-->        
+        <div  id="pageAppData4" class="mini-client-details"> 
+            <div  class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.BusinessInfo">Business Info</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.BusinessType">Type of Business</td><td>{{clientinfo.CLT_BIZ}}</td></tr>
+                            <tr><td data-i18n="messages.BusinessEquipment">Business Equipment</td><td>{{clientinfo.CLT_BIZ_EQUIPT}}</td></tr>
+                            <tr><td data-i18n="messages.JointBusinessWithHusband">Joint Business with Husband</td><td>{{clientinfo.CLT_BOTH_BIZ}}</td></tr>
+                            <tr><td data-i18n="messages.BusinessEquipment">Business Equipment</td><td>{{clientinfo.CLT_BOTH_BIZ_EQUIPT}}</td></tr>
+                            <tr><td data-i18n="messages.HusbandBusiness">Husband's Business</td><td>{{clientinfo.CLT_HB_BIZ}}</td></tr>
+                            <tr><td data-i18n="messages.BusinessEquipment">Business Equipment</td><td>{{clientinfo.CLT_HB_BIZ_EQUIPT}}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+
+        <!--Address and Telephone Numbers-->               
+        <div  id="pageAddress" class="mini-client-details"> 
+            <div class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.AddrTelNo">Address and Telephone Numbers</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                        <tr><td data-i18n="messages.RTRW">RT/RW</td><td>{{clientinfo.CLT_RT_RW}}</td></tr>
+                        <tr><td data-i18n="messages.StreetArea">Street/Area</td><td>{{clientinfo.CLT_STREET_AREA_NM}}</td></tr>
+                        <tr><td data-i18n="messages.Village">Village</td><td>{{clientinfo.VLM_NAME}}</td></tr>
+                        <tr><td data-i18n="messages.SubDistrict">Sub-district</td><td>{{clientinfo.CLT_SUB_DISTRICT}}</td></tr>
+                        <tr><td data-i18n="messages.District">District</td><td>{{clientinfo.CLT_DISTRICT}}</td></tr>
+                        <tr><td data-i18n="messages.Province">Province</td><td>{{clientinfo.CLT_PROVINCE}}</td></tr>
+                        <tr><td data-i18n="messages.PostalCode">Post code</td><td><span ng-hide="clientinfo.CLT_POSTAL_CD=='null'">{{clientinfo.CLT_POSTAL_CD}}</span></td></tr>
+                        <tr><td data-i18n="messages.Landmark">Landmark</td><td>{{clientinfo.CLT_LAND_MARK}}</td></tr>
+                        <tr><td data-i18n="messages.ClientMobileNo1">Client Mobile No.1</td><td>{{clientinfo.CLT_MOB_NO_1}}</td></tr>
+                        <tr><td data-i18n="messages.ClientMobileNo2">Client Mobile No.2</td><td>{{clientinfo.CLT_MOB_NO_2}}</td></tr>
+                        <tr><td data-i18n="messages.HusbandMobileNo">Husb. Mobile No</td><td>{{clientinfo.CLT_HUSB_MOB_NO}}</td></tr>
+                        </tbody>
+                    </table></div>
+            </div> 
+        </div>
+        
+        <!--Family Welfare Status-->  
+        <div  id="pageWelfareStatus" class="mini-client-details"> 
+            <div   class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.FamilyWelfareStatus">Family Welfare Status</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><th data-i18n="messages.FamilyWelfareStatus">Family Welfare Status</th><th data-i18n="messages.Type">Type</th></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.WelfareStatus">Welfare Status</td><td>{{ {'PW':'Pre-Welfare','W1':'Welfare 1','W2':'Welfare 2'}[loaninfo.CLL_WELFARE_STATUS] | translate }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="ui-content">
+                    <div ng-show="checkWelfare('PW')">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead><tr><th><a href="#" class="ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all ui-shadow ui-btn-h"></a>{{selectedWelfare.FWF_OCCUPATION | translate }}</th></tr></thead>
+                            <tbody>
+                                <tr><td>{{selectedWelfare.FWF_DESC | translate }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <!--Working Capital-->  
+        <div  id="pageWorkingCapital" class="mini-client-details"> 
+            <div   class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.OwnWorkCapital">Own Working Capital</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.Applicant">Applicant</td><td>{{loaninfo.CLL_WORKING_CAPITAL | currency}}</td></tr>
+                            <tr><td data-i18n="messages.Husband">Husband</td><td>{{loaninfo.CLL_HB_WORKING_CAPITAL | currency}}</td></tr>
+                            <tr class="bold"><td class="strong" data-i18n="messages.Total">Total</td><td>{{loaninfo.CLL_WORKING_CAPITAL+loaninfo.CLL_HB_WORKING_CAPITAL | currency}}</td></tr>
+                        </tbody>
+                    </table>
+                    <p data-i18n="messages.NoteHdr">Note:<br/></p>
+                    <ol><li data-i18n="messages.Note1">If more than 1 loan from bank or private institution (exclude money lender/co-operative), applicant not eligible.</li>
+                        <li data-i18n="messages.Note2">Branch manager assesses whether above repayment will not overburden applicant in repayment of working capital.</li>
+                    </ol>
+                </div>
+                <br class="clear"/><span class="label clear bold uppercase" data-i18n="messages.BorrowedFund">Borrowed Funds</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><th data-i18n="messages.LoanFrom">Loan From</th><th data-i18n="messages.LoanFromName">Loan From Name</th><th data-i18n="messages.By">by</th><th data-i18n="messages.OriginalAmt">Original Amt.</th><th data-i18n="messages.Balance">Bal.</th><th data-i18n="messages.RepaymentPerWk">Repayment/Week</th><th data-i18n="messages.RepaymentPerMth">Repayment/Mth</th></tr></thead>
+                        <tbody ng-repeat="fund in borrowedinfo">
+                            <tr><td>{{{'B':'Bank','I':'Institution','M':'MoneyLender','C':'Cooperative'}[fund.CEF_LOAN_FROM] | translate }}</td><td>{{fund.CEF_LOAN_FROM_NAME}}</td><td>{{{'C':'Client','H':'Husband','B':'Both'}[fund.CEF_BORROWED_BY] | translate}}</td><td>{{fund.CEF_ORGINAL_AMT | currency}}</td><td>{{fund.CEF_BALANCE_AMT | currency}}</td><td>{{fund.CEF_REPAY_PER_WEEK | currency}}</td><td>{{fund.CEF_REPAY_PER_MONTH | currency}}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+
+        <!--Housing Index-->  
+        <div  id="pageHousingIndex" class="mini-client-details"> 
+            <div class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.HousingType">Housing Type</span><br class="clear"/>
+                <div class="ui-content">
+                    {{houseindices[1][loaninfo.CLL_HOUSE_TYP].HSE_NAME | translate }}
+                </div>
+                <br class="clear"/><span class="label clear bold uppercase" data-i18n="messages.HousingIndex">Housing Index</span><br class="clear"/>
+                <div class="ui-content" >
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td data-i18n="messages.HousingSize">House Size</td><td style="width:50%">{{houseindices[2][loaninfo.CLL_HOUSE_SIZE].HSE_NAME | translate }}</td></tr>
+                            <tr><td data-i18n="messages.HousingCondition">House Condition</td><td style="width:50%">{{houseindices[3][loaninfo.CLL_HOUSE_CONDITION].HSE_NAME | translate }}</td></tr>
+                            <tr><td data-i18n="messages.RoofType">Roof Type</td><td style="width:50%">{{houseindices[4][loaninfo.CLL_ROOF_TYPE].HSE_NAME | translate }}</td></tr>
+                            <tr><td data-i18n="messages.WallType">Wall Type</td><td style="width:50%">{{houseindices[5][loaninfo.CLL_WALL_TYPE].HSE_NAME | translate }}</td></tr>
+                            <tr><td data-i18n="messages.FloorType">Floor Type</td><td style="width:50%">{{houseindices[6][loaninfo.CLL_FLOOR_TYP].HSE_NAME | translate }}</td></tr>
+                            <tr><td data-i18n="messages.ElectricitySource">Electricity Source</td><td style="width:50%">{{houseindices[7][loaninfo.CLL_ELETRICITY].HSE_NAME | translate }}</td></tr>
+                            <tr><td data-i18n="messages.WaterSource">Water Source</td><td style="width:50%">{{houseindices[8][loaninfo.CLL_WATER_SRC].HSE_NAME | translate }}</td></tr>
+                        </tbody>
+                        <tbody><tr class="bold"><td><h1 data-i18n="messages.Total">TOTAL</h1></td><td><h1>{{loaninfo.CLL_HSE_INX}}</h1></td></tr></tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+        
+        <!--House Income Est-->  
+        <div  id="pageHouseIncomeEst" class="mini-client-details"> 
+            <div   class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.HouseIncomeEstimate">House Income Est.</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow">
+                        <thead>
+                            <tr>
+                                <th data-18n="messages.IncomeSource">Source</th>
+                                <th data-18n="messages.IncomeFixed">Fixed(Rp per Month)</th>
+                                <th data-18n="messages.IncomeVariable">Variable(Rp per Month)</th>
+                                <th data-18n="messages.IncomeSourceDetail" colspan="2">Details</th>
+                                <th data-18n="messages.IncomeTotal">Total(Rp per Month)</th>  
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="income in houseIncomes" ng-init="income" ng-show="showSelect(income)">
+                            <tr >  
+                                <td><div class="ui-content">{{ income.source }}</div></td>
+                                <td>
+                                    <div class="ui-content">
+                                        {{ income.fixed }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-content">
+                                        {{ income.variable }}
+                                    </div> 
+                                </td>
+                                <td>   
+                                    <div class="ui-content">
+                                        {{ income.inctype }}
+                                    </div>  
+                                </td>
+                                <td>
+                                    <div class="ui-content">
+                                        {{ income.detaildesc }}
+                                    </div>  
+                                </td>
+                                <td> 
+                                    <div class="ui-content">Rp {{income.fixed + income.variable | currency }}/mth</div>
+                                </td>
+                            </tr> 
+                        </tbody> 
+                        <tfoot>
+                            <tr class="tfoot"> 
+                                <th colspan="3" style="text-align= right;"></th>
+                                <th colspan="2">
+                                    <div class="ui-content" data-18n="messages.IncomeNet">Net Income</div>
+                                </th>
+                                <th>
+                                    <div class="ui-content">Rp {{ getTotalIncome() }} /mth</div>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table> 
+                </div>
+            </div> 
+        </div>
+        <!--Account Status-->
+        <div id="pageAccountStatus" class="mini-client-details"> 
+            <div class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.AccountStatus">Account Status</span><br class="clear"/>
+                <div class="ui-content"> 
+                    <!-- LOAN TYPES -->
+                    <div ng-repeat="loan in currLoan track by loan.LTY_PK" class="ui-grid-33 marg-btm-20 ">
+                        <a href="#" ng-click="viewloanproducts($index, $event)" class="loan-trans">
+                            <table data-role="table" class="ui-responsive box-active loan-box ui-shadow table-stroke" style="width:100%"  >
+                                <thead>
+                                    <tr>
+                                        <th class="box-header">
+                                            <div class="lineh-32 ">
+                                                {{loan.LTY_DESCRIPTION}} 
+                                            </div> 
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="box-body">
+                                    <tr>
+                                        <td > 
+                                            <div class="ui-content bold center group-block-amt" >
+                                                <h1>Week {{ loan.CRS_ACTUAL_WEEK_NO }}</h1>
+                                            </div>
+                                            <div class="group-client left">
+                                                <i class="fa fa-repeat"></i>{{ loan.CLL_LOAN_WEEKS }}
+                                            </div>
+                                            <div class="group-status right">
+                                                <span>Loan</span> :<b>{{ loan.CLL_ACTUAL_LOAN }}</b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui-grid-a" style="text-align:center;" >
+                    <div class="ui-block-a">
+                        <div class="ui-content">
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                <thead><tr><td></td><td></td></tr></thead>
+                                <tbody>
+                                <!--    <tr><td class="half" data-i18n="messages.LoanStatus">Loan Status</td><td>{{selectTransactions[loaninfo.CLL_STATUS]['TST_NAME']}}</td></tr>  -->
+                                    <tr><td class="half" data-i18n="messages.LoanStatus">Loan Status</td><td>{{selectTransactions[loaninfo.CLL_STATUS]['TST_KEY'] | translate }}</td></tr>
+                                    <tr><td class="half" data-i18n="messages.ActualLoanAmt">Actual Loan Amount</td><td>{{loaninfo.CLL_ACTUAL_LOAN | currency}}</td></tr>
+                                    <tr><td class="half" data-i18n="messages.LoanInterest">Loan Interest</td><td>{{loaninfo.CLL_LOAN_INTEREST}}%</td></tr>
+                                    <!-- <tr>
+                                        <td class="half">CRF</td><td>{{loaninfo.CLL_CRF_PERCENTAGE}}%</td>
+                                    </tr> -->
+                                    <tr ng-hide="loaninfo.CLL_DISBURSEMENT_DATE==null||loaninfo.CLL_DISBURSEMENT_DATE==''"><td class="half" data-i18n="messages.DisbursementDate">Disbursement Date</td><td>{{loaninfo.CLL_DISBURSEMENT_DATE}}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="ui-block-b">
+                        <div class="ui-content">
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                <thead><tr><td></td><td></td></tr></thead>
+                                <tbody>
+                                    <tr><td class="half" data-i18n="messages.WeeklyRepayment">Weekly Repayment</td><td>{{loaninfo.CLL_CAPITAL_REPAY_PER_WEEK+loaninfo.CLL_PROFIT_REPAY_PER_WEEK | currency}}</td></tr>
+                                    <tr>
+                                        <td class="half" data-i18n="messages.TotalPaid">Total Paid</td>
+                                        <td>{{ totalpaid | currency}}</td>
+                                    </tr>
+                                    <tr ng-hide="capbalance==null"><td class="half" data-i18n="messages.CapitalBalance">Capital Balance</td><td>{{capbalance | currency}}</td></tr>
+                                    <tr ng-hide="profbalance==null"><td class="half" data-i18n="messages.ProfitBalance">Profit Balance</td><td>{{profbalance | currency}}</td></tr>
+                                    <tr ng-hide="latestpayment==null"><td class="half" data-i18n="messages.RecentMissedPayment">Recent Missed Payment</td><td data-i18n="messages.WeekNo">Week No:{{ latestpayment.CRS_WEEK_NO }}<br/>Amount: {{latestpayment.CRS_COLLECTION_AMT | currency}}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    
+                <span class="label clear bold uppercase" data-i18n="messages.TrainingStatus">Training Status</span><br class="clear"/>
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr ng-show="clientinfo.CLT_TRANING_COMPLETED==''||clientinfo.CLT_TRANING_COMPLETED==null||clientinfo.CLT_TRANING_COMPLETED=='null'"><td class="half" data-i18n="messages.TrainingScheduleStart">Training Schedule Start</td><td>{{prepDate(clientinfo.CLT_TRANING_START_DATE)}}</td></tr>
+                            <tr ng-show="clientinfo.CLT_TRANING_COMPLETED==''||clientinfo.CLT_TRANING_COMPLETED==null||clientinfo.CLT_TRANING_COMPLETED=='null'"><td class="half" data-i18n="messages.TrainingScheduleEnd">Training Schedule End</td><td>{{prepDate(clientinfo.CLT_TRANING_END_DATE)}}</td></tr>
+                            <tr ng-hide="clientinfo.CLT_TRANING_COMPLETED==''||clientinfo.CLT_TRANING_COMPLETED==null||clientinfo.CLT_TRANING_COMPLETED=='null'"><td class="half" data-i18n="messages.TrainingCompleted">Training Completed</td><td>{{CODE[5][clientinfo.CLT_TRANING_COMPLETED].CODE_NAME | translate }}<br/>
+                                </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>
+        <!--Payment History-->
+        <div   id="pagePaymentHistory" class="mini-client-details"> 
+            <div   class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.PaymentHistory">Payment History</span><br class="clear"/>
+                <div class="ui-content" style='text-align:center;background:white;position:relative;'>
+                    <div style='text-align:center;background:white;position:absolute;z-index:8'></div>
+                    <canvas id="historyChart" width="400" height="400" style='background:white;border:1px solid black;z-index:9'></canvas>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead>
+                            <tr> 
+                                <th   >Name</th>
+                                <th   >Maturity</th>  
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="loan in currLoan" class="selected loanhist" ng-click="SelectLoanHistory(this,loan.CLL_PK)">
+                                <td>
+                                    <div class="ui-content">
+                                        {{ loan.LTY_DESCRIPTION }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-content">
+                                        {{ loan.CLL_LOAN_WEEKS }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead> 
+                            <tr>
+                                <th data-i18n="messages.Week">Wk</th>
+                                <th data-i18n="messages.Date">Date</th>
+                                <!-- <th data-i18n="messages.Principal">Principal</th>
+                                <th data-i18n="messages.Interest">Interest</th> -->
+                                <!-- <th data-i18n="messages.Total">Total</th> -->
+                                <th data-i18n="messages.Principal">Principal</th>
+                                <th data-i18n="messages.Interest">Interest</th> 
+                                <th data-i18n="messages.Total">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="payment in filteredHistory">
+                                <td>{{payment[0]}}</td>
+                                <td>{{payment[1]}}</td>
+                             <!--    <td>{{payment[2] | currency}}</td>
+                                <td>{{payment[3] | currency}}</td> -->
+                                <!-- <td>{{payment[4] | currency}}</td>
+                                <td>{{payment[5] | currency}}</td> -->
+                                <!-- <td>{{payment[6] | currency}}</td> -->
+                                <td>{{payment[7] | currency}}</td>
+                                <td>{{payment[8] | currency}}</td>
+                                <!-- <td>{{payment[8] | currency}}</td> -->
+                                <!-- <td>{{payment[9]}}</td> -->
+                                <td>{{payment[10] | currency}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class='right' ng-show='numPages()!=0'><strong>Page</strong> {{currentPage}} <strong>of</strong> {{numPages()}} &nbsp;<a href="#" class="ui-btn ui-btn-h ui-icon-check ui-btn-inline ui-" ng-repeat="i in getPages() track by $index" ng-click="changePage($index+1)">{{$index+1}}</a></div>
+                </div>
+            </div> 
+        </div>
+
+        <!--Payment History Previous-->
+        <div  id="pagePrevPaymentHistory" class="mini-client-details"> 
+            <div   class="ui-content" data-ajax="false">
+                <span class="label clear bold uppercase" data-i18n="messages.PaymentHistory">Payment History</span><br class="clear"/>
+                <div class="ui-content" style='text-align:center;background:white;position:relative;'>
+                    <canvas id="prevHistoryChart" width="400" height="400" style='background:white;border:1px solid black'></canvas>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead>
+                            <tr><th data-i18n="messages.Week">Wk</th><th data-i18n="messages.Date">Date</th><th colspan=3 style="text-align:center" data-i18n="messages.Repayment">Repayment</th><th colspan=3 style="text-align:center" data-i18n="messages.LoanBalance">Loan Balance</th><th data-i18n="messages.MissedPaymentAmt">Missed Payment Amt</th><th data-i18n="messages.Reason">Reasons</th></tr>
+                            <tr><th></th><th></th><th data-i18n="messages.Principal">Principal</th><th data-i18n="messages.Interest">Interest</th><th data-i18n="messages.Total">Total</th><th data-i18n="messages.Principal">Principal</th><th data-i18n="messages.Interest">Interest</th><th data-i18n="messages.Loan">Loan</th><th></th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="payment in prevfilteredHistory">
+                                <td>{{payment[0]}}</td>
+                                <td>{{payment[1]}}</td>
+                                <td>{{payment[2] | currency}}</td>
+                                <td>{{payment[3] | currency}}</td>
+                                <td>{{payment[4] | currency}}</td>
+                                <td>{{payment[5] | currency}}</td>
+                                <td>{{payment[6] | currency}}</td>
+                                <td>{{payment[7] | currency}}</td>
+                                <td>{{payment[8] | currency}}</td>
+                                <td>{{payment[9]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class='right' ng-show='prevnumPages()!=0'><strong>Page</strong> {{prevcurrentPage}} <strong>of</strong> {{prevnumPages()}} &nbsp;<a href="#" class="ui-btn ui-btn-h ui-icon-check ui-btn-inline ui-" ng-repeat="i in prevgetPages() track by $index" ng-click="prevchangePage($index+1)">{{$index+1}}</a></div>
+                </div>
+            </div> 
+        </div>
+		
+		<!--Product Mapping-->  
+        <div  id="pageProductMapping" class="mini-client-details"> 
+            <div class="ui-content" data-ajax="false"> 
+                <div class="ui-content">
+                    <span class="ui-content label clear bold uppercase" data-i18n="messages.Products">Products</span>
+                    <br class="clear"/>
+                    <table data-role="table" class="ui-responsive ui-table ui-shadow table-stroke" ng-repeat="product in allproducts" >
+                        <thead>
+                            <tr>
+                                <th width="45%" data-i18n="messages.ProductName">{{ words.ProductName }}</th>
+                                <th width="15%" data-i18n="messages.AccountNumber">{{ words.AccountNumber }}</th>
+                                <th width="15%" data-i18n="messages.Maturity">{{ words.Maturity }}</th>
+                                <th width="15%" data-i18n="messages.Balance">{{ words.Balance }}</th>
+                                <th width="10%" data-i18n="messages.Status">{{ words.Status }}</th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr >
+                                <td colspan="5">
+                                    <table data-role="table" class="ui-table ui-responsive table-expandable" >
+                                        <thead>
+                                            <tr><td colspan="5"></td></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td width="45%">
+                                                    <div style="display:inline-block;" class="ui-rmargin">
+                                                        <button class="ng-scope ui-btn ui-shadow ui-corner-all" ng-if="product.expanded" ng-click="product.expanded = false"> - </button>
+                                                        <button class="ng-scope ui-btn ui-shadow ui-corner-all" ng-if="!product.expanded" ng-click="product.expanded = true">+</button>
+                                                    </div>
+                                                    <div class="inline">
+                                                        {{ product.PRM_NAME | translate }}{{ " (" + product.PRM_CODE + ")" }}
+                                                    </div>
+                                                </td>
+                                                <td width="15%">
+                                                    <div class="ui-content no-hori-padding">
+                                                       {{ product.CPM_PRM_ACC_NUMBER }}
+                                                    </div>
+                                                </td>
+                                                <td width="15%" >
+                                                    <div class="ui-content" ng-show="product.CPM_PRM_MATURITY != '' && product.CPM_PRM_MATURITY != null">
+                                                        {{ product.CPM_PRM_MATURITY_TEXT | translate }}
+                                                    </div>
+                                                    <div class="ui-content" ng-hide="product.CPM_PRM_MATURITY != '' && product.CPM_PRM_MATURITY != null">
+                                                        NA
+                                                    </div>
+                                                </td>
+                                                <td width="15%">
+                                                    <div class="ui-content" ng-show="product!=null">
+                                                        {{ product.CPM_PRM_BALANCE_TEXT  }}
+                                                    </div>
+                                                    <div class="ui-content" ng-hide="product!=null">
+                                                        NA
+                                                    </div>
+                                                </td>
+                                                <td width="10%">
+                                                    <div class="ui-content no-hori-padding">
+                                                        {{ product.STATUS_TEXT | translate }}
+                                                    </div>
+                                                </td> 
+                                            </tr>
+                                            <tr ng-show="product.expanded">
+                                                <td colspan="5" class="td-no-padding"> 
+                                                    <table ng-show="product.closerequests.length > 0" data-role="table" class="ui-table ui-responsive ui-shadow table-stroke ui-table ui-table-reflow" style="background-color: white;" >
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="background:#80C6C7" data-i18n="messages.AccountNumber">
+                                                                    {{ words.AccountNumber}}
+                                                                </th>
+                                                                <th style="background:#80C6C7" data-i18n="messages.Reason">
+                                                                    {{ words.Reason}}
+                                                                </th>
+                                                                <th style="background:#80C6C7" data-i18n="messages.ClosingCharge">
+                                                                    {{ words.ClosingCharge}}
+                                                                </th>
+                                                                <th style="background:#80C6C7" data-i18n="messages.Reason">
+                                                                    {{ words.DisbursedAmt}}
+                                                                </th>
+                                                                <th style="background:#80C6C7" data-i18n="messages.CloseDate">
+                                                                    {{ words.CloseDate}}
+                                                                </th> 
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="account in product.closerequests">
+                                                                <td>
+                                                                    <div class="ui-content">
+                                                                        {{ account.CPM_PRM_ACC_NUMBER }}
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="ui-content no-hori-padding">
+                                                                        {{ account.CPC_REASON }}
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="ui-content">
+                                                                        {{ account.CPC_CLOSING_FEE | currency }}
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="ui-content">
+                                                                        {{ account.CPC_DISBURSE_AMT | currency }}
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="ui-content">
+                                                                        {{ account.CPC_DISBURSE_JUSTDATE}}
+                                                                    </div>
+                                                                </td> 
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <table ng-show="product.closerequests.length == 0" data-role="table" class="ui-table ui-responsive ui-shadow table-stroke ui-table ui-table-reflow" style="background-color: white;" >
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="background:#80C6C7">
+                                                                    <div class="ui-content center">
+                                                                        {{ words.NoCloseRecords }}
+                                                                    </div>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody><tr><td></td></tr></tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> 
+                </div>                
+            </div>
+        </div> 

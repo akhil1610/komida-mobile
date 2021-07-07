@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init2.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <body ng-controller="clientCtrl">
+<form id="newClientForm" name="newClientForm" novalidate><!--newClientForm.$valid && -->
+    <!-- ng-submit="addToExistingGroup()&&actionSubmit()" -->
+    <!--
+Applicant's Data
+-->
+<div data-role="header" class="header"></div>
+<div data-role="page" id="pageAppData">
+
+<div id="content" data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Applicant's Data</span><br class="clear"/>
+<!--<div id="testdata">{{finaldata}}</div>-->
+<div class="ui-grid-a ui-content" style="text-align:center;" >
+<div class="ui-block-a">
+<div class="ncadPhoto" style="background-color:#f6f6f6;border:1px solid #ddd;margin:auto;margin-top:1em;">
+<img class="ncadPhoto" id="ncadPhoto" ng-src="{{applicantdata.photo}}" alt="" />
+</div>
+<div data-role="controlgroup" data-type="horizontal">
+<a href="#" ng-click="takePhoto()" class="ui-btn ui-btn-g ui-icon-check ui-btn-icon-left">Take Photo</a>
+    <!--<a href="#" ng-click="magic()" class="ui-btn ui-btn-h ui-icon-delete ui-btn-icon-left">Magic</a>-->
+<a href="#" ng-click="removePhoto()" class="ui-btn ui-btn-r ui-icon-delete ui-btn-icon-left">Delete</a>
+</div>
+</div>
+<div class="ui-block-b">
+    <!--<div data-role="controlgroup" data-type="horizontal" class="right"><a href="#" class="ui-btn ui-icon-search ui-btn-icon-left" ng-click="actionSubmit()">Submit</a><a href="#" class="ui-btn ui-icon-refresh ui-btn-icon-left">Cancel</a></div>-->
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td ng-click="magic()">Full Name</td><td><input type="text" ng-model="applicantdata.fullname" name="ncadFullname" id="ncadFullname" placeholder="Full Name" data-inline="true" maxlength="100" required/></td></tr>
+<tr><td>Nick Name</td><td><input type="text" ng-model="applicantdata.nickname" name="ncadNickname" id="ncadNickname" placeholder="Nick Name" data-inline="true" maxlength="100" required/></td></tr>
+<tr><td>Gender</td><td>
+    <select name="ncadGender" id="ncadGender" ng-model="applicantdata.gender" ng-options="option.value as option.name for option in selectCodes.2" required />
+    </td></tr>
+<tr><td>Family Card No.</td><td><input type="text" ng-model="applicantdata.familycardno" name="ncadFamilyCardNo" id="ncadFamilyCardNo" placeholder="Family Card No" data-inline="true" maxlength="100" required/></td></tr>
+<tr><td>Client ID</td><td><input type="number" ng-model="applicantdata.clientno" name="ncadClientNo" id="ncadClientNo" placeholder="Client ID" data-inline="true"  max="9999999999999999" required/></td></tr>
+<tr><td>KTP NO.</td><td><input type="number" ng-model="applicantdata.ktpno" name="ncadKTPNo" id="ncadKTPNo" placeholder="KTP No" data-inline="true" max="9999999999999999" required/></td></tr>
+<tr><td>Date of Birth</td><td><input type="date" ng-model="applicantdata.dateofbirth" name="ncadDateofBirth" id="ncadDateofBirth" data-inline="true" required/></td></tr>
+<tr><td>Age</td><td><!--<input type="text" ng-model="applicantdata.age" name="ncadAge" id="ncadAge" placeholder="Age" data-inline="true"/>-->{{adCalcAge()}}</td></tr>
+<tr><td>Highest Education</td><td>
+<select name="ncadHighestEducation" id="ncadHighestEducation" ng-model="applicantdata.highested" ng-options="option.value as option.name for option in selectCodes.3" required>
+<!--<option value="NS">No School/1-2 Years Only</option>
+<option value="NC">Not completed Prim S.</option>
+<option value="CP">Completed Prim S. Completed JSE. Completed SSE</option>
+<option value="O">Other</option>-->
+</select>
+</td></tr>
+<tr ng-show="apHighestEdOthers()"><td>Please specify:</td><td><input type="text" ng-model="applicantdata.highestedothers" name="ncadHighestEducationOthers" id="ncadHighestEducationOthers" placeholder="Others" data-inline="true" maxlength="200"/></td></tr>
+</tbody>
+</table>
+<br class="clear"/>
+</div>
+</div><!--
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td>Client ID No.</td><td><input type="text" ng-model="applicantdata.clientidno" name="ncadClientIdNo" id="ncadClientIdNo" placeholder="Client ID No." data-inline="true"/></td></tr>
+<tr><td>Group No.</td><td><input type="text" ng-model="applicantdata.groupno" name="ncadGroupNo" id="ncadGroupNo" placeholder="Group No." data-inline="true"/></td></tr>
+<tr><td>Role</td>
+<td>
+<select name="ncadRole" id="ncadRole" ng-model="applicantdata.role">
+<option value="leader">Leader</option>
+<option value="member">Member</option>
+</select>
+</td>
+</tr>
+</tbody>
+</table>-->
+</div>
+<div data-role="footer" class="footer" style="text-align:center;">
+</div><!-- data-position="fixed"-->
+</div>
+    
+<!--
+Husband's Info
+-->
+<div data-role="page" id="pageAppData2">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Husband's Information</span><br class="clear"/>
+<div class="ui-content">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td>Marital Status</td><td>
+<select name="ncadMaritalStatus" id="ncadMaritalStatus" ng-model="husbandinfo.maritalstatus" ng-options="option.value as option.name for option in selectCodes.1" required />
+</td></tr>
+<tr ng-show="showHusband()"><td>Husband Name</td><td><input ng-model="husbandinfo.husbandname" type="text" name="ncadHusbandName" id="ncadHusbandName" placeholder="Husband Name" data-inline="true" maxlength="100" required/></td></tr>
+<tr ng-show="showHusband()"><td>Husband ID No.</td><td><input type="number" ng-model="husbandinfo.husbandidno" name="ncadHusbandIdNo" id="ncadHusbandIdNo" placeholder="Husband ID No." data-inline="true" max="9999999999999999" required/></td></tr>
+<tr ng-show="showHusband()"><td>Lives in House</td><td><label for="ncadLivesInHouse">{{husbandinfo.livesinhouse}}</label><input type="checkbox" ng-model="husbandinfo.livesinhouse" name="ncadLivesInHouse" id="ncadLivesInHouse" ng-true-value='YES' ng-false-value='NO'/></td></tr>
+<tr ng-show="showHusband()"><td>Where does he live?</td><td><input ng-model="husbandinfo.whereis" type="text" name="ncadWhereHusband" id="ncadWhereHusband" placeholder="Where does he live?" data-inline="true" maxlength="150" required/></td></tr>
+<tr ng-show="showHusband()">
+    <td>How often does he come home?</td><td>
+    <select name="ncadHowOftenHusband" id="ncadHowOftenHusband" ng-model="husbandinfo.howoften" ng-options="option.value as option.name for option in selectCodes.6" required />
+    </td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="footer" data-role="footer"></div><!-- data-position="fixed"-->
+</div>  
+        
+<!--
+Household and Mother Info
+-->
+<div data-role="page" id="pageAppData3">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Household and Mother Info</span><br class="clear"/>
+<div class="ui-content">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td>No. of Household Members</td><td><input type="number" ng-model="housemotherinfo.noofmembers" name="ncadHouseholdMembers" id="ncadHouseholdMembers" placeholder="No. of Household Members" data-inline="true" max="99" required/></td></tr>
+<tr><td>No. of Children &lt;18yrs<br/> in the household</td><td><input type="number" ng-model="housemotherinfo.noofchildren" name="ncadNoChildren" id="ncadNoChildren" placeholder="No. of Children &lt;18yrs in the household" data-inline="true" max="99" required/></td></tr>
+<tr><td>Mother's Name</td><td><input type="text" ng-model="housemotherinfo.mothername" name="ncadMotherName" id="ncadMotherName" placeholder="Mother's Name" maxlength="150" data-inline="true" required/></td></tr>
+<tr><td>Mother's Birth Date</td><td><input type="date" ng-model="housemotherinfo.motherdob" name="ncadMotherBirthdate" id="ncadMotherBirthdate" data-inline="true" required/></td></tr>
+<tr><td>Mother's Age</td><td>{{hmiCalcMotherAge()}}</td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="footer" data-role="footer"></div>
+</div>
+        
+<!--
+App Data Business Info
+-->        
+<div data-role="page" id="pageAppData4">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Business Info</span><br class="clear"/>
+<div class="ui-content">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td>Type of Business</td><td><input type="text" ng-model="businessinfo.typeofbusiness" name="ncadTypeBusiness" id="ncadTypeBusiness" placeholder="Type of Business" maxlength="150" data-inline="true" required/></td></tr>
+<tr><td>Business Equipment</td><td><input type="text" ng-model="businessinfo.busequipment" name="ncadBusinessEquip" id="ncadBusinessEquip" placeholder="Business Equipment" maxlength="150" data-inline="true" required/></td></tr>
+<tr><td>Joint Business with Husband</td><td><input type="text" ng-model="businessinfo.jointbusiness" name="ncadJointBusiness" id="ncadJointBusiness" placeholder="Joint Business with Husband" maxlength="150" data-inline="true" required/></td></tr>
+<tr><td>Business Equipment</td><td><input type="text" ng-model="businessinfo.jbequipment" name="ncadBusinessEquip2" id="ncadBusinessEquip2" placeholder="Business Equipment" maxlength="150" data-inline="true" required/></td></tr>
+<tr><td>Husband's Business</td><td><input type="text" ng-model="businessinfo.husbandbusiness" name="ncadHubandBusiness" id="ncadHubandBusiness" placeholder="Husband's Business" maxlength="150" data-inline="true" required/></td></tr>
+<tr><td>Business Equipment</td><td><input type="text" ng-model="businessinfo.hbequipment" name="ncadBusinessEquip3" id="ncadBusinessEquip3" placeholder="Business Equipment" maxlength="150" data-inline="true" required/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="footer" data-role="footer"></div>
+</div>
+
+<!--
+Address and Telephone Numbers
+-->               
+<div data-role="page" id="pageAddress">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Address and Telephone Numbers</span><br class="clear"/>
+<div class="ui-content">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td>RT/RW</td><td><input type="text" ng-model="address.rtrw" name="adrtrw" id="adrtrw" placeholder="RT/RW" data-inline="true" maxlength="50" required/></td></tr>
+<tr><td>Street/Area</td><td><input type="text" ng-model="address.streetarea" name="adstreetarea" id="adstreetarea" placeholder="Street/Area" maxlength="50" data-inline="true" required/></td></tr>
+<tr><td>Village</td><td>
+    <select name="advillage" id="advillage" ng-model="address.village" ng-options="option.value as option.name for option in selectCodes.VILL" required />
+    </td></tr>
+<tr><td>Sub-district</td><td><input type="text" ng-model="address.subdistrict" name="adsubdistrict" id="adsubdistrict" placeholder="Sub-district" maxlength="50" data-inline="true" required/></td></tr>
+<tr><td>District</td><td><input type="text" ng-model="address.district" name="addistrict" id="addistrict" placeholder="District" data-inline="true" maxlength="50" required/></td></tr>
+<tr><td>Province</td><td><input type="text" ng-model="address.province" name="adprovince" id="adprovince" placeholder="Province" data-inline="true" maxlength="50" required/></td></tr>
+<tr><td>Post code</td><td><input type="number" ng-model="address.postcode" name="adpostcode" id="adpostcode" placeholder="Post code" data-inline="true" max="9999999999999999" required/></td></tr>
+<tr><td>Landmark</td><td><input type="text" ng-model="address.landmark" name="adlandmark" id="adlandmark" placeholder="Landmark" data-inline="true" maxlength="50" required/></td></tr>
+<tr><td>Client Mobile No.1</td><td><input type="text" ng-model="address.mobile1" name="admobile1" id="admobile1" placeholder="Client Mobile No.1" maxlength="20" data-inline="true" required/></td></tr>
+<tr><td>Client Mobile No.2</td><td><input type="text" ng-model="address.mobile2" name="admobile2" id="admobile2" placeholder="Client Mobile No.2" maxlength="20" data-inline="true" required/></td></tr>
+<tr><td>Husb. Mobile No</td><td><input type="text" ng-model="address.husbmobile" name="adhusbmobile" id="adhusbmobile" placeholder="Husb. Mobile No" maxlength="20" data-inline="true" required/></td></tr>
+</tbody>
+</table></div>
+</div>
+<div class="footer" data-role="footer"></div>
+</div>
+<!-- endbody -->        
+        
+<!--
+Family Welfare Status
+-->  
+<div data-role="page" id="pageWelfareStatus">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Family Welfare Status</span><br class="clear"/>
+<div class="ui-content">
+<!--
+<div ng-show="checkWelfare('PW')">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th><a href="#" class="ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all ui-shadow ui-btn-h"></a>Examples of Applicant's Business:</th></tr></thead>
+<tbody>
+<tr><td>Itinerant trader using cart/bicycle/food cart, selling in front of house, kiosk, agriculture labour, washing lady, house maid, selling on credit basic necessities/goods, etc.</td></tr>
+</tbody>
+</table>
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th><a href="#" class="ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all ui-shadow ui-btn-h"></a>Examples of Husband's Business:</th></tr></thead>
+<tbody>
+<tr><td>Itinerant trader using cart/bicycle/food cart, construction worker, odd jobs, tricycle driver, Motorcycle taxi, agriculture labour, massage worker</td></tr>
+</tbody>
+</table>
+</div>
+	<div ng-show="checkWelfare('W1')">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th><a href="#" class="ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all ui-shadow ui-btn-h"></a>Examples of Applicant's Business:</th></tr></thead>
+<tbody>
+<tr><td>Permanent shop, salon owner, traditional midwife, selling larger goods on credit</td></tr>
+</tbody>
+</table>
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th><a href="#" class="ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all ui-shadow ui-btn-h"></a>Examples of Husband's Business:</th></tr></thead>
+<tbody>
+<tr><td>Own agriculture land, bus driver, owner of restaurant/shop/small workshop by roadside</td></tr>
+</tbody>
+</table>
+    </div>-->
+	<div><!-- ng-show="checkWelfare('W2')"-->
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th><a href="#" class="ui-btn ui-btn-inline ui-icon-info ui-btn-icon-notext ui-corner-all ui-shadow ui-btn-h"></a>{{selectedWelfare.FWF_OCCUPATION}}</th></tr></thead> <!--Examples of Applicant’s/Husband’s Business:-->
+<tbody>
+<tr><td>{{selectedWelfare.FWF_DESC}}</td></tr> <!--Driver, security, technician, book-keeper, administration in large shop/factory/office/school teacher on monthly salary, civil servant, owner of permanent workshop/restaurant/shop, bus owner, etc-->
+</tbody>
+</table>
+    </div>
+	<!--<form>-->
+    <fieldset id="welfareid" data-role="controlgroup">
+	<label for="welfareRadio1" id="welfareRadio1label">Pre-welfare</label><input type="radio" ng-model="welfareStatus" name="welfaretype" id="welfareRadio1" value="{{familywelfare[0].FWF_TYPE_PK}}" ng-click="selectWelfare(0)" checked />
+	<label for="welfareRadio2" id="welfareRadio2label">Welfare 1</label><input type="radio" ng-model="welfareStatus" name="welfaretype" id="welfareRadio2" value="{{familywelfare[1].FWF_TYPE_PK}}" ng-click="selectWelfare(1)"/>
+	<label for="welfareRadio3" id="welfareRadio3label">Welfare 2</label><input type="radio" ng-model="welfareStatus" name="welfaretype" id="welfareRadio3" value="{{familywelfare[2].FWF_TYPE_PK}}" ng-click="selectWelfare(2)"/>
+    <!--<label for="{{fw.FWF_TYPE_PK}}" ng-repeat="fw in familywelfare" ng-click="selectWelfare(fw.FWF_TYPE_PK)">Welfare {{fw.FWF_TYPE_PK}}</label>
+    <input ng-repeat="fw in familywelfare" type="radio" ng-model="welfareStatus" name="welfaretype" id="{{fw.FWF_TYPE_PK}}" value="{{fw.FWF_TYPE_PK}}"/>-->
+    </fieldset>
+	<!--</form>-->
+</div>
+</div>
+<div class="footer" data-role="footer"></div>
+</div>
+        
+<!--
+Working Capital
+-->  
+<div data-role="page" id="pageWorkingCapital">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Own Working Capital</span><br class="clear"/>
+<div class="ui-content">
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+<tbody>
+<tr><td>Applicant</td><td><input type="text" ng-model="workcap.app" placeholder="0.00" max="9999999999" value="0" ng-currency required/></td></tr>
+<tr><td>Husband</td><td><input type="text" ng-model="workcap.husband" placeholder="0.00"  max="9999999999" value="0" ng-currency required/></td></tr>
+<tr class="bold"><th class="strong">Total</th><th>{{workcap.totalWorkCap() | currency}}</th></tr>
+</tbody>
+</table>
+<p>Note:<br/></p>
+<ol><li>If more than 1 loan from bank or private institution (exclude money lender/co-operative), applicant not eligible.</li>
+<li>Branch manager assesses whether above repayment will not overburden applicant in repayment of working capital.</li>
+</ol>
+</div>
+<br class="clear"/><span class="label clear bold uppercase">Borrowed Funds</span><br class="clear"/>
+<div class="ui-content">
+<!--<form id="workingCapitalForm" name="workingCapitalForm" ng-submit="workingCapitalForm.$valid && addFund()" novalidate>-->
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th>Loan From</th><th>Loan From Name</th><th>by</th><th>Original Amt.</th><th>Bal.</th><th>Repayment/Week</th><th>Repayment/Mth</th><th>Action</th></tr></thead>
+    <tbody ng-repeat="fund in borrowedFunds">
+    <tr ng-hide="isSelectedFund($index)" ng-click="selectFund($index)"><td>{{getBFLoanFrom(fund.loanfrom)}}</td><td>{{fund.loanfromname}}</td><td>{{getBFApplicant(fund.applicant)}}</td><td>{{fund.originalamt | currency}}</td><td>{{fund.balance | currency}}</td><td>{{fund.repaymentperwk | currency}}</td><td>{{fund.repaymentpermth | currency}}</td><td><a href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext" ng-click="deleteFund($index)">Delete</a></td>
+        </tr>
+    <tr ng-show="isSelectedFund($index)" style="background: #3399ff;">
+        <!-- <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"> -->
+        <td>
+            <div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+        <select ng-model="fund.loanfrom" data-role="none"  required>
+            <option value="B">{{getBFLoanFrom('B')}}</option>
+            <option value="I">{{getBFLoanFrom('I')}}</option>
+            <option value="M">{{getBFLoanFrom('M')}}</option>
+            <option value="C">{{getBFLoanFrom('C')}}</option>
+        </select></div>
+        </td>
+        <td><input ng-model="fund.loanfromname" type="text" placeholder="Loan From Name" maxlength="150" required /></td>
+        <td><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            <select ng-model="fund.applicant" data-role="none"  required>
+            <option value="C">{{getBFApplicant('C')}}</option>
+            <option value="H">{{getBFApplicant('H')}}</option>
+            <option value="B">{{getBFApplicant('B')}}</option>
+        </select></div></td>
+        <td><input ng-currency ng-model="fund.originalamt" type="text" placeholder="0.00" max="9999999999999999" required /></td>
+        <td><input ng-currency ng-model="fund.balance" type="text" placeholder="0.00" max="9999999999999999" required /></td>
+        <td><input ng-currency ng-model="fund.repaymentperwk" type="text" max="9999999999999999" placeholder="0.00" required /></td>
+        <td><input ng-currency ng-model="fund.repaymentpermth" type="text" max="9999999999999999" placeholder="0.00" required /></td>
+        <td><a ng-click="selectFund(-1)" href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-check ui-btn-icon-notext">Confirm</a></td>
+    </tr>
+    </tbody>
+    <!-- input -->
+    <tbody>
+        <tr>
+        <td>
+        <select id="bfLoanFrom" ng-model="fundEntry.loanfrom" ng-init="fundEntry.loanfrom = 'B'">
+            <option value="B">{{getBFLoanFrom('B')}}</option>
+            <option value="I">{{getBFLoanFrom('I')}}</option>
+            <option value="M">{{getBFLoanFrom('M')}}</option>
+            <option value="C">{{getBFLoanFrom('C')}}</option>
+        </select>
+        </td>
+        <td><input ng-model="fundEntry.loanfromname" type="text" placeholder="Loan From" maxlength="150"/></td>
+        <td><select id="bfLoanBy" ng-model="fundEntry.applicant" ng-init="fundEntry.applicant = 'C'">
+            <option value="C">{{getBFApplicant('C')}}</option>
+            <option value="H">{{getBFApplicant('H')}}</option>
+            <option value="B">{{getBFApplicant('B')}}</option>
+        </select></td>
+        <td><input ng-currency ng-model="fundEntry.originalamt" type="text" max="9999999999999999" placeholder="0.00" /></td>
+        <td><input ng-currency ng-model="fundEntry.balance" type="text" max="9999999999999999" placeholder="0.00" /></td>
+        <td><input ng-currency ng-model="fundEntry.repaymentperwk" type="text" max="9999999999999999" placeholder="0.00" /></td>
+        <td><input ng-currency ng-model="fundEntry.repaymentpermth" type="text" max="9999999999999999" placeholder="0.00" /></td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+    <a href="#" ng-click="addFund()" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left">Add New Fund</a>
+    <!--<input type="submit" value="Add New Loan" />-->
+<!--</form>-->
+</div>
+</div>
+<div class="footer" data-role="footer"></div><!-- data-position="fixed"-->
+</div>
+
+<!--
+Housing Index
+-->  
+<div data-role="page" id="pageHousingIndex">
+
+<div data-role="main" class="ui-content" data-ajax="false">
+<span class="label clear bold uppercase">Housing Type</span><br class="clear"/>
+<div class="ui-content">
+<!--<form>-->
+<fieldset data-role="controlgroup">
+<label for="houseType1">{{houseindices[1][0].HSE_NAME}}</label><input type="radio" ng-model="houseinfo.housetype" name="housetype" id="houseType1" value="{{houseindices[1][0].HSE_VALUE}}" checked required >
+<label for="houseType2">{{houseindices[1][1].HSE_NAME}}</label><input type="radio" ng-model="houseinfo.housetype" name="housetype" id="houseType2" value="{{houseindices[1][1].HSE_VALUE}}">
+<label for="houseType3">{{houseindices[1][2].HSE_NAME}}</label><input type="radio" ng-model="houseinfo.housetype" name="housetype" id="houseType3" value="{{houseindices[1][2].HSE_VALUE}}">
+</fieldset>
+<!--</form>-->
+</div>
+<br class="clear"/><span class="label clear bold uppercase">Housing Index</span><br class="clear"/>
+<div class="ui-content" >
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><td></td><td></td></tr></thead>
+    
+	<!--<tbody ng-repeat="houseindex in houseindices">
+	<tr><td style="width:50%"><label for="{{houseindex}}">?</label></td>
+		<td style="width:50%"><select id="{{houseindex.label}}" ng-model="choices[$index]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindex" required></select></td></tr>
+	</tbody>-->
+    
+    <tr><td>House Size</td><td style="width:50%"><select id="ncHSSZ" ng-model="choices[0]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.2" required></select></td></tr>
+    <tr><td>House Condition</td><td style="width:50%"><select id="ncCOND" ng-model="choices[1]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.3" required></select></td></tr>
+    <tr><td>Roof Type</td><td style="width:50%"><select id="ncROOF" ng-model="choices[2]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.4" required></select></td></tr>
+    <tr><td>Wall Type</td><td style="width:50%"><select id="ncWALL" ng-model="choices[3]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.5" required></select></td></tr>
+    <tr><td>Floor Type</td><td style="width:50%"><select id="ncFLOR" ng-model="choices[4]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.6" required></select></td></tr>
+    <tr><td>Electricity Source</td><td style="width:50%"><select id="ncELEC" ng-model="choices[5]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.7" required></select></td></tr>
+    <tr><td>Water Source</td><td style="width:50%"><select id="ncWATR" ng-model="choices[6]" ng-options="hseind.HSE_VALUE as hseind.HSE_NAME for hseind in houseindices.8" required></select></td></tr>
+    
+	<tbody><tr class="bold" style="background-color:#D6DF23"><td><h1>TOTAL</h1></td><td><h1>{{getTotal()}}</h1></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="footer" data-role="footer"></div>
+</div>
+        
+<!--
+House Income Est
+-->  
+<div data-role="page" id="pageHouseIncomeEst">
+    
+<div data-role="main" class="ui-content" data-ajax="false">
+
+<div data-role="popup" id="myPopup" style='background-color:white'><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-h">Close</a><p>PER DAY/WK/MTH<br/>RP'000</p></div>
+<div data-role="popup" id="myPopup2" style='background-color:white'><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-h">Close</a><p>PER DAY/WK/2WK/MTH<br/>RP'000</p></div>
+<div data-role="popup" id="myPopup3" style='background-color:white'><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-h">Close</a><p>Total No. of Days worked in 1 Month</p></div>
+<div data-role="popup" id="myPopup4" style='background-color:white'><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-h">Close</a><p>Net revenue^2 /net profit /remittance /pension per mth<br/>RP'000</p></div>
+    
+<span class="label clear bold uppercase">House Income Est. (RP'000)</span><br class="clear"/>
+<div class="ui-content">
+<!--<form id="houseIncomeForm" name="houseIncomeForm" ng-submit="houseIncomeForm.$valid && addEntry()" novalidate>-->
+<table data-role="table" class="ui-responsive ui-shadow table-stroke">
+<thead><tr><th>Capital By</th><th>Occup / Business Activity</th><th>Business / Work Location</th><th>Own Working Capital</th><th>Revenue / Sales / Wage PER DAY/WK/MTH RP'000<br/><!--<a href="#myPopup" data-rel="popup" class="ui-btn ui-btn-inline ui-corner-all ui-icon-info ui-btn-icon-notext ui-btn-h" data-position-to="origin">!</a>--></th><th>Expenses / Purchases / Transport  PER DAY/WK/MTH RP'000<br/><!--<a href="#myPopup" data-rel="popup" class="ui-btn ui-btn-inline ui-corner-all ui-icon-info ui-btn-icon-notext ui-btn-h" data-position-to="origin">!</a>--></th><th>Profit PER DAY/WK/MTH RP'000<br/> <!--<a href="#myPopup2" data-rel="popup" class="ui-btn ui-btn-inline ui-corner-all ui-icon-info ui-btn-icon-notext ui-btn-h" data-position-to="origin">!</a>--></th><th>Days / Wks Worked<br/><!--<a href="#myPopup3" data-rel="popup" class="ui-btn ui-btn-inline ui-corner-all ui-icon-info ui-btn-icon-notext ui-btn-h" data-position-to="origin">!</a>--></th><th>Net Revenue/ Profit/ Remittance/ Pension<br/><!--<a href="#myPopup4" data-rel="popup" class="ui-btn ui-btn-inline ui-corner-all ui-icon-info ui-btn-icon-notext ui-btn-h" data-position-to="origin">!</a>--></th><th>Action</th></tr></thead>
+    <tbody ng-repeat="entry in houseIncomes">
+    <tr ng-hide="isSelectedEntry($index)" ng-click="selectEntry($index)"><td>{{getINCCapitalBy(entry.capitalby)}}</td><td>{{entry.activity}}</td><td>{{entry.location}}</td><td>{{entry.owncapita | currency}}</td><td>{{entry.revpermth | currency}}</td><td>{{entry.exppermth | currency}}</td><td>{{entry.profpermth | currency}}</td><td>{{entry.totalinmth}}</td><td>{{entry.profpermth*entry.totalinmth | currency}}</td><td><a href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext" ng-click="deleteEntry($index)">Delete</a></td></tr>
+    <tr ng-show="isSelectedEntry($index)" style="background: #3399ff;">
+        <td><div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+            <select ng-model="entry.capitalby" required data-role="none" >
+            <option value="C">{{getINCCapitalBy('C')}}</option>
+            <option value="H">{{getINCCapitalBy('H')}}</option>
+            <option value="R">{{getINCCapitalBy('R')}}</option>
+            </select>
+            </div></td>
+        <td><input ng-model="entry.activity" type="text" placeholder="" maxlength="150" required /></td>
+        <td><input ng-model="entry.location" type="text" placeholder="" maxlength="150" required /></td>
+        <td><input ng-currency ng-model="entry.owncapita" type="text" placeholder="" max="9999999999999999" required /></td>
+        <td><input ng-currency ng-model="entry.revpermth" type="text" placeholder="" max="9999999999999999" required /></td>
+        <td><input ng-currency ng-model="entry.exppermth" type="text" placeholder="" max="9999999999999999" required /></td>
+        <td><input ng-currency ng-model="entry.profpermth" type="text" placeholder="" max="9999999999999999" required /></td>
+        <td><input ng-model="entry.totalinmth" type="number" placeholder="" max="9999999999999999" required /></td>
+        <td>{{(entry.profpermth*entry.totalinmth)|currency}}<!--<input ng-model="entry.netrev" type="number" placeholder="" required />--></td>
+        <td><a ng-click="selectEntry(-1)" href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-check ui-btn-icon-notext">Confirm</a></td>
+    </tr>
+    </tbody>
+    <!-- input -->
+    <tbody>
+        <tr>
+            <td>
+            <select ng-model="incomeEntry.capitalby" ng-init="incomeEntry.capitalby = 'C'" required>
+            <option value="C">{{getINCCapitalBy('C')}}</option>
+            <option value="H">{{getINCCapitalBy('H')}}</option>
+            <option value="R">{{getINCCapitalBy('R')}}</option>
+            </select>
+            </td>
+            <td><input ng-model="incomeEntry.activity" type="text" maxlength="150" placeholder="Activity" /></td>
+            <td><input ng-model="incomeEntry.location" type="text" maxlength="150" placeholder="Location" /></td>
+            <td><input ng-currency max="9999999999999999" ng-model="incomeEntry.owncapita" type="text" placeholder="0.00" /></td>
+            <td><input ng-currency max="9999999999999999" ng-model="incomeEntry.revpermth" type="text" placeholder="0.00" /></td>
+            <td><input ng-currency max="9999999999999999" ng-model="incomeEntry.exppermth" type="text" placeholder="0.00" /></td>
+            <td><input ng-currency max="9999999999999999" ng-model="incomeEntry.profpermth" type="text" placeholder="0.00" /></td>
+            <td><input max="9999999999999999" ng-model="incomeEntry.totalinmth" type="number" placeholder="0" /></td>
+            <td style='line-height:1.5em;vertical-align: middle;'>{{(incomeEntry.profpermth*incomeEntry.totalinmth)|currency}}<!--<input ng-model="incomeEntry.netrev" type="number" placeholder="0.00" />--></td>
+            <td></td>
+        </tr>
+    </tbody>
+    <tfoot><th>Total:</th><th></th><th></th><th>{{getCurrency('owncapita')|currency}}</th><th>{{getCurrency('revpermth')|currency}}</th><th>{{getCurrency('exppermth')|currency}}</th><th>{{getCurrency('profpermth')|currency}}</th><th></th><th>{{getCurrency('netrev')|currency}}</th><th></th></tfoot>
+</table>
+    <a href="#" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left" ng-click="addEntry()">Add New Income</a>
+    <!--<input type="submit" value="Add New House Income" />-->
+<!--</form>-->
+</div>
+</div>
+<div class="footer" data-role="footer"></div>
+</div>
+<div data-role="page" data-dialog="true" id="pageCancel" style="background:black !important;">
+  <div class="ui-content" style="background:#fff">
+      Return to dashboard without saving New Client?
+      <a href="dashboard.html" class="ui-btn ui-btn-r ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left" data-ajax="false">Return to Dashboard</a>
+      <a href="#" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onclick="navBack()">Cancel</a>
+  </div>
+</div>
+</form>
+
+
+<!-- endbody -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/load_template2.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        
+        <!--the scripts below causes lag -->
+        <script type="text/javascript" src="js/filemanager.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/app_newclients.js?V=1.0.0"></script>
+    </body>
+</html>

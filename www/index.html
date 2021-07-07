@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <script type="text/javascript" src="cordova.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css" />
+    <link rel="stylesheet" type="text/css" href="css/init.css?V=1.1" />
+    <link rel="stylesheet" type="text/css" href="css/offline.css?V=1.1" />
+    <link rel="stylesheet" type="text/css" href="css/offline-english.css?V=1.1" />
+    <link rel="stylesheet" type="text/css" href="css/offline-indonesia.css?V=1.1" />
+    <title>TBOP MOBILE APPLICATION</title>
+
+  </head>
+
+  <body>
+    <script> 
+        window.location.href = "newlogin.html";
+        function focusInput (){
+            setTimeout(function() {
+                $('#syncuserid').focus();
+            }, 300);
+        }
+    </script>
+    <!-- body -->
+    <div data-role="page" id="page">
+        <div data-role="header" class="header"></div>
+
+        <div id="content" data-role="main" class="ui-content bodybackground " data-ajax="false" style="    height: 100%;margin-top:-1em;">
+            <!-- login box -->
+            <div style="float:left;position:relative;width:70%">
+                <div style="text-align:center;padding-top:7em;"><img src="./img/Prodigy-Logo-Only.png" style="width:100%"/></div>
+            </div>
+            <div id="loginbox" class="right loginbackground" style="width:20%"><!--maxheight-->
+                <form method="post">
+                    <fieldset>
+						<a href="" onclick="setLanguage('en')">English</a> | <a href="" onclick="setLanguage('id')">Indonesian</a>
+                        <label for="userid" data-i18n="messages.userid">User ID:</label><input type="text" name="userid" id="userid" value="" placeholder="User ID" data-i18n="[placeholder]messages.userid"/><br/>
+                        <label for="password" data-i18n="messages.password">Password:</label><input type="password" name="password" id="password" value="" placeholder="Password" data-i18n="[placeholder]messages.password"/>
+                        <button class="prevent ui-btn ui-btn-g ui-icon-carat-r ui-btn-icon-left ui-corner-all " value="Login" onclick="login()" data-i18n="messages.login">LOGIN</button>
+                        <a href="#myPopupDialog" data-rel="popup" data-position-to="window" data-transition="fade" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-left ui-corner-all ui-shadow " onclick="focusInput()" data-i18n="messages.Start">Start</a>
+                        <a href="#myIPAddress" data-rel="popup" data-position-to="window" data-transition="fade" class="ui-btn ui-btn-bl ui-icon-edit ui-btn-icon-left ui-left ui-corner-all ui-shadow ui-btn-h" data-i18n="messages.syncconfig">Sync config</a>
+                        <!-- 
+                        <a href="#myCheatDialog" id="#DevLabel" data-rel="popup" data-position-to="window" data-transition="fade" class="ui-btn ui-btn-bl ui-icon-edit ui-btn-icon-left ui-left ui-corner-all ui-shadow ui-btn-h" data-i18n="messages.development">Development</a> -->
+                        <a href="#myDeviceReset" data-rel="popup" data-position-to="window" data-transition="fade" class="ui-btn ui-btn-bl ui-icon-edit ui-btn-icon-left ui-left ui-corner-all ui-shadow ui-btn-h" data-i18n="messages.Reset">Reset</a>
+                        <a href="#myCashierDialog" style="background-color: #4AC948;" data-rel="popup" data-position-to="window" data-transition="fade" class="ui-btn ui-btn-grn ui-icon-tag ui-btn-icon-left ui-left ui-corner-all ui-shadow ui-btn-h" data-i18n="messages.End">End</a>
+                        <p id="invalid" style="display:none;color:red;margin-bottom:0">Invalid login credential</p>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!-- sync popout -->
+            <div data-role="popup" id="myPopupDialog" style="width:300px;border-width:0px;">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-r">Close</a>
+                <div data-role="header" class="darkbackground">
+                    <h1 data-i18n="messages.datasync">Data Sync</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <form method="post" id="pulldetailsform">
+                        <fieldset id="syncbox">
+                            <label for="syncuserid" data-i18n="messages.userid">User ID:</label><input type="text" name="syncuserid" id="syncuserid" placeholder="User ID" value="" data-i18n="messages.userid"/>
+                            <label for="syncpassword" data-i18n="messages.password">Password:</label><input type="password" name="syncpassword" id="syncpassword" placeholder="Password" value="" data-i18n="[placeholder]messages.password"/>
+                            <label for="syncmgrid" data-i18n="messages.mgrid">Mgr ID:</label><input type="text" name="syncmgrid" id="syncmgrid" placeholder="User ID" value="" data-i18n="[placeholder]messages.mgrid"/>
+                            <label for="mgrsyncpassword" data-i18n="messages.mgrpassword">Mgr Password:</label><input type="password" name="mgrsyncpassword" id="mgrsyncpassword" placeholder="Password" value="" data-i18n="[placeholder]messages.mgrpassword"/>
+                            <!-- <a id="syncbutton" class="ui-btn ui-icon-arrow-u ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="messages.pushdata">Push Data</a> -->
+                            <a id="pullData" class="ui-btn ui-btn-bl ui-icon-arrow-d ui-btn-icon-left ui-left ui-corner-all ui-shadow" style='bottom-margin:0' data-i18n="messages.pulldata">Pull Data</a>
+                            <div class="left marg-top-10 purple">
+
+                                    <strong style="font-weight: 300;font-size: 0.6em;" data-i18n="messages.TermsConditions6" >By clicking "Pull Data", I acknowledge and agree to the Terms and Conditions.</strong>
+
+                            </div>
+                        </fieldset>
+
+                    </form>
+
+                </div>
+                <div data-role="footer" class="darkbackground">
+                    <h1 data-i18n="messages.TBopPteLtd">T-BOP Pte Ltd.</h1>
+                </div>
+            </div>
+
+            <!-- Reset popout -->
+            <div data-role="popup" id="myDeviceReset" style="width:300px;border-width:0px;">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-r">Close</a>
+                <div data-role="header" class="darkbackground">
+                    <h1 data-i18n="messages.Reset">Reset</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <form method="post" id="resetdetailsform">
+                        <fieldset id="resetbox">
+                            <label for="resetuserid" data-i18n="messages.userid">User ID:</label><input type="text" name="resetuserid" id="resetuserid" placeholder="User ID" value="" data-i18n="messages.userid"/>
+                            <label for="resetpassword" data-i18n="messages.password">Password:</label><input type="password" name="resetpassword" id="resetpassword" placeholder="Password" value="" data-i18n="[placeholder]messages.password"/>
+                            <label for="resetmgrid" data-i18n="messages.mgrid">Mgr ID:</label><input type="text" name="resetmgrid" id="resetmgrid" placeholder="User ID" value="" data-i18n="[placeholder]messages.mgrid"/>
+                            <label for="mgrresetpassword" data-i18n="messages.mgrpassword">Mgr Password:</label><input type="password" name="mgrresetpassword" id="mgrresetpassword" placeholder="Password" value="" data-i18n="[placeholder]messages.mgrpassword"/>
+                            <!-- <a id="resetbutton" class="ui-btn ui-icon-arrow-u ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="messages.pushdata">Push Data</a> -->
+                            <a id="resetData" onClick="ResponseFO('Reset')" class="ui-btn ui-btn-bl ui-icon-arrow-d ui-btn-icon-left ui-left ui-corner-all ui-shadow" style='bottom-margin:0' data-i18n="messages.Reset">Reset</a>
+                        </fieldset>
+
+                    </form>
+
+                </div>
+                <div data-role="footer" class="darkbackground">
+                    <h1 data-i18n="messages.TBopPteLtd">T-BOP Pte Ltd.</h1>
+                </div>
+            </div>
+
+            <!-- sync popout -->
+            <div data-role="popup" id="myCheatDialog" style="width:300px;border-width:0px;">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-r">Close</a>
+                <div data-role="header" class="darkbackground">
+                    <h1 data-i18n="messages.datasync">Data Sync</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <span id="development" class="label clear">DEVELOPMENT MODE IS ON</span>
+                    <a href="" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h prevent" id="updateDev">Dev Toggle</a>
+                    <a href="" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h prevent" onclick="myDB.dummy()">Dummy</a>
+                    <a href="" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h prevent" onclick="myDB.reset()">Reset</a>
+                    <a href="" id="sendeval" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h" class="prevent">Send Eval</a>
+                    <a href="" id="updatebutton" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h" class="prevent">Update</a>
+                    <a href="sql.html" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h" class="prevent" data-ajax="false">SQL</a><br/>
+                    <a href="" id="sendchange" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h" class="prevent">Date Change</a><br/>
+                    <a href="" id="resetprint" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h" class="prevent">Reset Print</a><br/>
+                    <a href="" id="programatically" class="ui-btn ui-btn-bl ui-icon-recycle ui-btn-icon-left ui-icon-edit ui-corner-all ui-shadow ui-btn-inline ui-btn-h" onclick="downloadDB()" >Download</a><br/>
+                </div>
+                <div data-role="footer" class="darkbackground">
+                    <h1 data-i18n="messages.TBopPteLtd">T-BOP Pte Ltd.</h1>
+                </div>
+            </div>
+
+            <div data-role="popup" id="myIPAddress" style="width:400px;border-width:0px;">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-r">Close</a>
+                <div data-role="header" class="darkbackground">
+                    <h1 data-i18n="messages.SetIPAddress">Set IP Address</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <form method="post">
+                        <fieldset id="syncbox2">
+                            <label for="setip" data-i18n="messages.SyncServer">Sync Server:</label><input type="text" name="setip" id="setip" placeholder="Server Address" value="http://192.168.88.180:8080/MBK/CommonBuildJSON"/>
+                            <button id="setipbutton" class="ui-btn ui-icon-carat-r ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="buttons.Set">Set</button>
+                        </fieldset>
+                    </form>
+                </div>
+                <div data-role="footer" class="darkbackground">
+                    <h1 data-i18n="messages.TBopPteLtd">T-BOP Pte Ltd.</h1>
+                </div>
+            </div>
+
+            <!-- sync popout -->
+            <div data-role="popup" id="myCashierDialog" style="width:600px;border-width:0px;">
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right ui-btn-r">Close</a>
+                <div data-role="header" class="darkbackground">
+                    <h1 data-i18n="messages.cahsierverification">Cashier Verification</h1>
+                </div>
+                <div data-role="main" class="ui-content">
+                    <div class="ui-grid-50 left marg-right-5">
+                        <!-- <div class="ui-grid-33  div-header ">
+                            <div class="ui-shadow table-stroke">
+                                <div class="lightbluebackground ui-content">
+                                    Excess Widthdrawals
+                                </div>
+                                <div class="ui-content bold center">
+                                    <h2>$1.30</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-grid-33  div-header">
+                            <div class="ui-shadow table-stroke">
+                                <div class="lightbluebackground ui-content">
+                                    Excess Disbursements
+                                </div>
+                                <div class="ui-content bold center">
+                                    <h2>$0.00</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-grid-33  div-header">
+                            <div class="ui-shadow table-stroke">
+                                <div class="lightbluebackground ui-content">
+                                    Amount Collected
+                                </div>
+                                <div class="ui-content bold center">
+                                    <h2>$112.30</h2>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="width-100  marg-top-10 left div-header ui-shadow table-stroke ">
+                            <div class="greenbackground ui-content" data-i18n="messages.cashtoreceive">
+                                Cash to Receive
+                            </div>
+                            <div class="ui-content bold center cashier-total-amt">
+                                $0.00
+                            </div>
+
+                            <div class="exp-total-amt right">
+                                <span data-i18n="messages.Forecasted">Forecasted</span> : <span class="exp_val"><b>$0</b></span>
+                            </div>
+                        </div>
+
+                        <div class="center left marg-top-50" style="position:relative">
+                            <div class="left" style="position: absolute;top: -4em;left: 1em;color: orange;">
+                                <br>
+                                <span id="withdrawal">Withdrawal : $ 0</span>
+                            </div>
+                             <p class="center purple"><strong style="font-weight: 300;font-size: 0.6em;" data-i18n="messages.TermsConditions5" >By clicking "Push Data", I acknowledge that the amount of cash received by me is correct.</strong></p>
+                        </div>
+                    </div>
+                    <form method="post" id="pushdetailsform" >
+                        <fieldset id="syncbox3">
+                            <label for="syncuserid_push" data-i18n="messages.userid">User ID:</label><input type="text" name="syncuserid_push" id="syncuserid_push" placeholder="User ID" value="" data-i18n="messages.userid"/>
+                            <label for="syncpassword_push" data-i18n="messages.password">Password:</label><input type="password" name="syncpassword_push" id="syncpassword_push" placeholder="Password" value="" data-i18n="[placeholder]messages.password"/>
+                            <label for="syncmgrid_push" data-i18n="messages.mgrid">Mgr ID:</label><input type="text" name="syncmgrid_push" id="syncmgrid_push" placeholder="User ID" value="" data-i18n="[placeholder]messages.mgrid"/>
+                            <label for="mgrsyncpassword_push" data-i18n="messages.mgrpassword">Mgr Password:</label><input type="password" name="mgrsyncpassword_push" id="mgrsyncpassword_push" placeholder="Password" value="" data-i18n="[placeholder]messages.mgrpassword"/>
+                            <a id="syncbutton" class="ui-btn ui-icon-arrow-u ui-btn-icon-left prevent ui-btn-g ui-corner-all" data-i18n="messages.pushdata">Push Data</a>
+
+                        </fieldset>
+                    </form>
+                </div>
+                <div data-role="footer" class="darkbackground" >
+                    <h1 data-i18n="messages.TBopPteLtd">T-BOP Pte Ltd.</h1>
+                </div>
+            </div>
+
+        </div>
+        <div data-role="footer" class="footer"></div><!-- data-position="fixed"-->
+      </div>
+
+      <!-- scripts -->
+
+      <script src="js/jquery.js"></script>
+      <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+      <script type="text/javascript" src="js/load_template.js"></script>
+      <script type="text/javascript" src="js/properDB.js"></script>
+      <script src="js/lz-string.js" type="text/javascript"></script>
+      <script type="text/javascript" src="js/index.js?V=4"></script>
+      <script type="text/javascript" src="js/initDB.js?V=1.1.18"></script>
+      <script type="text/javascript" src="js/moment.min.js"></script>
+      <script type="application/javascript" src="js/fastclick.js"></script>
+      
+      <script type="text/javascript" src="js/filemanager.js"></script>
+
+      <script type="text/javascript" src="js/offline.js?v=1.1.1"></script>
+      <script type="text/javascript" src="js/app_login.js?v=1.1.118"></script>
+	  <script type="text/javascript" src="js/i18next-1.8.0.js?v=2"></script>
+      
+	  <script type="text/javascript" src="js/ln.js?v=4"></script>
+      <script src="js/sweetalert.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+
+	  <script> 
+    	function setLanguage(language) {
+
+    		if(typeof(Storage) !== "undefined") {
+    			sessionStorage.LANGUAGE = language;
+    		} else {
+    			console.log("Sorry, your browser does not support web storage!");
+    		}
+
+    		i18n.setLng(language, function(t) {
+    			$('body').i18n();
+    		});
+        } 
+        
+        setLanguage('id');
+
+	 </script>
+
+  </body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css?v=1.1.1" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .reason.ng-hide { /*override for this page only*/ 
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+            .tbl-header {
+                padding-bottom: 11px;
+            }
+            select .option {
+                color: black;
+                background-color: white;
+            }
+            optgroup {
+                background-color: white;
+                color: black;
+            }
+            input.wthAmt,
+            div.wthAmt {
+                color: orange;
+            }
+            .wthCol  {
+                background: #EEE !important;
+                /*background: #FFF;
+                box-shadow: inset -4px 0px 10px -7px,inset 4px 0px 10px -7px;*/
+            }
+        </style>
+    </head>
+    <body ng-app="myApp" ng-controller="TransactionsCtrl">
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content1" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page">
+                    <div data-type="vertical" class="left ui-grid-50">
+
+                        <br class="clear"/>
+                        <div class="detlabel" data-i18n="messages.Village">Village:</div>:
+                        <span class="detville">&nbsp;&nbsp;<b class="">{{ user.curr_village.name }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+
+                    <br class="clear"/>
+
+                    <div class="ui-content no-hori-padding" style="    min-height: 200px;">
+                        <div class="jumbotron center" ng-if="user.village.groups != undefined && user.village.groups.length == 0 && !loading" data-i18n="messages.NoClientInVillage">
+                            <h1>No Clients in this Village</h1>
+                            &nbsp;
+                        </div>
+                        <div class="load-cover">
+                            <img src="img/ripple3.gif?1" />
+                        </div> 
+                        <div class="notransaction jumbotron center" style="display: none;">
+                            <h1 data-i18n="messages.NoTransaction">No Transaction</h1>
+                            &nbsp;
+                        </div>
+                        
+                        <centerlist control="centers" updateC="updateCenter()"></centerlist>
+                        <div ng-repeat="group in user.village.groups | filter: { CLT_CENTER_ID: selectedCenter.CTR_CENTER_ID }" class="ui-grid-33 marg-btm-20 ">
+                            <a href="#"  class="trans-blocks">
+                                <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke"  trans-check
+                                            expected="{{ group.total_exp }} "
+                                            actual="{{ group.total_act }}"
+                                            type="bg"
+                                            defaultcolor="#42A5F5"
+                                            checknow="groupCompleted(group)">
+                                    <thead>
+                                        <tr>
+                                            <th class="box-header">
+                                                <div class="lineh-32 ">
+                                                    {{ group.CTR_CENTER_NAME }} {{ grouptext }} {{ group.CLT_GROUP_ID }}
+                                                    <i style="position:absolute;float:right;right:15px;" ng-show="groupCompleted(group)" class="dark-blue right fa fa-check-square fa-2x"></i>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="box-body" ng-click="changeGroup(group)">
+                                        <tr ng-click="detailview()" >
+                                            <td >
+                                                <div class="ui-content bold center group-block-amt" >
+                                                    <h1>{{ group.total_act | noFractionCurrency : currloc : 0 }}</h1>
+                                                    <span class="wthwth" ng-if="group.total_wth_act > 0">-{{ group.total_wth_act }}</span>
+                                                </div>
+                                                <div class="group-client left">
+                                                    <i class="fa fa-user"></i>{{group.clientcount}}
+                                                </div>
+                                                <div class="group-status right">
+                                                    <span>{{ expected }}</span> :<b>{{ group.total_exp | noFractionCurrency : currloc : 0 }}</b>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr >
+                                            <td class="grp_printer" ng-click="groupPrint(group)" trans-check
+                                                                expected="{{ group.total_exp }} "
+                                                                actual="{{ group.total_act }}"
+                                                                type="bg"
+                                                                defaultcolor="#42A5F5"
+                                                                checknow="groupCompleted(group)">
+                                                <div class="">
+                                                  <div ng-hide="isGroupPrinted(group)"><i class="fa fa-print "></i>&nbsp;&nbsp;&nbsp;{{ "Save" | translate }}</div>
+                                                  <div ng-show="isGroupPrinted(group)" ><i class="fa fa-print white"></i>&nbsp;&nbsp;&nbsp;{{ "Saved" | translate }}</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="center_wrap center_overview" >
+                        <!-- OVERVIEW -->
+                        <div class="ui-grid-100 marg-btm-20 ">
+                            <a href="#" class="trans-blocks">
+                                <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" trans-check
+                                                    expected="{{getCenterExpected()}}"
+                                                    actual="{{getCenterActual()}}"
+                                                    type="bg"
+                                                    defaultcolor="#42A5F5"
+                                                    checknow="getCenterCompleted()">
+                                    <thead>
+                                        <tr>
+                                            <th class="box-header">
+                                                <div class="lineh-32 ">
+                                                    {{ overviewtext }}
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="box-body">
+                                        <tr>
+                                            <td >
+                                                <div class="ui-grid-33 center overview_sub">
+                                                    <h2>{{ centerRepayment | noFractionCurrency : currloc : 0 }}</h2>
+                                                    <p data-i18n="messages.Repayment">Repayment</p>
+                                                </div>
+                                                <div class="ui-grid-33 center overview_sub">
+                                                    <h2>{{ centerSavings | noFractionCurrency : currloc : 0 }}</h2>
+                                                    <p  data-i18n="messages.Savings">Savings</p>
+                                                </div>
+                                                <div class="ui-grid-33 center overview_sub">
+                                                    <h2>- {{ centerWidthdrawal | noFractionCurrency : currloc : 0 }}</h2>
+                                                    <p data-i18n="buttons.Widthdrawal">Withdrawal</p>
+                                                </div>
+                                                <!-- <div class="ui-content bold center group-block-amt" >
+                                                    <h1>{{ group.total_act | noFractionCurrency : currloc : 0 }}</h1>
+                                                    <span class="wthwth" ng-if="group.total_wth_act > 0">-{{ group.total_wth_act }}</span>
+                                                </div>
+                                                <div class="group-client left">
+                                                    <i class="fa fa-user"></i>{{group.clientcount}}
+                                                </div>
+                                                <div class="group-status right">
+                                                    <span>{{ expected }}</span> :<b>{{ group.total_exp | noFractionCurrency : currloc : 0 }}</b>
+                                                </div> -->
+                                            </td>
+                                        </tr>
+                                        <tr >
+                                            <td class="center_total" trans-check
+                                                                expected="{{getCenterExpected()}}"
+                                                                actual="{{getCenterActual()}}"
+                                                                type="bg"
+                                                                defaultcolor="#42A5F5"
+                                                                checknow="getCenterCompleted()">
+                                                <div class="">
+                                                    <div class="center">
+                                                        <h1 style="font-size: 2.5em;font-weight:bold; padding-top: 1em;">{{ centerRepayment + centerSavings - centerWidthdrawal | noFractionCurrency : currloc : 0}}</h1>
+                                                        <p data-i18n="messages.CenterTotal">Center Total</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </a>
+                        </div>
+                    </div>
+                    <br class="clear"/>
+                    <br class="clear"/>
+                </div>
+                <div class="ui-content second-wrapper row" data-ajax="false">
+                    <div class="whitecover second-page" >
+                        <div class="coverwrap">
+
+                        </div>
+                    </div>
+
+                    <div class="ui-content no-hori-padding" id="indivInfoTable" ng-show="isGroupSelected">
+                        <!-- <div class="ui-grid-b">
+                            <div class="ui-block-c" ng-repeat="client in user.clients  | filter: { CLT_GROUP_ID: user.selectedGroup.value, CLT_CENTER_ID: user.selectedGroup.centerid  } track by client.CLT_PK ">
+                                <a class="ui-btn ui-corner-all ui-shadow ">
+                                    <i class="fa fa-user" style="font-size: 2em;color: #888;"></i>
+                                    <b><p style="font-family: sans-serif;">{{ client.CLT_FULL_NAME }}</p></b>
+                                    <p>{{ client.CLT_CLEINT_ID }}</p>
+                                </a>
+                            </div>
+                        </div>   -->
+                        <div class="ui-content">
+                            <div data-type="vertical" class="left">
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back"  ng-click="detailview()">Back</a>
+                            </div>
+                            <div data-type="vertical" class="right" ng-show="isGroupSelected" ng-model="user">
+
+                                <!-- SMS Buttons -->
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-bl btn-group-9 ui-btn-icon-left  ui-corner-all" link-disabled="isGroupSelected" ng-hide="(getSMSGrpStatus()&&BRC_DISBURSE_NOTIFICATION!='R')||BRC_DISBURSE_NOTIFICATION=='R'"   ng-click="sendMsg('G', 'S', user,0)"><i class="fa fa-envelope left" style="padding-right: 1em;"></i>{{ "Send SMS to Leader" | translate }}</a>
+                                <a class="ui-btn ui-btn-tl ui-icon-check ui-btn-icon-left ui-corner-all btn-group-9" href="#" data-role="button" ng-click="sendMsg('G', 'S', user,0)"  data-inline="true" ng-show="getSMSGrpStatus()&&BRC_DISBURSE_NOTIFICATION!='R'">{{ "SMS Sent" | translate }}</a>
+                                <!-- Print Buttons -->
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-bl btn-group-9 ui-btn-icon-left  ui-corner-all" link-disabled="isGroupSelected"  ng-hide="getReceiptGrpStatus()"   ng-click="sendMsg('G', 'R', user,0)"><i class="fa fa-print left"></i>&nbsp;&nbsp;<span data-i18n="messages.Print">Print</span></a>
+
+                                <a class="ui-btn ui-btn-tl ui-btn_i ui-btn-icon-left ui-corner-all btn-group-9" href="#" data-role="button" ng-click="sendMsg('G', 'R', user,0)" data-inline="true" ng-show="getReceiptGrpStatus()">&nbsp;&nbsp;<i class="fa fa-print white left"></i>{{ "PRINTED" | translate }}</a>
+
+                            </div>
+                        </div>
+
+                        <table data-role="table" class="ui-responsive" ng-if="checkIsGroupSelected()">
+                            <thead><tr><td></td></tr></thead>
+                            <tbody>
+                                <tr ng-repeat="client in user.clients  | filter: { CLT_GROUP_ID: user.selectedGroup.value, CLT_CENTER_ID: user.selectedGroup.centerid  } track by client.CLT_PK " ng-init="client" style="background: transparent;">
+                                    <td class="no-padding">
+                                        <div class="usr-ext">&nbsp;</div>
+                                        <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table table-box ui-corner-all" id="table{{client.CLT_PK}}" >
+                                            <thead class="tbl-header" ng-click="showClient(client)" >
+                                                <th colspan="4" class="list-first-col">
+                                                    <!-- <div style="display:inline-block;" class="ui-rmargin">
+                                                        <button class="ng-scope grey bold ui-btn ui-shadow ui-corner-all" ng-if="client.expanded" ng-click="client.expanded = false"> - </button>
+                                                        <button class="ng-scope grey bold ui-btn ui-shadow ui-corner-all" ng-if="!client.expanded" ng-click="client.expanded = true">+</button>
+                                                    </div> -->
+
+                                                    <a href="#" data-prefetch="true"  data-ajax="false" ng-click="clientprofile(client)">
+                                                        <div class="name">{{ client.CLT_FULL_NAME }}<p>{{ client.CLT_CLEINT_ID }}</p></div>
+                                                    </a>
+                                                </th>
+                                                <th colspan="2">
+                                                    <div class="ui-content no-hori-padding currency-cl right">
+                                                        {{ expected }}: <b>{{ getClientTotal(client) | noFractionCurrency : currloc : 0 }}</b></br>
+                                                        {{ actual }} <b class="clientactual"  >{{ getClientActualTotal(client) | noFractionCurrency : currloc : 0 }}</b>
+                                                    </div>
+                                                </th>
+                                                <th colspan="1" style="width:10%">
+                                                    <div class="ui-content no-hori-padding right" >
+                                                        <i style="font-size:2em;padding: 0 .5em;color:rgb(66, 165, 245)"  ng-show="(getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus())" class="fa fa-check-circle-o" aria-hidden="true"></i>
+                                                    </div>
+                                                    <!-- <div class="ui-content currency-cl right">{{ weektext }} <b>{{ client.CRS_WEEK_NO}}</b></div> -->
+                                                </th>
+                                            </thead>
+                                            <tbody style="background: white;" ng-show="client.showdetails">
+                                                <tr>
+
+                                                    <!-- <td colspan="1" style="padding-left: 1em;" >
+                                                        <button model="client.CRS_ASSISTED" ng-show="client.CRS_ASSISTED=='N'" ng-click="client.CRS_ASSISTED='Y'" ng-disabled="getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus()" class="left ng-scope ui-btn ui-shadow ui-corner-all">{{assisted}}</button>
+                                                        <button model="client.CRS_ASSISTED" ng-show="client.CRS_ASSISTED=='Y'" ng-click="client.CRS_ASSISTED='N'"  ng-disabled="getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus()" class="left ng-scope ui-btn ui-btn-tl white ui-shadow ui-corner-all">{{ assisted }}</button>
+                                                    </td> --> <td colspan="1" > <!-- <button model="client.CRS_ATTENDED" ng-show="client.CRS_ATTENDED=='Y'" ng-click="client.CRS_ATTENDED='N'" ng-disabled="getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus()" class="left ng-scope ui-btn ui-shadow ui-corner-all">{{absent}}</button>
+                                                        <button model="client.CRS_ATTENDED" ng-show="client.CRS_ATTENDED=='N'" ng-click="client.CRS_ATTENDED='Y'" ng-disabled="getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus()" class="left ng-scope ui-btn ui-btn-tl white ui-shadow ui-corner-all">{{ absent }}</button> -->
+                                                        <button model="client.CRS_ATTENDED" ng-show="!client.isAbsent" ng-click="absentControl(client)" ng-disabled="getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus()||isSubmited(client)" class="left ng-scope ui-btn ui-shadow ui-corner-all">{{absent}}</button>
+                                                        <button model="client.CRS_ATTENDED" ng-show="client.isAbsent" ng-click="absentControl(client)" ng-disabled="getSMSClientStatus(client)||getSMSGrpStatus()||getReceiptClientStatus(client)||getReceiptGrpStatus()" class="left ng-scope ui-btn ui-btn-tl white ui-shadow ui-corner-all">{{ absent }}</button>
+                                                    </td>
+                                                    <td colspan="4" width="40%">
+                                                        <div ng-show="isSubmited(client)&&client.isAbsent" class="text-padding">
+                                                            <b data-i18n="messages.Reason">Reason:</b> {{ client.CRS_REASON }}
+                                                        </div>
+                                                        <div ng-if="(!isSubmited(client))&&client.isAbsent" class="reason"> 
+                                                            <select class="reasons" ng-change="refreshAlldiv('.reasons', client)" ng-model="client.CRS_REASON" >
+                                                                <option >Select</option>
+                                                                <option value="Izin">Izin</option>
+                                                                <option value="Sakit">Sakit</option>
+                                                                <option value="Cuti">Cuti</option>
+                                                                <option value="Alpa">Alpa</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        <!-- <div class="ui-grid-30 left">
+                                                            <a class="ui-btn ui-btn-bl ui-btn-i ui-btn-icon-notext ui-corner-all " href="#" data-role="button" data-inline="true" ng-hide="getSMSClientStatus(client)" ng-click="openSign(client)"><i class="fa fa-lg fa-hand-pointer-o white"></i></a>
+                                                        </div> -->
+                                                        <div class="ui-grid-30 right">
+                                                            <a class="ui-btn ui-btn-bl ui-btn-i ui-btn-icon-notext ui-corner-all "  href="#" data-role="button" data-inline="true" ng-hide="getReceiptClientStatus(client)" ng-click="sendMsg('C', 'R', client,$index)"><i class="fa fa-lg white fa-archive"></i></a>
+                                                            <a class="left ui-btn ui-btn-i ui-btn-tl ui-btn-icon-notext ui-corner-all " href="#" data-role="button" data-inline="true" ng-show="getReceiptClientStatus(client)" ng-click="sendMsg('C', 'R', client)"><i class="fa fa-lg white fa-archive"></i></a>
+                                                        </div>
+                                                        <div class="ui-grid-30 right">
+                                                            <!-- <a class="ui-btn ui-btn-bl ui-btn-i ui-btn-icon-notext ui-corner-all " href="#" data-role="button" data-inline="true" ng-hide="getSMSClientStatus(client)" ng-click="sendMsg('C', 'S', client,$index)"><i class="fa fa-lg fa-envelope white"></i></a>
+                                                            <a class="left ui-btn ui-btn-i ui-btn-tl ui-btn-icon-notext ui-corner-all " href="#" data-role="button" data-inline="true" ng-show="getSMSClientStatus(client)" ng-click="sendMsg('C', 'S', client)"><i class="fa fa-lg fa-envelope white"></i></a> -->
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                                <!-- <tr>
+                                                    <td colspan="8">
+                                                        <div class="client-loan-wrapper">
+                                                            <div ng-repeat="loanbox in client.loans" ng-init="loanbox" class="client-loan ui-grid-33">
+                                                                <div class=""
+                                                                ng-click="expandLoan(client,loanbox,$event)"  >
+                                                                    <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke " ng-class="{'selected': (loanbox.isOpen == true)}" >
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="box-header">
+                                                                                    <div class="" style="line-height: 1em;">
+                                                                                        {{ loanbox.LTY_DESCRIPTION }} <br>
+                                                                                        <span>&nbsp;
+                                                                                            <small style="font-size: .6em;" ng-show="loanbox.CLL_LOAN_NUMBER != 'null' ">{{ loanbox.CLL_LOAN_NUMBER }}</<small>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div class="loan-assisted-check"  ng-click="toggleAssisted(loanbox,client)" ng-class="{'selected': isSubmited(client)}">
+                                                                                        <div class="lac">
+                                                                                            <i ng-show="loanbox.CRS_ASSISTED == 'Y'" class="fa orange-text fa-font"></i>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody class="box-body">
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <div class="ui-content bold center group-block-amt">
+                                                                                        <h2>{{getLoanActual(loanbox,client) | noFractionCurrency : currloc : 0 }}</h2>
+                                                                                    </div>
+                                                                                    <div class="group-client left">
+
+                                                                                        &nbsp;
+                                                                                    </div>
+                                                                                    <div class="group-status right">
+                                                                                        {{ expected }}: <b>{{ getLoanExpected(loanbox,client) | noFractionCurrency : currloc : 0 }}</b>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>  -->
+                                                <tr ng-repeat="loan in client.loans" ng-init="loan" >
+                                                    <td colspan="8" style="background: #ECEFF1;">
+
+                                                        <br class="clear">
+
+                                                        <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow sub-table light-text"
+                                                        style="background-color:white"
+                                                        ng-if="getLoanExpectedAmt(loan) > 0" >
+
+                                                            <thead>
+                                                                <tr>
+                                                                    <th  style="width:12%" class="darker-bg" >
+                                                                        <div class="week-box">
+                                                                            <h3 ><span>Minggu Ke</span><br></h3>
+                                                                            {{ getCurrentLoanWeek(loan) }}
+                                                                        </div>
+                                                                    </th>
+                                                                    <th style="width:12%" class="dark-bg">
+                                                                        <div class="week-box ">
+                                                                            <h3><span>Minggu Riil</span><br></h3>
+                                                                            {{ getActualLoanWeek(loan) }}
+                                                                        </div>
+                                                                    </th>
+                                                                    <th style="width:35%" class="light-bg" colspan="2">
+                                                                        <div class="ui-content inline-week left" style="margin-top: .3em;">
+                                                                            <div class="" style="line-height: 1em;">
+                                                                                {{ loan.LTY_DESCRIPTION | translate }} <br>
+                                                                                <span>
+                                                                                    &nbsp;
+                                                                                    <small style="font-size: .6em;" ng-show="loanbox.CLL_LOAN_NUMBER != 'null' ">{{ loan.CLL_LOAN_NUMBER }}</small>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </th>
+                                                                    <th colspan="1">
+                                                                        <div class="right payfor-wrap">
+                                                                            <div class="ui-content inline-week right" style="margin-top: .3em;">
+                                                                                <strong>{{ weekstxt }}</strong>
+                                                                            </div>
+                                                                            <div class="inline-week right" ng-show="!isSubmited(client) ">
+                                                                                <input 
+                                                                                    id="clientWeek{{client.CLT_PK}}" 
+                                                                                    class="colVal" 
+                                                                                    ng-blur="updateForWeek(loan);checkLoanRepayment(client,loan)" 
+                                                                                    onclick="this.select();" 
+                                                                                    type="tel" 
+                                                                                    ng-model="loan.payfor" 
+                                                                                    ng-change="payforOnChange(loan)"
+                                                                                    ng-currency 
+                                                                                    deci-place="0" 
+                                                                                    style="width: 50px;" 
+                                                                                    currency-symbol="{{currloc}}" 
+                                                                                />
+                                                                            </div>
+                                                                            <div class="ui-content inline-week right" ng-show="isSubmited(client) " style="margin-top: 0.3em;">
+                                                                                {{ loan.payfor }}
+                                                                            </div>
+                                                                            <div class="ui-content right inline-week" style="margin-top: .3em;">
+                                                                                <strong>{{ payfortxt }}</strong>
+                                                                            </div>
+                                                                        </div>
+                                                                    </th>
+                                                                </tr>
+
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td colspan="5" style="padding: 0px;">
+                                                                        <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow sub-table light-text" style="background-color:white" >
+                                                                            <thead >
+                                                                                <tr>
+                                                                                    <th class="pad-left paidby" style="width: 25%"><div class="" ng-show="client.isAbsent && loan.paidonbehalfby != null">Paid By</div></th>
+                                                                                    <th style="width:20%">{{ expectedamttext }}</th>
+                                                                                    <th style="width:20%">{{ capitalamttext }}</th>
+                                                                                    <th style="width:20%;">{{ profitamttext }}</th>
+                                                                                    <th style="width:18%">{{ balancetext }}</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-show="getLoanExpectedAmt(loan) > 0">
+                                                                                    <td class="pad-left" >
+                                                                                        <div class="list-first-subcol paidby" >
+                                                                                            <div class="" ng-show="client.isAbsent && loan.paidonbehalfby != null">
+                                                                                                 {{ (user.clients | filter: { CLT_PK: loan.paidonbehalfby  })[0].CLT_FULL_NAME }}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class=" ">
+                                                                                            {{ getLoanExpectedAmt(loan) | noFractionCurrency : currloc : 0 }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class="  bold">
+                                                                                            {{  loan.total_expected_capital | noFractionCurrency : currloc : 0 }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class=" bold">
+                                                                                            {{  loan.total_expected_profit | noFractionCurrency : currloc : 0 }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class=" ">
+                                                                                            {{ getLoanBalance(loan) | noFractionCurrency : currloc : 0 }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="8" style="background: #ECEFF1;">
+                                                        <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow sub-table light-text" style="background-color:white" >
+                                                            <thead >
+                                                                <tr>
+                                                                    <th class="pad-left" style="width: 25%">{{ producttext }}</th>
+                                                                    <th style="width:20%">{{ expectedamttext }}</th>
+                                                                    <th style="width:20%">{{ actualamttext }}</th>
+                                                                    <th style="width:20%;"  class="wthCol">{{ withdrawalamttext }}</th>
+                                                                    <th style="width:18%">{{ balancetext }}</th>
+                                                                    <!-- <th>{{ withdrawalamttext }}</th> -->
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="product in client.products track by product.PRM_PK" ng-init="product" style="background-color:white">
+                                                                    <td class="pad-left">
+                                                                        <div class="ui-content list-first-subcol">
+                                                                            {{ product.PRM_LOCAL_NAME }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="">
+                                                                            {{ getSavingsExpected(product) | noFractionCurrency : currloc : 0 }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="list-first-subcol paidby" style="position: absolute;margin-top: 15px;">
+                                                                          <div class="" ng-show="client.isAbsent && (product.CRS_PAIDBY_PK != null && product.CRS_PAIDBY_PK != '' )">
+                                                                               PAID BY {{ (user.clients | filter: { CLT_PK: product.CRS_PAIDBY_PK  })[0].CLT_FULL_NAME }}
+                                                                          </div>
+                                                                        </div>
+                                                                        <div ng-hide="isSubmited(client)||isAccountClose(product)||lockSavings('weekly',product) " >
+                                                                            <input id="clientActual{{ client.CLT_PK}}{{$index}}" class="colVal" ng-blur="validateAmt(loan,$index,'saving');checkProductPayment(client,product)"  onclick="this.select();" type="tel" ng-model="product.CRS_ACT_CAPITAL_AMT" ng-currency deci-place="0" currency-symbol="{{currloc}}" />
+                                                                        </div>
+                                                                        <div ng-show="isSubmited(client)||lockSavings('weekly',product)||isAccountClose(product) " class="">
+                                                                            <span ng-hide="checkClosed(product)">
+                                                                                {{ getSavingsActual(product)  | noFractionCurrency : currloc : 0 }}
+                                                                            </span>
+                                                                            <span ng-show="checkClosed(product)">
+                                                                                {{ pendingclose }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="wthCol">
+                                                                        <div ng-show="canWithdrawal(product)">
+                                                                            <div ng-if="!isSubmited(client)&&!lockSavings('weekly',product)&&!client.isAbsent">
+                                                                                <input id="clientWithdrawal{{ client.CLT_PK}}{{$index}}" class="colVal wthAmt" ng-blur="validateAmt(client,product,'saving')"  onclick="this.select();"
+                                                                                ng-click="checkCashonHand()" type="tel" ng-model="product.ACT_WTH_AMT" ng-currency deci-place="0" currency-symbol="{{currloc}}" />
+                                                                            </div>
+                                                                            <div class=" wthAmt" ng-if="lockSavings('weekly',product)||(isSubmited(client)&&product.ACT_WTH_AMT>0)||client.isAbsent">
+                                                                                {{ product.ACT_WTH_AMT | noFractionCurrency : currloc : 0  }}
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="">
+                                                                            {{ getSavingsBalance(client,product) | noFractionCurrency : currloc : 0 }}
+                                                                        </div>
+                                                                        <!-- <span class="wth_amt" ng-show="product.ACT_WTH_AMT > 0">
+                                                                            - {{ product.ACT_WTH_AMT | noFractionCurrency : currloc : 0 }}
+                                                                        </span> -->
+                                                                    </td>
+                                                                    <!-- <td>
+                                                                        <div show-withdrawal client="client" iuser="user" itype="input" product="product" class="trans-wth-wrap" >
+                                                                            <input id="clientActual{{ client.CLT_PK}}{{$index}}" class="colVal" ng-blur="validateWithdrawal(loan,$index,client,$event)"  onclick="this.select();" type="tel"  ng-model="product.CRS_FLEXI_WTH" ng-currency currency-symbol='{{currloc}}' deci-place="0" />
+                                                                            <div class="wth-req">R</div>
+                                                                        </div>
+                                                                        <div show-withdrawal client="client" iuser="user" itype="div" product="product" class="ui-content">
+                                                                            {{ product.CRS_FLEXI_WTH | noFractionCurrency : currloc : 0 }}
+                                                                        </div>
+                                                                    </td> -->
+                                                                </tr>
+                                                                <tr ng-repeat="product in client.ranproducts track by $index" ng-init="product" style="background-color:white" >
+                                                                     <td>
+                                                                        <div class="ui-content list-first-subcol">
+                                                                            {{ product.PRM_LOCAL_NAME }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="">
+                                                                            {{ getSavingsExpected(product) | noFractionCurrency : currloc : 0 }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div ng-hide="isSubmited(client)||lockSavings('ran',product)|| isAccountClose(product)" >
+                                                                            <input id="clientActual{{ client.CLT_PK}}{{$index}}" class="colVal"   onclick="this.select();" type="tel" ng-model="product.CRS_ACT_CAPITAL_AMT" ng-currency deci-place="0" currency-symbol="{{currloc}}" />
+                                                                        </div>
+                                                                        <div ng-show="isSubmited(client)||lockSavings('ran',product)||isAccountClose(product)||loan.CRS_ATTENDED=='N'" class="">
+                                                                            <span ng-hide="checkClosed(product)">
+                                                                                {{ getSavingsActual(product)  | noFractionCurrency : currloc : 0 }}
+                                                                            </span>
+                                                                            <span ng-show="checkClosed(product)">
+                                                                                {{ pendingclose }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="wthCol">
+                                                                        <div ng-show="canWithdrawal(product)">
+                                                                            <div ng-if="!isSubmited(client)&&!lockSavings('ran',product)&&!client.isAbsent">
+                                                                                {{ testing(product) }}
+                                                                                <input id="clientWithdrawal{{ client.CLT_PK}}{{$index}}" class="colVal wthAmt" ng-blur="validateAmt(client,product,'withdrawal')"  onclick="this.select();"
+                                                                                ng-click="checkCashonHand()" type="tel" ng-model="product.ACT_WTH_AMT"
+                                                                                ng-currency deci-place="0" currency-symbol="{{currloc}}" />
+                                                                            </div>
+                                                                            <div class="wthAmt" ng-if="lockSavings('ran',product)||(isSubmited(client)&&product.ACT_WTH_AMT>0)||client.isAbsent">
+                                                                                {{ product.ACT_WTH_AMT | noFractionCurrency : currloc : 0  }}
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="">
+                                                                            {{ getSavingsBalance(client,product) | noFractionCurrency : currloc : 0 }}
+                                                                        </div>
+                                                                        <!-- <span class="wth_amt" ng-show="product.ACT_WTH_AMT > 0">
+                                                                            - {{ product.ACT_WTH_AMT | noFractionCurrency : currloc : 0 }}
+                                                                        </span> -->
+                                                                    </td>
+                                                                </tr>
+                                                                <tr ng-repeat="product in client.newProducts | filter: { CPM_CLT_PK : loan.CLT_PK }" ng-init="product">
+                                                                     <td colspan="5">
+                                                                        <div class="ui-content list-first-subcol">
+                                                                            {{ product.PRM_LOCAL_NAME | translate }}
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr ng-if="false">
+                                                                    <td>
+
+                                                                    </td>
+                                                                    <td>
+
+                                                                    </td>
+                                                                    <td>
+
+                                                                    </td>
+                                                                    <td>
+
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ newproducttxt }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr ng-if="haveMoreProducts(client)&&!client.isAbsent">
+                                                                    <td colspan="5">
+                                                                        <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow sub-table light-text" style="background-color:white" >
+                                                                            <thead >
+                                                                                <tr>
+                                                                                    <th class="pad-left">New {{ producttext }}</th>
+                                                                                    <th style="width:20%"><span id="newprodmattxt{{client.CLT_PK}}">{{ maturitytxt}}</span></th>
+                                                                                    <th style="width:20%"> </th>
+                                                                                    <th style="width:20%;">{{ weeklysavingstxt }} </th>
+                                                                                    <th style="width:18%">{{ actiontxt }}</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <select name="newprod{{client.CLT_PK}}" id="newprod{{client.CLT_PK}}"
+                                                                                            class="newprod"
+                                                                                            ng-model="client.selectedProduct"
+                                                                                            ng-change="refresh(client,'prd')"
+                                                                                            ng-options="prd.PRM_CODE as prd.PRM_LOCAL_NAME for prd in client.allloanprds | filterClientLoan:client.all_existing_prds track by prd.PRM_CODE"   ></select>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input id="newProdMat{{ client.CLT_PK}}" class="colVal"  onclick="this.select();" type="tel" ng-model="selectedMaturity" ng-currency deci-place="0" currency-symbol="{{currloc}}" />
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <span id="newprodwktxt{{client.CLT_PK}}">{{ weekstxt }}</span>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div ng-show="client.selectedProduct=='002.0007'">
+                                                                                            <select name="newprodpay{{client.CLT_PK}}"
+                                                                                                id="newprodpay{{client.CLT_PK}}"
+                                                                                                class="newprod"
+                                                                                                ng-model="selectedProduct"
+                                                                                                ng-change="refresh(client,'sav')"
+                                                                                                ng-options="pay.value as pay.name for pay in feastrepay"   ></select>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <button ng-click="addNewProduct(client)" class="ui-btn-bl white" data-i18n="messages.AddNewProduct">{{ addnewproducttxt }} </button>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="center_total" trans-check
+                                                        expected="0"
+                                                        actual="0"
+                                                        type="bg"
+                                                        defaultcolor="#42A5F5"
+                                                        checknow="false">
+                                        <div class="">
+                                            <div class="center">
+                                                <h1 style="font-size: 2.5em;font-weight:bold; padding-top: 1em; color: white;">{{ getGroupTotal() | noFractionCurrency : currloc : 0}}</h1>
+                                                <p style="color:white;" data-i18n="messages.GroupTotal">Group Total</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div data-role="footer" class="footer"></div>
+            </div>
+
+        </div>
+
+        <!-- scripts -->
+
+        <script type="text/javascript" src="js/load_template.js?V=1.1.3"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script>
+            var myDB = new properDB("TBOP",1,"TBOP Client Database", 10*1024*1024); //10MB
+        </script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_transactions.js"></script>
+        <script type="text/javascript" src="js/app_header.js?V=1.2"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+        <script type="text/javascript" src="js/chart.min.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+    </body>
+</html>

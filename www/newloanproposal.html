@@ -1,0 +1,1132 @@
+s<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <style>
+        .btnctr a {
+            text-align: center;
+            left: 0;
+            right: 0;
+            margin: auto;
+        }
+        canvas {
+            height: 100%;
+        }
+        canvas#the-canvas {
+            height: auto;
+        }
+        multiselect {
+            display: block;
+        }
+
+        multiselect > .btn-group {
+            min-width: 180px;
+        }
+
+        multiselect .btn {
+            width: 100%;
+            background-color: #FFF;
+        }
+
+        multiselect .btn.has-error {
+            border: 1px solid #a94442 !important;
+            color: #db524b;
+        }
+
+        multiselect .dropdown-menu {
+            max-height: 300px;
+            min-width: 200px;
+            overflow-y: auto;
+        }
+
+        multiselect .dropdown-menu .filter > input {
+            width: 99%;
+        }
+
+        multiselect .dropdown-menu .filter .glyphicon {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        multiselect .dropdown-menu {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 2px;
+        }
+
+        multiselect > .btn-group > button {
+            padding-right: 20px;
+        }
+
+        multiselect > .btn-group > button > .caret {
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid black;
+            right: 5px;
+            top: 45%;
+            position: absolute;
+        }
+
+        multiselect .dropdown-menu > li > a {
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+
+        multiselect .dropdown-menu > li > a i {
+            margin-right: 4px;
+        }
+
+        .glyphicon-none:before {
+            content: "\e013";
+            color: transparent !important;
+        }
+        #signingperson h3 p {
+            text-align: center;
+        }
+        .group-client { 
+             bottom: .5em; 
+        }
+        .ui-grid-33 {
+            width: 49%;
+        }
+    </style>
+    <body ng-app="myApp" ng-controller="ProposalCtrl">
+        <!-- body -->
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content1" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page">
+                    <div class="whitecover first-cover" >
+                        <div class="coverwrap">
+
+                        </div>
+                    </div>
+                    <div data-type="vertical" class="left ui-grid-50">
+
+                        <br class="clear"/>
+                        <div class="detlabel" data-i18n="messages.Village">Village:</div>:
+                        <span class="detville">&nbsp;&nbsp;<b class="">{{ user.curr_village.name }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+
+                    <br class="clear"/>
+
+                    <div class="ui-content no-hori-padding" style="    min-height: 200px;">
+                        <div class="jumbotron center" ng-if="user.village.groups != undefined && user.village.groups.length == 0 && !loading">
+                            <h1 data-i18n="messages.NoClientInVillage">No Clients in this Village</h1>
+                            &nbsp;
+                        </div>
+                        <div class="load-cover">
+                            <img src="img/ripple3.gif?1" />
+                        </div>
+                        <div class="center_wrap">
+                            <div ng-class="{'selected': (center.SELECTED) }" ng-click="changeCenter(center,$event)" ng-repeat="center in village.centers" class="centers " ng-show="center.groups.length > 0">
+                                {{ center.CTR_CENTER_NAME }} 
+                            </div>
+                        </div>
+                        <div ng-repeat="center in village.centers | filter: { CTR_CENTER_NAME: selectedCenter.CTR_CENTER_NAME  }"  ng-show="center.groups.length > 0">
+                            <div ng-repeat="group in center.groups" class="ui-grid-33 marg-btm-20 ">
+                                 
+                                    <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke"  trans-check
+                                                        expected="{{ group.clients.length }} "
+                                                        actual="{{ checkGroupDone(group) }}"
+                                                        type="bg"
+                                                        defaultcolor="#42A5F5"
+                                                        checknow="allProposalDone(group)">
+                                        <thead>
+                                            <tr>
+                                                <th class="box-header">
+                                                    <div class="lineh-32 ">
+                                                        {{ center.CTR_CENTER_NAME }}  {{ grouptext }} {{ group.GROUP_ID }} 
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="box-body" ng-click="changeGroup(group)">
+                                            <tr ng-click="detailview('clientlist')" >
+                                                <td >
+                                                    <div class="ui-content bold center group-block-amt" >
+                                                        <h1 data-18n="messages.LoanProposal">&nbsp;PROPOSAL</h1>
+                                                        <span class="wthwth" ng-if="group.total_wth_act > 0">-{{ group.total_wth_act }}</span>
+                                                    </div>
+                                                    <div class="group-client left">
+                                                        <i class="fa fa-user"></i>{{group.clients.length}}
+                                                    </div>
+                                                    <div class="group-status right">
+                                                         
+                                                    </div>
+                                                </td>
+                                            </tr> 
+                                        </tbody>
+                                    </table>
+                               
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="ui-content second-page row" data-ajax="false">
+                    <div class="whitecover second-cover" >
+                        <div class="coverwrap">
+
+                        </div>
+                    </div>
+
+                    <div class="ui-content no-hori-padding" id="indivInfoTable"  > 
+                        <div class="ui-content">
+                            <div data-type="vertical" class="left">
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back"  ng-click="detailview('centers')">Back</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-role="main" class="ui-content" data-ajax="false">
+                        <div class="ui-content no-hori-padding aniview slow"  av-animation="fadeInUp">
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table table-box ui-corner-all ui-table-reflow" >
+                                <thead>
+                                    <tr>
+                                        <th><div class="ui-content" data-i18n="messages.ClientName">Name</div></th>
+                                        <th><div class="ui-content" data-i18n="messages.LoanType">Loan Type</div></th>
+                                        <th>
+                                            <div class="ui-content" data-i18n="messages.Signature">Signature</div>
+                                        </th>
+                                        <th>
+                                            <div class="ui-content" data-i18n="messags.Done">Done</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="client in clients | orderBy : 'hasSigned':true | filter: {  CLT_GROUP_ID: selectedGroup }" class="valign-middle" >
+                                        <td>
+                                            {{client.CLT_FULL_NAME}} 
+                                        </td>
+                                        <td>   
+                                            <div class="ui-content">
+                                                {{ client.LTY_DESCRIPTION | translate }} 
+                                            </div>
+                                        </td>  
+                                        <td>
+                                            <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="selectClient(client)" ng-show="!clientDone(client)" data-i18n="messages.Sign">
+                                                {{ signtext }}
+                                            </div>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="selectClient(client)" ng-show="!clientDone(client) && selectedLoan == client.CLL_PK">
+                                                <i class="fa fa-undo" aria-hidden="true"></i>
+                                            </div>  -->
+                                            <div ng-show="clientDone(client)" style="height: 100px;text-align: right;">
+                                                <canvas id="clients-canvas-{{client.CLL_PK}}" >
+
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                        <td class="btnctr" style="text-align: center">
+                                            <a data-ajax="false" ng-show="clientMandatoryDone(client)" href="#" class="ui-btn ui-btn-grn ui-shadow ui-corner-all ui-icon-check white ui-btn-i"><i class="fa fa-lg small fa-check"></i></a>
+
+                                            <a data-ajax="false" ng-hide="clientMandatoryDone(client)"  href="#" class="ui-btn ui-btn-gr ui-shadow ui-corner-all ui-icon-check white ui-btn-i"><i class="fa fa-lg small fa-times"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-content third-page row" data-ajax="false" >
+                    <div class="whitecover third-cover">
+                        <div class="coverwrap">
+
+                        </div>
+                    </div>
+                    <div class="ui-content no-hori-padding" id="indivInfoTable"  > 
+                        <div class="ui-content">
+                            <div data-type="vertical" class="left">
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back"  ng-click="detailview('clientlist')">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-role="main" class="ui-content" data-ajax="false">
+                        <div class="">
+                            <!-- LOAN TYPES -->
+                            <div ng-repeat="loan in loans track by loan.LTY_PK" class="ui-grid-33 marg-btm-20 ncl_loan">
+                                <a href="#" id="loan{{loan.CLL_PK}}" ng-click="viewloanproducts($index, $event)" class="loan-trans">
+                                    <table data-role="table" class="ui-responsive box-active loan-box ui-shadow table-stroke"  >
+                                        <thead>
+                                            <tr>
+                                                <th class="box-header">
+                                                    <div class="lineh-32 ">
+                                                        {{loan.LTY_DESCRIPTION | translate }}
+                                                        <div ng-if="activeloan.LTY_PK == loan.LTY_PK || loan.isSelected || loan.existingloan" class="loan-check" ng-click="loanSelected(loan,$event)" ng-disabled="loan.existingloan">
+                                                            <i ng-show="loan.isSelected||loan.newloan" class="dark-blue right fa fa-check fa-2x"></i>
+                                                            <i ng-show="loan.existingloan&&!loan.newloan&&!loan.isSelected" class="dark-grey right fa fa-check fa-2x"></i>
+                                                        </div>
+                                                        <i ng-show="groupCompleted(group)" class="dark-grey right fa fa-check-square fa-2x"></i>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="box-body">
+                                            <tr>
+                                                <td >
+                                                    <div class="ui-content bold center group-block-amt" >
+                                                        <h1><i class="fa fa-plus"></i></h1>
+                                                    </div>
+                                                    <div class="group-client left">
+                                                        
+                                                    </div>
+                                                    <div class="group-status right">
+                                                        <div ng-show="loan.LTY_CODE != '001.9999'">
+                                                            <span>Min Loan</span> :<b>{{ loan.LTY_MIN_LOAN_AMOUNT }} Rp</b>
+                                                        </div>
+                                                        <div ng-hide="loan.LTY_CODE != '001.9999'"><span>&nbsp;</span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </a>
+                            </div>
+                        </div>
+                        <br class="clear"/>
+                        <table id="productmappingdetails" data-role="table" ng-model="activeloan" ng-show="activeloan.LTY_PK != undefined"  class="ui-responsive ui-shadow table-stroke ui-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="messages.LoanAmt">Loan Amount</th>
+                                    <th ng-if="activeloan.graceOptions != ''">Grace Period</th>
+                                    <th data-i18n="messages.Maturity">Maturity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div ng-if="(activeloan.LTY_PK != '99' && !activeloan.isSelected && !activeloan.newloan)" >
+                                            <input id="activeloanAsmount{{activeloan.LTY_PK}}"  type="number" ng-model="activeloan.selecteddetails.loanamt" placeholder="{{ activeloan.selecteddetails.loanamt }}" />
+                                        </div>
+                                        <div class="ui-content" ng-show="(activeloan.LTY_PK != '99' && activeloan.isSelected) || activeloan.newloan ">
+                                            <div ng-if="!activeloan.newloan">
+                                                {{ activeloan.selecteddetails.loanamt  }} 
+                                            </div>
+                                            <div ng-if="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'loanamt') }}
+                                            <div>
+                                        </div>
+                                    </td>
+                                    <td ng-if="activeloan.graceOptions != ''">
+                                        <div  ng-hide="activeloan.isSelected || activeloan.newloan">
+                                            <select
+                                                id="activeloanGracePeriod"
+                                                name="activeloanGracePeriod"
+                                                class="sel-activeloangrace"
+                                                ng-change="refreshSelect('#activeloanGracePeriod)"
+                                                ng-model="activeloan.selecteddetails.graceperiod"
+                                                ng-init="activeloan.selecteddetails.graceperiod = activeloan.selecteddetails.graceperiod || options[0].value"
+                                                ng-options="item.value for item in activeloan.graceOptions"
+                                                my-change
+                                                required>
+                                            </select>
+                                        </div>
+                                        <div class="ui-content" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            {{ activeloan.selecteddetails.graceperiod.value }} {{ weektext }}
+                                        </div>
+                                    </td>
+                                    <td style="width:21%">
+                                        <div  ng-hide="activeloan.isSelected || activeloan.newloan">
+                                            <select
+                                                id="activeloanMaturity"
+                                                name="activeloanMaturity"
+                                                class="sel-activeloanmat"
+                                                ng-change="refreshSelect('#activeloanMaturity');updateInterest(activeloan)"
+                                                ng-model="activeloan.selecteddetails.loanmaturity"
+                                                ng-init="activeloan.selecteddetails.loanmaturity = activeloan.selecteddetails.loanmaturity || options[0].value"
+                                                ng-options="item.value for item in activeloan.maturityOptions"
+                                                my-change
+                                                required>
+                                            </select>
+                                        </div>
+                                        <div class="ui-content" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-show="!activeloan.newloan">
+                                                {{ activeloan.selecteddetails.loanmaturity.value }} 
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'loanmat') }} {{ weektext }}
+                                            <div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                        <table data-role="table" ng-model="activeloan" ng-show="activeloan.LTY_PK != undefined && activeloan.LTY_CODE != '001.9999'"  class="ui-responsive ui-shadow table-stroke ui-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="messages.LoanPurpose">Loan Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div  ng-hide="activeloan.isSelected||activeloan.newloan">
+                                            <select
+                                                id="activeloanPurpose"
+                                                name="activeloanPurpose"
+                                                class="sel-activeloanmat"
+                                                ng-model="activeloan.selecteddetails.loanpurpose"
+                                                ng-init="activeloan.selecteddetails.loanpurpose"
+                                                ng-options="item as item.name | translate for item in loanpurpose | loanpurposefilter: activeloan.LTY_PK track by item.name"
+                                                my-change
+                                                required>
+                                            </select>
+                                        </div>
+                                        <div class="ui-content" ng-show="activeloan.isSelected||activeloan.newloan">
+                                            <div ng-show="!activeloan.newloan">
+                                                {{ activeloan.selecteddetails.loanpurpose.name | translate }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'loanpurp') | translate }}
+                                            <div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table" ng-show="activeloan.LTY_PK != undefined && !activeloan.existingloan">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="messages.Select">Select</th>
+                                    <th data-i18n="messages.ProductName">Product Name</th>
+                                    <th data-i18n="messages.ProductSavingpwk">Saving per Week</th>
+                                    <th data-i18n="messages.Maturity">Maturity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="product in newproducts track by product.CPM_PK" ng-if="product.PRM_CODE != '002.0007'"  >
+                                    <td>
+                                        <div class="ui-content">
+                                            <input type="checkbox"
+                                                class="ui-btn ui-shadow ui-corner-all"
+                                                ng-model="product.isSelected"
+                                                name="product{{ product.PRM_PK}}"
+                                                id="product{{ product.PRM_PK}}"
+                                                ng-true-value="YES"
+                                                ng-false-value="NO"
+                                                data-role="none"
+                                                ng-disabled="true"
+                                                ng-change="checkboxChange(product.isSelected)" />
+                                            <label for="product{{product.PRM_PK}}">&nbsp;</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                           {{ product.PRM_LOCAL_NAME }}{{ " (" + product.PRM_CODE + ")" }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div ng-show="product.PRM_CODE=='002.0007'" >
+                                            <div >
+                                                {{ product.selectedSavingperWeek | currency }} / {{ weektext }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td  >
+                                        <div class="">{{ product.CPM_PRM_MATURITY }}</div>
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="product in activeloan.products track by product.PRM_PK"  ng-show="!activeloan.newloan && !( (product.isMandatory=='Y' && !product.showMaturityOptions ) ||  !productAvailable(product,'check'))">
+                                    <td>
+                                        <div class="ui-content">
+                                            <input type="checkbox"
+                                                class="ui-btn ui-shadow ui-corner-all"
+                                                ng-model="product.isSelected"
+                                                name="product{{ product.PRM_PK}}"
+                                                id="product{{ product.PRM_PK}}"
+                                                ng-true-value="YES"
+                                                ng-false-value="NO"
+                                                data-role="none"
+                                                ng-disabled="product.isMandatory=='Y' || activeloan.isSelected || activeloan.newloan || !productAvailable(product,'check')"
+                                                ng-change="checkboxChange(product.isSelected)" />
+                                            <label for="product{{product.PRM_PK}}">&nbsp;</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                           {{ product.PRM_LOCAL_NAME }}{{ " (" + product.PRM_CODE + ")" }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div ng-show="product.PRM_CODE=='002.0007' && product.isSelected != 'NO'" >
+                                            <div ng-show="!activeloan.isSelected && !activeloan.newloan && productAvailable(product,'check')">
+                                                <select name="newprodpay{{activeloan.CLL_PK}}"
+                                                    id="newprodpay{{ activeloan.CLL_PK }}"
+                                                    class="newprod"
+                                                    ng-model="product.selectedSavingperWeek"
+                                                    my-change
+                                                    onchange="refreshthis('.newprod')"
+                                                    ng-change="refreshSelSav(loan.CLL_PK,product)"
+                                                    ng-options="pay.value as pay.name for pay in feastrepay"></select>
+                                            </div>
+                                            <div ng-show="(activeloan.isSelected || activeloan.newloan || !productAvailable(product,'check')) && product.isSelected == 'YES'">
+                                                {{ product.selectedSavingperWeek | currency }} / {{ weektext }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td ng-if="product.showMaturityOptions && product.maturityOptions.length > 1  ">
+                                        <div ng-hide="activeloan.isSelected || activeloan.newloan || !productAvailable(product,'check')" ng-class="{'bggrey' :  product.isSelected == 'NO'  }">
+                                            <select
+                                                class="newprodmat"
+                                                id="maturityOption{{ product.PRM_PK}}"
+                                                name="maturityOption{{ product.PRM_PK }}"
+                                                ng-model="product.selectedMaturityOption"
+                                                ng-change="selectOption({{$index}}, product)"
+                                                ng-options="item | translate for item in product.maturityOptions "
+                                                my-change
+                                                required>
+                                                <option value="">-- please Select --</option>
+                                            </select>
+                                        </div>
+                                        <div class="" ng-show="(activeloan.isSelected || activeloan.newloan || !productAvailable(product,'check')) && product.isSelected == 'YES'">
+                                            {{ product.selectedMaturityOption | translate }}
+                                        </div>
+                                    </td>
+                                    <td ng-if="!product.showMaturityOptions ">
+                                        <div class="" ng-show="product.isSelected == 'YES'">{{ activeloan.selecteddetails.loanmaturity.value }} {{ weektext }}</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table id="additional_loaninfo" data-role="table" ng-model="activeloan" ng-show="activeloan != null && activeloan.LTY_CODE == '001.0003'"  class="ui-responsive ui-shadow table-stroke ui-table">
+                            <thead>
+                                <tr>
+                                    <th>Child's Name</th>
+                                    <th>Child's Gender</th>
+                                    <th>Child's Age</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td> 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                {{ activeloan.selecteddetails.childname }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'childname') }} 
+                                            </div>
+                                        </div>
+                                        <div class="" ng-show="!activeloan.isSelected && !activeloan.newloan">
+                                            <input id="activeloanChildname{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.childname" placeholder="Child's Name" />
+                                        </div>
+                                    </td>
+                                    <td  > 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                {{ activeloan.selecteddetails.childgender }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'childgender') }} 
+                                            </div>
+                                        </div>
+                                        <div  ng-show="!activeloan.isSelected && !activeloan.newloan">
+                                            <select
+                                                id="activeloanChildgender"
+                                                name="activeloanChildgender"
+                                                class="sel-activeloangrace"
+                                                ng-change="refreshSelect('#activeloanChildgender)"
+                                                ng-model="activeloan.selecteddetails.childgender" 
+                                                my-change
+                                                required>
+
+                                                <option value="M">Male</option>
+                                                <option value="F">Female</option>
+
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td style="width:21%"> 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                {{ activeloan.selecteddetails.childage }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'childage') }} 
+                                            </div>
+                                        </div>
+                                        <div  ng-show="!activeloan.isSelected && !activeloan.newloan">
+                                            <input id="activeloanchildage{{activeloan.LTY_PK}}" type="number" ng-model="activeloan.selecteddetails.childage" placeholder="Child Age" />
+                                        </div>
+                                    </td>
+                                </tr> 
+                                <tr>
+                                    <td colspan="3"> 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                <b>Profile: </b>{{ activeloan.selecteddetails.profile }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                <b>Profile: </b>{{ getNewLoan(activeloan,'childprofile') }} 
+                                            </div>
+                                        </div> 
+                                        <textarea id="activeloanChildProfile" ng-model="activeloan.selecteddetails.profile"  ng-show="!activeloan.isSelected && !activeloan.newloan" placeholder="Profile"></textarea>
+                                    </td>
+                                </tr>   
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                        <table id="additional_loaninfo" data-role="table" ng-model="activeloan" ng-show="activeloan != null && activeloan.LTY_CODE == '001.0007'"  class="ui-responsive ui-shadow table-stroke ui-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Additional Information</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            PRODUCT NAME
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.artaproducts  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanArtaProductName{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.artaproducts" placeholder="Product Name" />
+                                        </div>
+                                    </td> 
+                                </tr>    
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                        <table id="additional_loaninfo" data-role="table" ng-model="activeloan" ng-show="activeloan != null && activeloan.LTY_CODE == '001.0005'"  class="ui-responsive ui-shadow table-stroke ui-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3" data-i18n="messages.AgricultureInfo">Agriculture Information</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" data-i18n="messages.MainPlant">
+                                            MAIN PLANT
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrimainplant  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanAgriMainPlant{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.agrimainplant"  
+                                            data-i18n="[placeholder]messages.MainPlant" />
+                                        </div>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"  data-i18n="messages.TypesVarieties">
+                                            TYPES / VARIETIES
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agritype  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanAgriType{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.agritype" data-i18n="[placeholder]messages.TypesVarieties" />
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"   data-i18n="messages.OriginOfSeed">
+                                            ORIGIN OF SEED
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrioriginofseed  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanAgriOriginOfSeed{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.agrioriginofseed" data-i18n="[placeholder]messages.OriginOfSeed" />
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"   data-i18n="messages.OtherPlant">
+                                            OTHER PLANT
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agriotherplant }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanAgriOtherPlant{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.agriotherplant" data-i18n="[placeholder]messages.OtherPlant" />
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"   data-i18n="messages.BlockLocation">
+                                            LAND / BLOCK LOCATION
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrilandlocation  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanAgriLandLoc{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.agrilandlocation" data-i18n="[placeholder]messages.BlockLocation" />
+                                        </div>
+                                    </td> 
+                                </tr>  
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"   data-i18n="messages.LandArea">
+                                            LAND AREA
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrilandarea  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected" style="width: 90%;display: inline-block;">
+                                            <input id="activeloanAgriLandArea{{activeloan.LTY_PK}}"  type="number" ng-model="activeloan.selecteddetails.agrilandarea" data-i18n="[placeholder]messages.LandArea" /> 
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"  data-i18n="messages.LandTenure" >
+                                            LAND TENURE
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrilandtenure  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <select name="activeloanAgriLandTenure" id="activeloanAgriLandTenure{{activeloan.LTY_PK}}" ng-model="activeloan.selecteddetails.agrilandtenure" ng-options="option.value as option.name | translate for option in selectCodes.3" required></select>  
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"   data-i18n="messages.LandQuality">
+                                            LAND Quality
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrilandquality  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <select name="activeloanAgriLandQuality" id="activeloanAgriLandQuality{{activeloan.LTY_PK}}" ng-model="activeloan.selecteddetails.agrilandquality" ng-options="option.value as option.name | translate for option in selectCodes.3" required></select>  
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content"   data-i18n="messages.BizRisk">
+                                            Business Risk
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agribizrisk }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <select name="activeloanAgriLandQuality" id="activeloanAgriBizRisk{{activeloan.LTY_PK}}" ng-model="activeloan.selecteddetails.agribizrisk" ng-options="option.value as option.name | translate for option in selectCodes.3" required></select>  
+                                        </div>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" data-i18n="messages.Note">
+                                            Note
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content" ng-if="activeloan.isSelected">
+                                            {{ activeloan.selecteddetails.agrinote  }}
+                                        </div>
+                                        <div class="" ng-show=" !activeloan.isSelected">
+                                            <input id="activeloanAgriNote{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.agrinote" data-i18n="[placeholder]messages.Note" /> 
+                                        </div>
+                                    </td> 
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br class="clear"/>
+                        <table id="additional_loaninfo" data-role="table" ng-model="activeloan" ng-show="activeloan != null && (activeloan.LTY_CODE == '001.0003' || activeloan.LTY_CODE == '001.0006' || activeloan.LTY_CODE == '001.0007')  "  class="ui-responsive ui-shadow table-stroke ui-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Payment Information</th> 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            <b>Payee Name</b>
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" > 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                {{ activeloan.selecteddetails.payeename }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'payeename') }} 
+                                            </div>
+                                        </div>
+                                        <div  ng-show="!activeloan.isSelected && !activeloan.newloan">
+                                            <input id="activeloanChildname{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.payeename" placeholder="Payee's Name" />
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            <b>Payee Address</b>
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" > 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                {{ activeloan.selecteddetails.payeeaddress }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'payeeaddress') }} 
+                                            </div>
+                                        </div>
+                                        <div  ng-show="!activeloan.isSelected && !activeloan.newloan">
+                                            <input id="activeloanChildname{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.payeeaddress" placeholder="Payee's Address" />
+                                        </div>
+                                    </td> 
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            <b>Payee Account No.</b>
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" > 
+                                        <div class="" ng-show="activeloan.isSelected || activeloan.newloan">
+                                            <div ng-hide="activeloan.newloan">
+                                                {{ activeloan.selecteddetails.payeeacct }}
+                                            </div>
+                                            <div ng-show="activeloan.newloan">
+                                                {{ getNewLoan(activeloan,'payeeacct') }} 
+                                            </div>
+                                        </div>
+                                        <div  ng-show="!activeloan.isSelected && !activeloan.newloan">
+                                            <input id="activeloanChildname{{activeloan.LTY_PK}}"  type="text" ng-model="activeloan.selecteddetails.payeeacct" placeholder="Payee's Account No" />
+                                        </div>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="ui-content" >
+                                            <b>Disbursement Mode</b>
+                                        </div> 
+                                    </td>
+                                    <td colspan="2" >
+                                        <div class="ui-content">
+                                            <div class="disb-mode" ng-class="{selected:activeloan.selecteddetails.disbmode=='cash' || getNewLoan(activeloan,'disbmode') =='cash'}" ng-click="selectDisburseMode(activeloan,'cash') ">
+                                                <i class="fa fa-money"></i>
+                                                <p>Cash</p>
+                                            </div>
+                                            <div class="disb-mode" ng-class="{selected:activeloan.selecteddetails.disbmode=='credit' || getNewLoan(activeloan,'disbmode') =='credit'}" ng-click="selectDisburseMode(activeloan,'credit') ">
+                                                <i class="fa fa-credit-card"></i>
+                                                <p>Transfer</p>
+                                            </div>
+                                        </div> 
+                                    </td> 
+                                </tr>  
+                            </tbody>
+                        </table> 
+                        <button ng-show="activeloan.LTY_PK != undefined && !activeloan.isSelected" class="ui-btn ui-btn-g" type="button" ng-click="loanSelected(activeloan,$event)" > {{ selectloantext }}</button>
+                        <br class="clear"/>
+                        <div class="loansignature" ng-show="activeloan !== null && !activeloan.newloan && activeloan.isSelected"> 
+                            <table id="client-signatures" data-role="table" class="ui-responsive ui-shadow table-stroke ui-table"  >
+                                <thead><tr><td></td></tr></thead>
+                                <tbody>
+                                    <tr ng-init="client" style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-i18n="messages.Member">
+                                                Member
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ selectedClient.CLT_FULL_NAME }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#popupSign" ng-hide="selectedClient.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(selectedClient, 'client')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                Sign
+                                            </a>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(0)" ng-hide="selectedClient.hasSigned" data-i18n="messages.Sign">
+                                                Sign
+                                            </div> -->
+                                            <div class="right" ng-show="selectedClient.hasSigned">
+                                                <canvas id="the-canvas-{{selectedClient.CLT_PK}}" >
+    
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- <tr ng-repeat="witness in witnesses track by $index" style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content">
+                                                Witness {{ $index + 1 }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content" ng-show="!witness.hasSigned">
+                                                <select ng-model="selectedWitness[$index]"
+                                                        class="witness"
+                                                        ng-change="updateWitness($index)"
+                                                        my-change
+                                                        ng-options="(item) as (item.CLT_FULL_NAME||item) for item in memeberFilter()">
+    
+                                                </select>
+                                            </div>
+                                            <div class="ui-content" ng-show="witness.hasSigned">
+                                                {{ witness.witness_name }} 
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index,'witness')" ng-show="!witness.hasSigned && selectedWitness[$index] != null" data-i18n="messages.Sign">
+                                                Sign
+                                            </div>
+                                            <div class="right" ng-show="witness.hasSigned">
+                                                <canvas id="the-canvas-{{witness.witness_pk}}" >
+    
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr> -->
+                                    <tr  style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-i18n="messages.GroupLeader">
+                                                Group Leader
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content" >
+                                                {{ grp_lead.grp_lead_name }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#popupSign" ng-hide="grp_lead.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(grp_lead, 'grp_lead')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                Sign
+                                            </a>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(0,'grp_lead')" ng-hide="grp_lead.hasSigned" data-i18n="messages.Sign">
+                                                Sign
+                                            </div> -->
+                                            <div class="right" ng-show="grp_lead.hasSigned">
+                                                <canvas id="the-canvas-grp_lead" >
+    
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-i18n="messages.CenterLeader">
+                                                Center Leader
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content" ng-show="!ctr_lead.hasSigned">
+                                                <select ng-model="selectedCtrLeader"
+                                                        ng-change="updateCtrLeader()"
+                                                        my-change
+                                                        ng-options="(item) as (item.CLT_FULL_NAME||item) for item in ctr_lead.ctr_leaders">
+    
+                                                </select>
+                                            </div>
+                                            <div class="ui-content" ng-show="ctr_lead.hasSigned">
+                                                {{ ctr_lead.ctr_lead_name }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#popupSign" ng-hide="ctr_lead.hasSigned || selectedCtrLeader == null" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(ctr_lead, 'ctr_lead')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                Sign
+                                            </a>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(0,'ctr_lead')" ng-hide="ctr_lead.hasSigned || selectedCtrLeader == null" data-i18n="messages.Sign">
+                                                Sign
+                                            </div> -->
+                                            <div class="right" ng-show="ctr_lead.hasSigned">
+                                                <canvas id="the-canvas-ctr_lead" >
+    
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-18n="messages.FieldOfficer">
+                                                Field Officer
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ user.userName }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#popupSign" ng-hide="user.Signature != ''" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(user, 'officer')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                Sign
+                                            </a>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index, 'officer')" ng-hide="user.Signature != ''" data-i18n="messages.Sign">
+                                                Sign
+                                            </div> -->
+                                            <div class="right" ng-show="user.Signature != ''">
+                                                <canvas id="the-canvas-officer" >
+                                                    
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!-- <tr style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content" data-18n="buttons.Manager">
+                                                Manager
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ MGR.mgrname }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index, 'mgr')" ng-hide="MGR.hasSigned && MGR.Signature != ''" data-i18n="messages.Sign">
+                                                Sign
+                                            </div>
+                                            <div class="right" ng-show="MGR.hasSigned && MGR.Signature != ''">
+                                                <canvas id="the-canvas-mgr" >
+    
+                                                </canvas>
+                                            </div>
+                                        </td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                            <div class="ui-content no-hori-padding signature-screen" ng-show="showSign" >
+                                <canvas id="the-canvas" >
+    
+                                </canvas>
+                                <div id="signature" style="text-align:center;">
+    
+                                </div>
+                                <p id="signingperson" style="text-align:center;"></p>
+                                <br><br>
+                                <p id="sigbtn" style="display:none;">
+                                    <button type="button" ng-click="clearSigPad()" data-i18n="messages.Clear">Clear</button>
+                                    <!-- <button type="button" onclick="alert($('#signature').jSignature('getData', 'base30'))">Export</button> -->
+                                    <button type="button" ng-click="importImg()" data-i18n="messages.ConfirmSignature">Confirm Signature</button>
+                                    <!-- <a href="$" ng-click="updateStatus()" id="download" class="ui-btn" download >Download Form</a> -->
+                                    <!-- <button type="button" ng-click="updateStatus()" >Save</button> -->
+                                </p>
+                                <div class="displayarea"></div>
+                            </div>
+                        </div>
+                        <button ng-show="activeloan.isSelected" class="ui-btn ui-btn-bl" type="button" ng-click="saveloan()" data-i18n="messages.Save">Save</button>
+                        <br class="clear"/>
+                        <div class="ui-content no-hori-padding signature-screen" ng-show="showSign">
+                            <canvas id="the-canvas" >
+
+                            </canvas>
+                            <div id="signature" style="text-align:center;">
+
+                            </div>
+                            <p id="signingperson"></p>
+                            <Br><Br>
+                            <p id="sigbtn" style="display:none;">
+                                <button type="button" ng-click="clearSigPad()" data-i18n="messages.clear" >Clear</button>
+                                <!-- <button type="button" onclick="alert($('#signature').jSignature('getData', 'base30'))">Export</button> -->
+                                <button type="button" ng-click="importImg()" data-i18n="messages.ConfirmSignature">Confirm Signature</button>
+                                <!-- <a href="$" ng-click="updateStatus()" id="download" class="ui-btn" download >Download Form</a> -->
+                                <!-- <button type="button" ng-click="updateStatus()" >Save</button> -->
+                            </p>
+                            <div class="displayarea"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div>
+            <div id="signaturePops">
+                <style>
+                    #popupSign-popup {
+                        width: 80%;
+                    }
+                    #popup-signingperson {
+                        text-align: center;
+                    }
+                </style>
+                
+                <div data-role="popup" id="popupSign" class="ui-corner-all" ng-controller="signCtrl" >
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <h1>Sign</h1>
+                    <div class="ui-content no-hori-padding signature-screen" >
+                        <canvas id="popup-the-canvas" ng-show="showCanvas">
+                    
+                        </canvas>
+                        <div id="popup-signature" style="text-align:center;">
+                    
+                        </div>
+                        <p id="popup-signingperson"></p>
+                        <br><br>
+                        <p id="popup-sigbtn">
+                            <button type="button" ng-click="clearSigPad()">Clear</button>
+                            <button type="button" ng-click="importImg()">Confirm Signature</button>
+                        </p>
+                        <div class="popup-displayarea"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- scripts --> 
+        <script type="text/javascript" src="js/load_template.js?V=1.0"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_newloanproposal.js?V=1.1.18"></script>
+        <script type="text/javascript" src="js/services.js?V=1.1.8"></script>
+        <script type="text/javascript" src="js/app_header.js?V=1.1"></script>
+	    <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+	    <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+        <script type="text/javascript" src="js/app_signature.js?V=1.1"></script>
+
+    </body>
+</html>

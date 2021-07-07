@@ -1,0 +1,263 @@
+s<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <style>
+        canvas {
+            height: 100%;
+        }
+        canvas#the-canvas {
+            height: auto;
+        }
+        multiselect {
+            display: block;
+        }
+
+        multiselect > .btn-group {
+            min-width: 180px;
+        }
+
+        multiselect .btn {
+            width: 100%;
+            background-color: #FFF;
+        }
+
+        multiselect .btn.has-error {
+            border: 1px solid #a94442 !important;
+            color: #db524b;
+        }
+
+        multiselect .dropdown-menu {
+            max-height: 300px;
+            min-width: 200px;
+            overflow-y: auto;
+        }
+
+        multiselect .dropdown-menu .filter > input {
+            width: 99%;
+        }
+
+        multiselect .dropdown-menu .filter .glyphicon {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        multiselect .dropdown-menu {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 2px;
+        }
+
+        multiselect > .btn-group > button {
+            padding-right: 20px;
+        }
+
+        multiselect > .btn-group > button > .caret {
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid black;
+            right: 5px;
+            top: 45%;
+            position: absolute;
+        }
+
+        multiselect .dropdown-menu > li > a {
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+
+        multiselect .dropdown-menu > li > a i {
+            margin-right: 4px;
+        }
+
+        .glyphicon-none:before {
+            content: "\e013";
+            color: transparent !important;
+        }
+        #signingperson h3 p {
+            text-align: center;
+        }
+        .group-client { 
+             bottom: .5em; 
+        }
+    </style>
+    <body ng-app="myApp" ng-controller="ProposalCtrl">
+        <!-- body -->
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content1" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page">
+                    <div data-type="vertical" class="left ui-grid-50">
+ 
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+
+                    <br class="clear"/>
+
+                    <div class="ui-content no-hori-padding" style="    min-height: 200px;">
+                          
+                        <div class="">
+                             <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                             <thead><tr><th colspan="3"></th></tr></thead>
+                             <tbody>
+                                <tr ng-repeat="qtn in survey">
+                                    <td>
+                                        {{ qtn.SQM_QTN_NO }}
+                                    </td>
+                                    <td ng-if="qtn.SQM_QTN_TYPE !='hourly'">
+                                        {{ qtn.SQM_QTN }} 
+                                    </td>
+                                    <td colspan="2" ng-if="qtn.SQM_QTN_TYPE =='hourly'">
+                                        {{ qtn.SQM_QTN }}
+                                        <div class="" ng-if="qtn.SQM_QTN_TYPE =='hourly'">
+                                            <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                                 <thead>
+                                                    <tr>
+                                                        <th>
+                                                            &nbsp;
+                                                        </th>
+                                                        <th colspan="{{qtn.hrcols_before}}">
+                                                            Before
+                                                        </th>
+                                                        <th colspan="{{qtn.hrcols_after}}">
+                                                            After
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            &nbsp;
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_BEFORE_HAS_HOURS=='Y'">
+                                                            Hours
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_BEFORE_HAS_RATE=='Y'">
+                                                            Rate
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_BEFORE_HAS_COST=='Y'">
+                                                            Cost
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_BEFORE_HAS_TOTAL=='Y'">
+                                                            Total
+                                                        </th> 
+                                                        <th ng-if="qtn.hourly[0].SQH_AFTER_HAS_HOURS=='Y'">
+                                                            Hours
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_AFTER_HAS_RATE=='Y'">
+                                                            Rate
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_AFTER_HAS_COST=='Y'">
+                                                            Cost
+                                                        </th>
+                                                        <th ng-if="qtn.hourly[0].SQH_AFTER_HAS_TOTAL=='Y'">
+                                                            Total
+                                                        </th> 
+                                                    </tr>
+                                                 </thead>
+                                                 <tbody>
+                                                    <tr ng-repeat="hr in qtn.hourly">
+                                                        <td>
+                                                            {{ hr.SQH_QTN }}
+                                                        </td>
+                                                        <td ng-if="hr.SQH_BEFORE_HAS_HOURS=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                        <td ng-if="hr.SQH_BEFORE_HAS_RATE=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                        <td ng-if="hr.SQH_BEFORE_HAS_COST=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                        <td ng-if="hr.SQH_BEFORE_HAS_TOTAL=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td> 
+                                                        <td ng-if="hr.SQH_AFTER_HAS_HOURS=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                        <td ng-if="hr.SQH_AFTER_HAS_RATE=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                        <td ng-if="hr.SQH_AFTER_HAS_COST=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                        <td ng-if="hr.SQH_AFTER_HAS_TOTAL=='Y'">
+                                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                    <td ng-if="qtn.SQM_QTN_TYPE !='hourly'">
+                                        <div class="" ng-show="qtn.SQM_QTN_TYPE=='date'">
+                                            <input type="date" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                        </div>
+                                        <div class="" ng-show="qtn.SQM_QTN_TYPE=='text'">
+                                            <input type="text" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                        </div>
+                                        <div class="" ng-show="qtn.SQM_QTN_TYPE=='number'">
+                                            <input type="number" name="{{qtn.SQM_QTN_NO}}" data-inline="true" required/>
+                                        </div> 
+                                        <div class="" ng-show="qtn.SQM_QTN_TYPE=='radio'">
+                                            <select>
+                                              <option ng-repeat="opt in qtn.options" name="{{qtn.SQM_QTN_NO}}" value="{{opt}}">{{opt}}</option> 
+                                            </select>
+                                        </div> 
+                                        <div class="" ng-show="qtn.SQM_QTN_TYPE=='checkbox'">
+                                             <div ng-repeat="opt in qtn.options">
+                                                    <!-- <input type="checkbox"  name="{{qtn.SQM_QTN_NO}}" value="{{opt}}" >{{opt}} -->
+                                                    <input type="checkbox" style="margin-top: 0px;left:0"   />
+                                                    <label class="control-label" style="margin-left: 40px;">
+                                                      {{ opt }}
+                                                    </label>
+                                                </div>
+                                        </div> 
+                                    </td>
+                                </tr>
+                             </tbody>
+                             </table>
+                        </div>
+                    </div>
+                </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+
+        <!-- scripts --> 
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/app_survey.js?V=1.1.5"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+	    <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+	    <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+
+
+    </body>
+</html>

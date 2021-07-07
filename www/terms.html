@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <body>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="header" class="header"></div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <!-- content -->
+                <h1 style="color:#009fcf"><strong data-i18n="messages.TermsConditionsUse">Terms and Conditions of Use</strong></h1>
+                <h3><u data-i18n="messages.Warning">Warning</u></h3>
+                <p data-i18n="messages.TermsConditions1">This document lays out the terms and conditions and rules, as may be amended and supplemented, from time to time, ("the Terms") which shall be applicable to the provision of T-BOP MOBILE APPLICATION (the "Services") by T-BOP Pte Ltd ("the Company").</p>
+                <p data-i18n="messages.TermsConditions2">The words, "I", "We", "us", "me", "my", "myself", "customer" and "consumer" refer to the Person(s) who request for or receive the Services or part thereof (the "Subscriber") and shall include both singular and plural.</p>
+                <p data-i18n="messages.TermsConditions3">Following are the terms and conditions that I acknowledge and agree with:</p>
+                <br/>
+                <p class="center purple"><strong data-i18n="messages.TermsConditions4">By clicking "Yes", I acknowledge that I agree to the above mentioned terms and conditions.</strong></p>
+                <p class="center">
+                    <button id="btnAgree" type="button" class="ui-btn ui-btn-g ui-icon-check ui-btn-icon-right ui-btn-inline" data-i18n="buttons.Agree">Agree</button>
+                    <button id="btnCancel" type="button" class="ui-btn ui-btn-r ui-icon-delete ui-btn-icon-right ui-btn-inline" data-i18n="buttons.Cancel">Cancel</button>
+                </p>
+            </div>
+            <div data-role="footer" class="footer" data-position="fixed"></div>
+        </div>
+        
+        <!-- script -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+		<script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+		<script type="text/javascript" src="js/ln.js"></script>
+        
+        <script>
+            function init(){
+			
+				var language = sessionStorage.LANGUAGE;
+				i18n.setLng(language, function(t) { 
+					$('body').i18n();					
+				});
+				
+                initTemplate.load();
+                $("#btnCancel").on("click",function(){window.location.href = "index.html";});
+                $("#btnAgree").on("click",function(){window.location.href = "dashboard.html";});
+            }			
+			
+        </script>
+    </body>
+</html>

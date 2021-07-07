@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .reason.ng-hide { /*override for this page only*/
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+        </style>
+    </head>
+    <body ng-app="myApp" ng-controller="TodoCtrl">
+        <!-- body -->
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page">
+
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <!-- content -->
+                <div class="ui-content">
+                    <!-- <span class="left label bold uppercase" >Today's Overview</span> -->
+
+                    <div class="left" >
+                        <p class="label"> hi , {{user_name}} ({{user_id}}) </p>
+                    </div>
+
+                    <div 
+                        id="datetime" 
+                        class="right label bold uppercase" 
+                        style="margin-top: 10px;"
+                        >
+                        {{datetime}}
+                    </div>
+                    <br class="clear"/>
+                </div>
+
+
+
+                <div class="ui-content aniview slow" av-animation="fadeInUp">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke maxwidth" style="    background: white;">
+                       <thead><tr><th class="tbl-header main" data-i18n="messages.ToDoList"></th></tr></thead>
+                        <tbody>
+                            <tr >
+                                <td style="padding:0px;top: -1px;position: relative;">
+                                    <table ng-show="checkVilActivity(village)" ng-repeat="village in tasks.villages" data-role="table" class="ui-responsive ui-shadow table-stroke maxwidth" style="box-shadow:none;width:100%;">
+                                        <thead>
+                                            <tr> 
+                                                <th class="tbl-subheader" colspan="2">
+                                                    <div>{{ village.vlm_name }}</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="task in village.todo" class="v-middle" >
+                                                <td>
+                                                    <div class="ui-content-small task-det ">
+                                                        {{task.FLAGS}} {{ getFlag(task.CRS_FLAG) | translate }}  
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a dash-link='{{ village.vlm_pk }}' style="margin-right: 0.75em;" stat-type="transactions" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" ng-show="task.CRS_FLAG=='C'" href="transactions.html" data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></i></a>
+
+                                                    <a style="margin-right: 0.75em;" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" dash-link="{{ village.vlm_pk }}" stat-type="disbursements" ng-show="(task.CRS_FLAG=='D')" href="disbursements.html" data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></i></a>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="task in village.withdraw " class="v-middle">
+
+                                                <td>
+                                                    <div class="ui-content-small task-det ">
+                                                        {{task.FLAGS}} {{ "Withdrawal(s)" | translate }} 
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a dash-link='{{ village.vlm_pk }}' style="margin-right: 0.75em;" stat-type="withdrawal" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow"  href="withdrawals.html" data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></i></a>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="record in village.eval" class="v-middle">
+                                                <td>
+                                                    <div class="ui-content-small task-det">
+                                                        {{record.EVALCOUNT}} {{ "Evaluation(s)" | translate }} 
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a style="margin-right: 0.75em;" dash-link='{{ village.vlm_pk }}' class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="client.html " stat-type="evalu" data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></i></a>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="trecord in village.training" class="v-middle">
+                                                <td>
+                                                    <div class="ui-content-small task-det" ng-if="trecord.CLT_STATUS==4">
+                                                        {{trecord.EVALCOUNT}} {{ "Trainee(s)" | translate }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a style="margin-right: 0.75em;" dash-link='{{ village.vlm_pk }}' d-status="{{trecord.CLT_STATUS}}" stat-type="train" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="training.html " data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></i></a>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="trecord in village.test" class="v-middle">
+                                                <td>
+                                                    <div class="ui-content-small task-det" ng-if="trecord.CLT_STATUS==4">
+                                                        {{trecord.EVALCOUNT}} {{ "Trainee(s) to Test" | translate }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a style="margin-right: 0.75em;" dash-link='{{ village.vlm_pk }}' d-status="{{trecord.CLT_STATUS}}" stat-type="test" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="manager.html " data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></i></a>
+                                                </td>
+                                            </tr> 
+
+                                            <tr ng-repeat="trecord in village.signbyapp" class="v-middle">
+                                                <td>
+                                                    <div class="ui-content-small task-det">
+                                                        {{trecord.EVALCOUNT}} {{"Forms to be signed" | translate}}
+                                                    </div>
+                                                </td>
+                                                <td  ng-if="trecord.CLL_STATUS == 57 || trecord.CLL_STATUS == 26" >
+                                                    <a style="margin-right: 0.75em;" dash-link='{{ village.vlm_pk }}'  stat-type="sign" is-sign="true" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="downpayment.html " data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></a>
+                                                </td>
+                                                <td ng-if="trecord.CLL_STATUS == 13">
+                                                    <a style="margin-right: 0.75em;"  dash-link='{{ village.vlm_pk }}'  stat-type="disbursements" is-sign="true" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="disbursements.html " data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></a>
+
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="trecord in village.deposit" class="v-middle">
+                                                <td>
+                                                    <div class="ui-content-small task-det">
+                                                        {{trecord.EVALCOUNT}}  {{ "Deposits to Collect" | translate }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a style="margin-right: 0.75em;" dash-link='{{ village.vlm_pk }}'  stat-type="sign" is-sign="true" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="downpayment.html " data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></a>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="trecord in village.proposal" class="v-middle">
+                                                <td>
+                                                    <div class="ui-content-small task-det">
+                                                        {{ trecord.EVALCOUNT }}  {{ "ProposalsToSign" | translate }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a style="margin-right: 0.75em;" dash-link='{{ village.vlm_pk }}'  stat-type="propo" is-sign="true" class="ui-btn ui-btn-i ui-btn-icon-notext ui-corner-all ui-btn-bl right ui-shadow" href="newloanproposal.html " data-role="button" data-inline="true" data-ajax='false'><i class="fa fa-lg white fa-info"></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr ng-show="allDone">
+                                <td colspan="2" style="background-color: #42A5F5;text-shadow: 0px 0x 0px #FFF;letter-spacing: 5px;color:white">
+                                    <div class="ui-content center boldtext" data-i18n="messages.AllDone">
+                                        All Done!
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="ui-content aniview reallyslow" av-animation="fadeIn">
+                  <select ng-model="selectedCenter" class="ui-btn ui-btn-bl"
+                        ng-change="updateDashboard()"
+                        ng-options="(item.CTR_PK||item) as (item.CTR_CENTER_NAME||item) group by item.VLM_NAME  for item in centerList">
+                        <option value="all">All Centers</option>
+                  </select>
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a aniview slow ui-grid-50" av-animation="slideInLeft">
+                        <div class="ui-content dash-block">
+                            <table data-role="table" class="ui-responsive ui-shadow box-gr table-stroke" trans-check
+                                    expected="{{ttlcol}}"
+                                    actual="{{ttlcoled}}"
+                                    type="dash"
+                                    defaultcolor="#ECEFF1"
+                                    groupid="{{ttlcol}}"
+                                    checknow="allDone" >
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="bold box-header grey-bg uppercase" data-i18n="messages.TotalCollectionToday" >  Total Collection Today
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="box-body"> 
+                                    <tr>
+                                        <td>
+                                            <div class="bold center group-block-amt" >
+                                                <h1>{{ ttlcoled | noFractionCurrency : currloc : 0 }}</h1>
+                                            </div>
+                                            <div class="group-client left">
+                                                <!-- <i class="fa fa-user"></i><b>{{ttlcolclient}}</b> -->
+                                            </div>
+                                            <div class="group-status right">
+                                                <span data-i18n="messages.Forecasted">Forecasted</span> :<b>{{ ttlcol | noFractionCurrency : currloc : 0 }}</b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="ui-block-b aniview slow ui-grid-50" av-animation="slideInRight">
+                        <div class="ui-content dash-block">
+                            <table data-role="table" class="ui-responsive ui-shadow box-gr table-stroke" trans-check
+                                                expected="{{ttlsave}}"
+                                                actual="{{ttlsaved}}"
+                                                type="dash"
+                                                defaultcolor="#ECEFF1"
+                                                groupid="{{ttlcol}}"
+                                                checknow="allDone">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="bold box-header grey-bg uppercase" data-i18n="messages.TotalSavignsToday">
+                                            Total Savings Today
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="box-body" > 
+                                    <tr>
+                                        <td>
+                                            <div class="bold center group-block-amt"
+                                                >
+                                                <h1>{{ ttlsaved | noFractionCurrency : currloc : 0 }}</h1>
+                                            </div>
+                                            <div class="group-client left">
+                                                <!-- <i class="fa fa-user"></i><b>{{ttlsaveclient}}</b> -->
+                                            </div>
+                                            <div class="group-status right">
+                                                <span data-i18n="messages.Forecasted">Forecasted</span> :<b>{{ ttlsave | noFractionCurrency : currloc : 0 }}</b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="ui-block-c aniview slow ui-grid-50" av-animation="slideInLeft">
+                        <div class="ui-content dash-block">
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke" trans-check
+                                            expected="{{ttwthdis}}"
+                                            actual="{{ttwthdised}}"
+                                            type="dash"
+                                            defaultcolor="#ECEFF1"
+                                            groupid="{{ttlcol}}"
+                                            checknow="allDone">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="bold box-header grey-bg uppercase" data-i18n="messages.TotalWithdrawalToday" >
+                                            Total Withdrawal Today
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="box-body" > 
+                                    <tr>
+                                        <td>
+                                            <div class="bold center group-block-amt" >
+                                                <h1>{{ ttwthdised | noFractionCurrency : currloc : 0 }}</h1>
+                                            </div>
+                                            <div class="group-client left">
+                                                <!-- <i class="fa fa-user"></i><b>{{ttwthdisclient}}</b> -->
+                                            </div>
+                                            <div class="group-status right">
+                                                <span data-i18n="messages.Forecasted">Forecasted</span> :<b>{{ ttwthdis | noFractionCurrency : currloc : 0 }}</b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="ui-block-b aniview slow ui-grid-50" av-animation="slideInRight">
+                        <div class="ui-content dash-block">
+                            <table data-role="table" class="ui-responsive ui-shadow box-gr table-stroke" trans-check
+                                                expected="{{ttldis}}"
+                                                actual="{{ttldised}}"
+                                                type="disb"
+                                                defaultcolor="#ECEFF1"
+                                                groupid="{{ttlcol}}"
+                                                checknow="allDone">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="bold box-header grey-bg uppercase" data-i18n="messages.TotalDisbursementToday">
+                                            Total Disbursement Today
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="box-body"> 
+                                    <tr>
+                                        <td>
+                                            <div class=" bold center group-block-amt" >
+                                                <h1>{{ ttldised | noFractionCurrency : currloc : 0 }}</h1>
+                                            </div>
+                                            <div class="group-client left">
+                                                <!-- <i class="fa fa-user"></i><b>{{ttldisclient}}</b> -->
+                                            </div>
+                                            <div class="group-status right">
+                                                <span data-i18n="messages.Forecasted">Forecasted</span> :<b>{{ ttldis | noFractionCurrency : currloc : 0 }}</b>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-content dash-block aniview slow"  av-animation="fadeInUp">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke" cashonhand-bg trans-check
+                                        expected="{{totalexpected}}"
+                                        actual="{{onhand}}"
+                                        type="final"
+                                        defaultcolor="#FFF"
+                                        groupid="{{ttlcol}}"
+                                        checknow="allDone">
+                        <thead>
+                            <tr>
+                                <th data-i18n="messages.CashOnHand" style="background-color: #FFF;">Cash on Hand</th>
+                            </tr>
+                        </thead>
+                        <tbody  class="box-body" >
+                            <tr>
+                                <td>
+                                    <div class="bold center group-block-amt" style="padding-top: 3em;" >
+                                        <h1 style="font-size:2.5em" >{{ onHand() | noFractionCurrency : currloc : 0 }}</h1>
+                                        <p class="bold" ng-show="allDone" data-i18n="messages.TotalCashToSubmit">Total Cash to Submit</p>
+                                    </div>
+                                     <div class="group-status right">
+                                        <span data-i18n="messages.Forecasted">Forecasted</span> :<b>{{ totalexpected | noFractionCurrency : currloc : 0 }}</b>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="ui-content dash-block aniview slow"  av-animation="fadeInUp">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke" cashonhand-bg trans-check
+                        expected="0"
+                        actual="0"
+                        type="final"
+                        defaultcolor="#FFF"
+                        groupid="{{ttlcol}}"
+                        checknow="true">
+                        <thead>
+                            <tr>
+                                <th style="background-color: #FFF;"> </th>
+                            </tr>
+                        </thead>
+                        <tbody  class="box-body" >
+                            <tr>
+                                <td>
+                                    <div class="bold center group-block-amt" style="padding-top: 3em;" >
+                                        <h1 style="font-size:2.5em" >{{ newClientCount  }}</h1> 
+                                        <p data-i18n="messages.NewClient">New Clients</p>
+                                    </div> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> 
+                </div> 
+                <a href="newclient.html" class="ui-btn ui-btn-bl ui-icon-plus ui-btn-icon-left" data-ajax="false" data-i18n="messages.CreateNewClient" style="border-radius: 5px;
+                margin: 15px;
+                padding: 1.2em;" >Create New Client</a>
+                
+                <div class="ui-content">
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead>
+                            <tr>
+                                <th colspan="2" data-i18n="messages.Summary">Summary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalDisbursementAndWithdrawal">Cash from Cashier:</td>
+                                <td class="underline">{{ ttldis+ttwthdis | noFractionCurrency : currloc : 0}}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalCollection">Total Collection:</td>
+                                <td class="underline">+ {{ ttlcoled | noFractionCurrency : currloc : 0}}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalDisbursement">Total Disbursement:</td>
+                                <td class="underline">- {{ ttldised | noFractionCurrency : currloc : 0}}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalWithdrawalToday">Total Withdrawal:</td>
+                                <td class="underline">- {{ ttwthdised | noFractionCurrency : currloc : 0}}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalSayingsWithoutInsurance">Total Savings:</td>
+                                <td class="underline">+ {{ ttlsaved - ttlinsurance | noFractionCurrency : currloc : 0}}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalRiskInsurance">Total Insurance:</td>
+                                <td class="underline">+ {{ ttlinsurance | noFractionCurrency : currloc : 0}}</td>
+                            </tr>
+                            <tr>
+                                <td class="bold uppercase" data-i18n="messages.TotalCashToSubmit">Total Cash to Submit:</td>
+                                <td class="underline">{{ onHand() | noFractionCurrency : currloc : 0 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+        <!-- endbody
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/app_dashboard.js"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/moment.js"></script>
+        <script type="text/javascript" src="js/en.js"></script>
+        <script type="text/javascript" src="js/id.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>-->
+        
+        <script type="text/javascript" src="js/i18next-1.8.0.js?v=1.0"></script>
+        <script type="text/javascript" src="js/ln.js?v=2.0"></script>
+        <script type="text/javascript" src="js/load_template.js?1.1.6"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script>
+            var myDB = new properDB("TBOP",1,"TBOP Client Database", 10*1024*1024); //10MB
+        </script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/moment.js"></script>
+        <script type="text/javascript" src="js/en.js?v=1.0"></script>
+        <script type="text/javascript" src="js/id.js?v=1.0"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_dashboard.js?v=1.1.6"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+        
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+ 
+    </body>
+</html>

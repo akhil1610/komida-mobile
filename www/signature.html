@@ -1,0 +1,28 @@
+<style>
+    #popupSign-popup {
+        width: 80%;
+    }
+    #popup-signingperson {
+        text-align: center;
+    }
+</style>
+
+<div data-role="popup" id="popupSign" class="ui-corner-all" ng-controller="signCtrl" >
+    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+    <h1>Sign</h1>
+    <div class="ui-content no-hori-padding signature-screen" >
+        <canvas id="popup-the-canvas" ng-show="showCanvas">
+    
+        </canvas>
+        <div id="popup-signature" style="text-align:center;">
+    
+        </div>
+        <p id="popup-signingperson"></p>
+        <br><br>
+        <p id="popup-sigbtn">
+            <button type="button" ng-click="clearSigPad()">Clear</button>
+            <button type="button" ng-click="importImg()">Confirm Signature</button>
+        </p>
+        <div class="popup-displayarea"></div>
+    </div>
+</div>

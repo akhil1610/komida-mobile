@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/sweetalert.css">
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .reason.ng-hide { /*override for this page only*/
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+        </style>
+    </head>
+    <body ng-app="myApp" ng-controller="WithdrawalCtrl">       
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+               
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page" >
+                    <div data-type="vertical" class="left ui-grid-50">
+                        <!-- <span class="label" data-i18n="messages.WithdrawalRequest">Withdrawal Request</span><br class="clear"/><br class="clear"/>
+                         -->    
+                        <br class="clear"/>
+                        <br class="clear"/>  
+                        <!-- <span data-i18n="messages.Branch">Branch: {{ user.branchID }}</span><br class="clear"/><br class="clear"/> -->
+                        <div class="detlabel" data-i18n="messages.Village">Village</div>:<span class="detville">&nbsp;&nbsp;<b>{{ user.currentVillage }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <br class="clear"/>   
+                        <br class="clear"/>                
+                        <!-- <div class="detlabel" data-i18n="messages.Group">Group:</div>              
+                        <select ui-select ng-model="user.selectedGroup" name="groupID" id="groupID" placeholder="groupID" data-inline="true"  ng-options="group as group.name for group in user.groups track by group.value"></select><br class="clear"/> -->
+                    </div>
+                    <div data-type="vertical" class="right" ng-show="isGroupSelected" ng-model="user">
+                        <!-- <a href="#clientspage" data-role="button" data-inline="true" class="ui-btn ui-btn-g ui-icon-carat-r ui-btn-icon-right ui-corner-all" link-disabled="isGroupSelected" data-prefetch="true"  data-ajax="false" data-i18n="buttons.Request" >Request</a> -->
+                        <!-- SMS Buttons -->
+                        <!-- <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-gr btn-group-9 ui-icon-action ui-btn-icon-left  ui-corner-all" link-disabled="isGroupSelected" data-i18n="messages.Sms" ng-hide="getSMSGrpStatus()&&BRC_DISBURSE_NOTIFICATION!='R'"  data-inline="true" ng-click="sendMsg('G', 'S', user)">{{ "Send SMS to Leader" | translate }}</a>
+                        <a class="ui-btn ui-btn-g ui-icon-check ui-btn-icon-left ui-corner-all btn-group-9" href="#" data-role="button" ng-click="sendMsg('G', 'S', user)"  data-inline="true" ng-show="getSMSGrpStatus()&&BRC_DISBURSE_NOTIFICATION!='R'">{{ "SMS Sent" | translate }}</a>   -->
+                        <!-- Print Buttons -->
+                        <!-- <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-gr btn-group-9 ui-icon-action ui-btn-icon-left  ui-corner-all" link-disabled="isGroupSelected" data-i18n="buttons.Print" ng-hide="getReceiptGrpStatus()&&BRC_DISBURSE_NOTIFICATION!='S'" data-inline="true" ng-click="sendMsg('G', 'R', user)">{{ "Print" | translate }}</a>
+                        <a class="ui-btn ui-btn-g ui-icon-check ui-btn-icon-left ui-corner-all btn-group-9" href="#" data-role="button" ng-click="sendMsg('G', 'R', user)" data-inline="true" ng-show="getReceiptGrpStatus()&&BRC_DISBURSE_NOTIFICATION!='S'">{{ "PRINTED" | translate }}</a> -->
+                    </div>
+                    <br class="clear"/>
+
+                    <!-- group info Table -->
+                    <div class="ui-content no-hori-padding" id="groupInfoTable">
+                        <div class="jumbotron center" ng-if="user.groups.length == 0">
+                            <h1 data-i18n="messages.NoClientInVillage">No Clients in this Village</h1>
+                        </div>
+                        <div ng-repeat="group in user.groups" class="ui-grid-33 marg-btm-20">
+                            <a href="#" ng-click="detailview()" data-role="none" data-inline="true" data-prefetch="true"  data-ajax="false" class="trans-blocks">
+                                <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" ng-click="changeGroup(group)" trans-check  
+                                        expected="{{ checkWithdrawalsCount(group,'expected') }} "
+                                        actual="{{ checkWithdrawalsCount(group,'actual') }}" 
+                                        type="bg"
+                                        defaultcolor="#42A5F5"
+                                        checknow="checkWithdrawalsCount(group,'actual') > 0">
+                                    <thead>
+                                        <tr>
+                                            <th class="box-header">
+                                                <div class="lineh-32">
+                                                    {{ group.CTR_CENTER_NAME }} {{ grouptext }} {{ group.value }}  
+                                                </div>
+                                                
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody  class="box-body">
+                                        <tr>
+                                            <td> 
+                                                <div class="ui-content bold center group-block-amt"  >
+                                                    <h1>{{ checkWithdrawalsCount(group,'actual') | noFractionCurrency : currloc : 0 }}</h1>
+                                                </div>
+                                                <div class="group-client left">
+                                                    <i class="fa fa-user"></i>{{group.clientcount}}
+                                                </div>
+                                                <div class="group-status right">
+                                                    {{ request }} :<b>{{ checkWithdrawalsCount(group,'expected') }}</b>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </a>
+                        </div>
+
+                        <br class="clear"/>
+                        <br class="clear"/>
+                        
+                        <!-- <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="messages.Name">Name</th>
+                                    <th data-i18n="messages.ProductName">Name</th>
+                                    <th >{{ requested }}</th>
+                                    <th data-i18n="messages.Reason">Reason</td>
+                                    <th data-i18n="buttons.Status">Status</td>
+                                    <th data-i18n="messages.Remark">Remark</td>
+                                    <th data-i18n="messages.Date">Date</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="withdrawal in withdrawals | orderBy:'CLT_FULL_NAME'">
+                                    <td>
+                                        <div >
+                                            {{ withdrawal.CLT_FULL_NAME }}
+                                        </div>
+                                    </td>
+                                    <td >
+                                        <div >
+                                            {{ withdrawal.PRM_NAME | translate }}
+                                        </div>
+                                    </td>
+                                    <td >
+                                        <div>
+                                            {{ withdrawal.CPT_TXN_AMOUNT | noFractionCurrency : currloc : 0 }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ withdrawal.CPT_REASON }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ withdrawal.CPT_STATUS_TEXT | translate }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ withdrawal.CPT_REMARK }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ withdrawal.CPT_DATETIME | moment: 'format': 'DD MMM YYYY' }}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th data-i18n="messages.Total">TOTAL</th>
+                                    <th></th>
+                                    <th>{{ "0:00" | noFractionCurrency : currloc : 0 }}</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table> -->
+                    </div>
+                </div>
+                <div class="ui-content second-wrapper" id="indivInfoTable" data-ajax="false">
+                    <div class="whitecover second-page"></div>
+                    <div data-type="vertical" class="left">
+                        <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="detailview()">Back</a>
+                    </div>
+                    <br class="clear">
+                    <div class="ui-content center">
+
+                        <div class="ui-grid-33">
+                            <div class="ui-content ui-shadow ui-corner-all" ng-class="{'ui-btn-bl': (navigation.request.isSelected == true) }" ng-click="navigate('request')" style="text-align: left;">Request<div class="withcount" style="top: 0.75em;">{{ checkWithdrawals('request',null,null) }}</div></div>
+                        </div>
+
+                        <!-- <div class="ui-grid-33">
+                            <div class="ui-content ui-shadow ui-corner-all" ng-class="{'ui-btn-bl': (navigation.immediate.isSelected == true) }" ng-click="navigate('immediate')" style="text-align: left;">Immediate<div class="withcount" style="top: 0.75em;">{{ checkWithdrawals('immediate',null,null) }}</div></div>
+                        </div>  -->
+
+                        <div class="ui-grid-33 ">
+                            <div class="ui-content ui-shadow ui-corner-all" ng-class="{'ui-btn-bl': (navigation.collect.isSelected == true) }" ng-click="navigate('collect')" style="text-align: left;">Approved Withdrawal<div class="withcount" style="top: 0.75em;">{{ checkWithdrawalsCount(selectedgroup,'expected','collect') }}</div></div>
+                        </div>      
+
+                    </div>
+                   
+                    <table data-role="table" class="ui-responsive" ng-repeat="group in user.groups | filter:{ CLT_GROUP_ID : user.selectedGroup.value, CLT_CENTER_ID: user.selectedGroup.centerid }:true">
+                        <thead><tr><td></td></tr></thead>
+                        <tbody>
+                            <tr ng-repeat="client in group.clients ">
+                                <td>
+                                    
+                                    <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table " id="table{{client.CLT_PK}}" >
+                                        <thead>
+                                            <!-- <tr>
+                                                <th>{{ clientname }}</th>
+                                                <th>{{ requested }}</th>
+                                                <th>{{ wkno }}</th>
+                                            </tr> -->
+                                            <tr class="v-mid">
+                                                <th width="40%"> 
+                                                    <div class="ui-content">{{ client.CLT_FULL_NAME }}</div>
+                                                </th>
+                                                <th>
+                                                    <div class="ui-content">&nbsp;</div>
+                                                </th>
+                                                <th>
+                                                    <div class="ui-content">
+                                                        <div class="withcount" >{{ checkWithdrawals(null,client) }}</div>
+                                                    </div>
+                                                </th> 
+                                            </tr>
+                                        </thead>
+                                        <tbody> 
+                                            <tr>
+                                                <td colspan="5">
+                                                    <div class="client-loan-wrapper"> 
+                                                        <div ng-repeat="loanbox in client.loans" ng-init="loanbox" class="client-loan ui-grid-33">
+                                                            <div class="" 
+                                                            ng-click="expandLoan(client,loanbox,$event)" >
+                                                                <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke " ng-class="{'selected': (loanbox.isOpen == true)}" >
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="box-header">
+                                                                                <div class="">
+                                                                                    {{ loanbox.LTY_DESCRIPTION }}
+                                                                                </div>
+                                                                                <div class="withcount" style="top:0.75em;">
+                                                                                    {{ checkWithdrawals(null,null,loanbox) }}
+                                                                                </div>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <!-- <tbody class="box-body">
+                                                                        <tr>
+                                                                            <td> 
+                                                                                <div class="ui-content bold center group-block-amt">
+                                                                                    <h2>{{getLoanActual(loanbox) | noFractionCurrency : currloc : 0 }}</h2>
+                                                                                </div>
+                                                                                <div class="group-client left">
+                                                                                    <i class="fa fa-calendar-o"></i>
+                                                                                    <span>W</span>
+                                                                                    {{ loanbox.CRS_WEEK_NO }}
+                                                                                </div>
+                                                                                <div class="group-status right">
+                                                                                    {{ expected }}: <b>{{ getLoanExpected(loanbox) | noFractionCurrency : currloc : 0 }}</b>
+                                                                                </div> 
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody> -->
+                                                                </table>
+                                                            </div> 
+                                                        </div>
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr ng-repeat="loan in client.loans" ng-init="loan" ng-show="loan.isOpen == true && loan != undefined">
+                                                <td colspan="5">  
+                                                    <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table ui-table-reflow" style="background-color:white" >
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{ producttext }}</th>
+                                                                <th ng-if="!showWithType('collect')">{{ balancetext }}</th>
+                                                                <th ng-if="showWithType('collect')">{{ exepectedtext }}</th>
+                                                                <th>{{ withdrawalamttext }}</th>
+                                                                <th>{{ reasontext }}</th>
+                                                                <th>{{ savetext }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="product in loan.products" ng-show="isActClosed(product)"  >
+                                                                <td >
+                                                                    <div class="ui-content">  
+                                                                        {{ product.PRM_NAME | translate }}  
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="ui-content" ng-if="!showWithType('collect')">
+                                                                        {{ getProductBalance(product) | noFractionCurrency : currloc : 0 }}
+                                                                    </div>
+                                                                    <div class="ui-content" ng-if="showWithType('collect')"> 
+                                                                        {{ getExpectedWithdrawal(product) | noFractionCurrency : currloc : 0 }} 
+                                                                    </div>
+                                                                </td>
+                                                                <!-- 
+                                                                    ############## REQUEST ###########################
+                                                                --> 
+                                                                <td ng-if="showWithType('request')"> 
+                                                                    <div ng-hide="checkVisible(product)">
+                                                                        <input id="clientActual{{ client.CLT_PK}}{{$index}}" class="colVal" ng-blur="validateAmt(client,product,'withdrawal')"  onclick="this.select();" type="tel" ng-model="product.request.WTH_AMT" ng-currency currency-symbol='{{currloc}}'  />
+                                                                    </div>
+                                                                    <div class="ui-content" ng-show="checkVisible(product)">
+                                                                        {{ product.request.WTH_AMT | noFractionCurrency : currloc : 0 }} 
+                                                                    </div>
+                                                                </td>
+                                                                <td ng-if="showWithType('request')"> 
+                                                                    <div ng-hide="checkVisible(product)" >
+                                                                        <input type="text" ng-model="product.request.CPT_REASON" placeholder="Reason" data-i18n="[placeholder]messages.Reason"/>
+                                                                    </div>
+                                                                    <div class="ui-content" ng-show="checkVisible(product)">
+                                                                        {{ product.request.CPT_REASON }}
+                                                                    </div>
+                                                                </td>
+                                                                <td ng-if="showWithType('request')"> 
+                                                                    <div ng-hide="checkVisible(product)">
+                                                                        <a class="ui-btn ui-btn-i ui-btn-bl ui-btn-icon-notext ui-corner-all ui-shadow" href="#" data-role="button" data-inline="true" ng-click="withReq($index, client,loan,'request')"><i class="fa fa-lg fa-plus white"></i></a>
+                                                                    </div>
+                                                                </td>
+                                                                <!-- 
+                                                                    ############## IMMEDIATE ###########################
+                                                                --> 
+                                                                <td ng-if="showWithType('immediate')"> 
+                                                                    <div ng-hide="checkVisible(product)">
+                                                                        <input id="clientActual{{ client.CLT_PK}}{{$index}}" class="colVal" ng-blur="validateAmt(client,product,'withdrawal')"  onclick="this.select();" type="tel" ng-model="product.immediate.WTH_AMT" ng-currency currency-symbol='{{currloc}}'  />
+                                                                    </div>
+                                                                    <div class="ui-content" ng-show="checkVisible(product)">
+                                                                        {{ product.immediate.WTH_AMT | noFractionCurrency : currloc : 0 }}
+                                                                    </div>
+                                                                </td>
+                                                                <td ng-if="showWithType('immediate')"> 
+                                                                    <div ng-hide="checkVisible(product)" >
+                                                                        <input type="text" ng-model="product.immediate.CPT_REASON" placeholder="Reason" data-i18n="[placeholder]messages.Reason"/>
+                                                                    </div>
+                                                                    <div class="ui-content" ng-show="checkVisible(product)">
+                                                                        {{ product.immediate.CPT_REASON }}
+                                                                    </div>
+                                                                </td>
+                                                                <td ng-if="showWithType('immediate')"> 
+                                                                    <div ng-hide="checkVisible(product)">
+                                                                        <a class="ui-btn ui-btn-i ui-btn-bl ui-btn-icon-notext ui-corner-all ui-shadow" href="#" data-role="button" data-inline="true" ng-click="withReq($index, client,loan,'immediate')"><i class="fa fa-lg fa-usd white"></i></a>
+                                                                    </div>
+                                                                </td>
+                                                                <!-- 
+                                                                    ############## COLLECT ###########################
+                                                                --> 
+                                                                <td ng-if="showWithType('collect')"> 
+                                                                    <div ng-hide="checkVisible(product)">
+                                                                        <input id="clientActual{{ client.CLT_PK}}{{$index}}" class="colVal" ng-blur="validateAmt(client,product,'withdrawal')"  onclick="this.select();" type="tel" ng-model="product.collect.WTH_AMT" ng-currency currency-symbol='{{currloc}}'  />
+                                                                    </div>
+                                                                    <div class="ui-content" ng-show="checkVisible(product)">
+                                                                        {{ product.collect.WTH_AMT | noFractionCurrency : currloc : 0 }} 
+                                                                    </div>
+                                                                </td>
+                                                                <td ng-if="showWithType('collect')">  
+                                                                    <div class="ui-content"  >
+                                                                        {{ product.collect.CPT_REASON }} 
+                                                                    </div>
+                                                                </td>
+                                                                <td ng-if="showWithType('collect')"> 
+                                                                    <div ng-hide="(checkVisible(product,'close'))">
+                                                                        <a class="ui-btn ui-btn-i ui-btn-bl ui-btn-icon-notext ui-corner-all ui-shadow" href="#" data-role="button" data-inline="true" ng-click="withReq($index, client,loan,'collect')"><i class="fa fa-lg fa-usd white"></i></a>
+                                                                    </div>
+                                                                </td> 
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+        <!-- scripts -->
+        
+        
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <!-- <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>-->
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_withdrawals.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>      
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script> 
+        
+    </body>
+</html>

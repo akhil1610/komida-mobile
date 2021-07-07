@@ -1,0 +1,282 @@
+s<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <style>
+        canvas {
+            height: 100%;
+        }
+        canvas#the-canvas {
+            height: auto;
+        }
+        multiselect {
+            display: block;
+        }
+
+        multiselect > .btn-group {
+            min-width: 180px;
+        }
+
+        multiselect .btn {
+            width: 100%;
+            background-color: #FFF;
+        }
+
+        multiselect .btn.has-error {
+            border: 1px solid #a94442 !important;
+            color: #db524b;
+        }
+
+        multiselect .dropdown-menu {
+            max-height: 300px;
+            min-width: 200px;
+            overflow-y: auto;
+        }
+
+        multiselect .dropdown-menu .filter > input {
+            width: 99%;
+        }
+
+        multiselect .dropdown-menu .filter .glyphicon {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        multiselect .dropdown-menu {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 2px;
+        }
+
+        multiselect > .btn-group > button {
+            padding-right: 20px;
+        }
+
+        multiselect > .btn-group > button > .caret {
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid black;
+            right: 5px;
+            top: 45%;
+            position: absolute;
+        }
+
+        multiselect .dropdown-menu > li > a {
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+
+        multiselect .dropdown-menu > li > a i {
+            margin-right: 4px;
+        }
+
+        .glyphicon-none:before {
+            content: "\e013";
+            color: transparent !important;
+        }
+        #signingperson h3 p {
+            text-align: center;
+        }
+        .group-client { 
+             bottom: .5em; 
+        }
+        .ui-grid-33 {
+            width: 49%;
+        }
+    </style>
+    <body ng-app="myApp" ng-controller="ProposalCtrl">
+        <!-- body -->
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content1" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page">
+                    <div data-type="vertical" class="left ui-grid-50">
+
+                        <br class="clear"/>
+                        <div class="detlabel" data-i18n="messages.Village">Village:</div>:
+                        <span class="detville">&nbsp;&nbsp;<b class="">{{ user.curr_village.name }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+
+                    <br class="clear"/>
+
+                    <div class="ui-content no-hori-padding" style="    min-height: 200px;">
+                        <div class="jumbotron center" ng-if="user.village.groups != undefined && user.village.groups.length == 0 && !loading">
+                            <h1>No Clients in this Village</h1>
+                            &nbsp;
+                        </div>
+                        <div class="load-cover">
+                            <img src="img/ripple3.gif?1" />
+                        </div>
+                        <div class="center_wrap">
+                            <div ng-class="{'selected': (center.SELECTED) }" ng-click="changeCenter(center,$event)" ng-repeat="center in village.centers" class="centers " ng-show="center.groups.length > 0">
+                                {{ center.CTR_CENTER_NAME }} 
+                            </div>
+                        </div>
+                        <div ng-repeat="center in village.centers | filter: { CTR_CENTER_NAME: selectedCenter.CTR_CENTER_NAME  }"  ng-show="center.groups.length > 0">
+                            <div ng-repeat="group in center.groups" class="ui-grid-33 marg-btm-20 ">
+                                 
+                                    <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke"  trans-check
+                                                        expected="{{ group.clients.length }} "
+                                                        actual="{{ checkGroupDone(group) }}"
+                                                        type="bg"
+                                                        defaultcolor="#42A5F5"
+                                                        checknow="allProposalDone(group)">
+                                        <thead>
+                                            <tr>
+                                                <th class="box-header">
+                                                    <div class="lineh-32 ">
+                                                        {{ center.CTR_CENTER_NAME }}  {{ grouptext }} {{ group.GROUP_ID }} 
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="box-body" ng-click="changeGroup(group)">
+                                            <tr ng-click="detailview()" >
+                                                <td >
+                                                    <div class="ui-content bold center group-block-amt" >
+                                                        <h1>&nbsp;PROPOSAL</h1>
+                                                        <span class="wthwth" ng-if="group.total_wth_act > 0">-{{ group.total_wth_act }}</span>
+                                                    </div>
+                                                    <div class="group-client left">
+                                                        <i class="fa fa-user"></i>{{group.clients.length}}
+                                                    </div>
+                                                    <div class="group-status right">
+                                                         
+                                                    </div>
+                                                </td>
+                                            </tr> 
+                                        </tbody>
+                                    </table>
+                               
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="ui-content second-wrapper row" data-ajax="false">
+                    <div class="whitecover second-page" >
+                        <div class="coverwrap">
+
+                        </div>
+                    </div>
+
+                    <div class="ui-content no-hori-padding" id="indivInfoTable"  > 
+                        <div class="ui-content">
+                            <div data-type="vertical" class="left">
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back"  ng-click="detailview()">Back</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-role="main" class="ui-content" data-ajax="false">
+                        <!-- <div class="ui-grid-a aniview ui-content"  av-animation="slideInLeft">
+                            <div class="ui-block-a padding no-hori-padding">  
+                                <label for="clientname">Client Search</label>
+                                <input type="text" ng-model="clientsearch" ng-model-options="{debounce: 500}" name="clientname" id="clientname" placeholder="Search Client" data-inline="true" />
+                            </div> 
+                        </div> -->
+                        <div class="ui-content no-hori-padding aniview slow"  av-animation="fadeInUp">
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke ui-table table-box ui-corner-all ui-table-reflow" >
+                                <thead>
+                                    <tr>
+                                        <th ><div class="ui-content">Name</div></th>
+                                        <th><div class="ui-content">Loan Name</div></th>
+                                        <th><div class="ui-content">Loan Amount</div></th>  
+                                        <th><div class="ui-content">Period</div></th> 
+                                        <th><div class="ui-content">Signature</div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="client in clients | orderBy : 'hasSigned':true | filter: {  CLT_GROUP_ID: selectedGroup }" class="valign-middle" >
+                                        <td>
+                                            {{client.CLT_FULL_NAME}} 
+                                        </td>
+                                        <td>   
+                                            <div class="ui-content">
+                                                {{ client.LTY_DESCRIPTION }} 
+                                            </div>
+                                        </td> 
+                                        <td>
+                                            <div ng-hide="client.hasSigned">
+                                                <input type="text" ng-model="client.CLL_ORIGINAL_LOAN" ng-model-options="{debounce: 500}" name="clientname" id="client-loan-{{client.CLL_PK}}" data-inline="true" />
+                                            </div>
+                                            <div ng-show="client.hasSigned" class="ui-content">
+                                                {{ client.CLL_ORIGINAL_LOAN | noFractionCurrency : currloc : 0}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div ng-hide="client.hasSigned">
+                                                <select
+                                                    id="activeloanMaturity{{client.CLL_PK}}"
+                                                    name="activeloanMaturity"
+                                                    class="sel-activeloanmat"
+                                                    ng-change="refreshSelect('.sel-activeloanmat');updateInterest(client)"
+                                                    ng-model="client.CLL_TOTAL_LOAN_WEEKS" 
+                                                    ng-options="item for item in client.matarray"
+                                                    my-change
+                                                    required>
+                                                </select>
+                                            </div>
+                                            <div ng-show="client.hasSigned" class="ui-content">
+                                                {{ client.CLL_TOTAL_LOAN_WEEKS.value }} Weeks
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="loanProposal(client,true)" >
+                                                <i class="fa fa-tick" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="loanProposal(client,false)" >
+                                                <i class="fa fa-cross" aria-hidden="true"></i>
+                                            </div>  
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+
+        <!-- scripts --> 
+        <script type="text/javascript" src="js/load_template.js?V=1.0"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/app_loanproposal.js?V=1.1.18"></script>
+        <script type="text/javascript" src="js/app_header.js?V=1.1"></script>
+	    <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+	    <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+
+
+    </body>
+</html>

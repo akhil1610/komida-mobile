@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <body>
+        <!-- body -->
+        <div data-role="page" id="page" ng-app="myApp" ng-controller="myController">
+            <div data-role="header" class="header"></div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+<!-- content -->
+                <table>
+                    <tr><td><input type="text" ng-model="altLoans" ng-init="altLoans='1347,1348'"/></td><td><input type="number" id="cmdprompt" ng-model="altDay" ng-init="altDay=1"/></td></tr>
+                    <tr><td colspan=2><input type="button" value="Alter Date" ng-click="alterdate()"/></td></tr>
+                </table>
+                
+
+                <br/>
+                <textarea id="cmdprompt" ng-model="cmdprompt"> </textarea>
+                <input type="button" value="Query" ng-click="performQuery()"/>
+                
+                Results: {{result.length || 0}}
+                <table>
+                    <tbody ng-repeat="record in result">
+                        <th colspan=2>Record {{$index+1}}:</th>
+                        <tr ng-repeat="(key, val) in record">
+                            <td>{{key}}</td>
+                            <td>{{val}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+<!-- content -->
+            </div>
+            <div data-role="footer" class="footer"></div><!-- data-position="fixed"-->
+        </div>
+        <!-- endbody -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>        
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script>
+            myApp = angular.module("myApp",[]);
+            myApp.controller("myController",function($scope){
+                $scope.performQuery = function(){
+                    console.log($scope.cmdprompt);
+                    myDB.execute($scope.cmdprompt, function(res){
+                       $scope.$apply(function(){
+                           console.log(res);
+                        $scope.result = res;
+                       }); 
+                    });
+                };
+                
+                $scope.alterdate = function(){
+                    var cmd = [];
+                    cmd.push("update T_CLIENT set CLT_TRANING_START_DATE =  CLT_TRANING_START_DATE - interval '"+$scope.altDay+"' day , CLT_TRANING_END_DATE =  CLT_TRANING_END_DATE - interval '"+$scope.altDay+"' day  where CLT_TRANING_START_DATE  is not null and CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_ set CLT_TRANING_START_DATE =  CLT_TRANING_START_DATE - interval '"+$scope.altDay+"' day , CLT_TRANING_END_DATE =  CLT_TRANING_END_DATE - interval '"+$scope.altDay+"' day  where CLT_TRANING_START_DATE  is not null and CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_loan set CLL_FORM_DISTRIBUTION_DATE = CLL_FORM_DISTRIBUTION_DATE - interval '"+$scope.altDay+"' day where CLL_FORM_DISTRIBUTION_DATE is not  NULL and CLL_CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_loan set CLL_DISBURSEMENT_DATE = CLL_DISBURSEMENT_DATE - interval '"+$scope.altDay+"' day where CLL_DISBURSEMENT_DATE is not  NULL and CLL_CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_loan_ set CLL_FORM_DISTRIBUTION_DATE = CLL_FORM_DISTRIBUTION_DATE - interval '"+$scope.altDay+"' day where CLL_FORM_DISTRIBUTION_DATE is not  NULL and CLL_CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_loan_ set CLL_DISBURSEMENT_DATE = CLL_DISBURSEMENT_DATE - interval '"+$scope.altDay+"' day where CLL_DISBURSEMENT_DATE is not  NULL and CLL_CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_REPAY_SCHEDULE set crs_date=crs_date-"+$scope.altDay+"  where CRS_CLT_PK in ("+$scope.altLoans+")");
+                    cmd.push("update T_CLIENT_REPAY_SCHEDULE set crs_created_date = crs_created_date - interval '"+$scope.altDay+"' day where CRS_CLT_PK in ("+$scope.altLoans+")");
+                    myDB.dbShell.transaction(function(tx){
+                        for(e in cmd){
+                            console.log(cmd[e]);
+                            tx.executeSql(cmd[e]); }
+                    }, function(err){alert("err:"+JSON.stringify(err));return true;}, function(suc){
+                        alert("Days "+$scope.altDay+" for loans "+$scope.altLoans);// "+CLT_PK+":"+ $scope.applicantdata.fullname);
+                        return true;
+                    });
+
+                };
+            });
+            function init(){
+                initTemplate.load(true);
+            }
+
+            var maxcrs = 0;
+            myDB.execute("SELECT MAX(CRS_PK) as maxcrs FROM T_CLIENT_REPAY_SCHEDULE LIMIT 1",function(data){
+                    console.log(data);
+                    maxcrs = parseInt(data[0].maxcrs) + 1; 
+                    var cdt = new Date();
+                    var cdt_date = cdt.getUTCDate(); 
+                    if(cdt_date.toString().length == 1) cdt_date = "0"+cdt_date.toString();
+                    
+                    var cdt_month = parseInt(cdt.getMonth()) + 1;  
+                    if(cdt_month.toString().length == 1) cdt_month =  "0"+cdt_month.toString();
+
+                    var cdt_year = cdt.getFullYear();
+                    var CRS_DATE = cdt_date + "/" + cdt_month + "/" + cdt_year; 
+
+                    
+                    var query = "SELECT c.CLT_PK, c.CLT_STATUS, loan.CLL_LTY_PK, loan.CLL_PK, loan.CLL_LOAN_INTEREST, loan.CLL_REPAY_PER_WEEK, loan.CLL_ACTUAL_LOAN, loan.loancount, " + //LOAN
+                    
+                    "CPM_COM.CPM_STATUS_PK as COM_CPM_STATUS_PK, CPM_COM.CPM_PRM_PK as COM_CPM_PRM_PK, CPM_COM.CPM_PRM_BALANCE as COM_CPM_PRM_BALANCE, " + //CPM_COM
+                    
+                    "CPM_FS.CPM_STATUS_PK as FS_CPM_STATUS_PK, CPM_FS.CPM_PRM_PK as FS_CPM_PRM_PK, CPM_FS.CPM_PRM_BALANCE as FS_CPM_PRM_BALANCE, CPM_FS.CPM_REPAY_PER_WEEK as FS_CPM_REPAY_PER_WEEK " + //CPM_COM
+     
+
+                    " FROM T_CLIENT as c "+
+                    
+                    "LEFT JOIN (SELECT COUNT(CLL_PK) as loancount, MAX(CLL_PK) as CLL_PK, MAX(CLL_CLT_PK) as CLL_CLT_PK, MIN(CLL_LTY_PK) as CLL_LTY_PK, MAX(CLL_LOAN_INTEREST) as CLL_LOAN_INTEREST, MAX(CLL_REPAY_PER_WEEK) as CLL_REPAY_PER_WEEK, MAX(CLL_ACTUAL_LOAN) as CLL_ACTUAL_LOAN  FROM T_CLIENT_LOAN WHERE CLL_LTY_PK IN (34,35) GROUP BY CLL_CLT_PK ) as loan ON (CLT_PK = loan.CLL_CLT_PK) "+  
+                     
+                    "LEFT JOIN T_CLIENT_PRODUCT_MAPPING CPM_COM ON (CLT_PK = CPM_COM.CPM_CLT_PK AND CPM_COM.CPM_PRM_PK=73   ) "+ 
+                    "LEFT JOIN T_CLIENT_PRODUCT_CLOSE_INFO CPC_COM ON (CPC_COM.CPC_CPM_PK = CPM_COM.CPM_PK) "+ 
+
+                    "LEFT JOIN T_CLIENT_PRODUCT_MAPPING CPM_FS ON (CLT_PK = CPM_FS.CPM_CLT_PK AND CPM_FS.CPM_PRM_PK=77) "+ 
+                    "LEFT JOIN T_CLIENT_PRODUCT_CLOSE_INFO CPC_FS ON (CPC_FS.CPC_CPM_PK = CPM_FS.CPM_PK) "+ 
+         
+                    "GROUP BY CLL_CLT_PK ";
+
+                    console.log(query);
+
+                    myDB.execute(query,function(clients){
+                         console.log(clients.length);
+                        if(clients.length == 0){ 
+                            console.log("omg");
+                            return false;
+                        }
+                        var cmdarr = {
+                            prepared: null,
+                            values : [],
+                        };
+                        cmd = "INSERT INTO T_CLIENT_REPAY_SCHEDULE ("+
+                                "CRS_PK,"+
+                                "CRS_CLT_PK,"+
+                                "CRS_CLL_PK,"+
+                                "CRS_PRM_LTY_PK,"+
+                                "CRS_LOAN_SAVING_FLAG,"+
+                                "CRS_ACTUAL_WEEK_NO,"+
+                                "CRS_COLLECTION_WEEK_NO,"+
+                                "CRS_DATE,"+
+                                "CRS_FO,"+
+                                "CRS_FLAG,"+ //10
+                                "CRS_ATTENDED,"+
+                                "CRS_EXP_CAPITAL_AMT,"+
+                                "CRS_EXP_PROFIT_AMT,"+
+                                "CRS_BALANCE_CAPITAL,"+
+                                "CRS_BALANCE_PROFIT,"+
+                                "CRS_PENALTY,"+
+                                "CRS_SMS_STATUS,"+
+                                "CRS_SMS_GROUP_STATUS,"+
+                                "CRS_RECP_STATUS,"+
+                                "CRS_RECP_GROUP_STATUS,"+ //20
+                                "CRS_REASON,"+
+                                "CRS_ASSISTED,"+
+                                "CRS_ACT_CAPITAL_AMT,"+
+                                "CRS_ACT_PROFIT_AMT,"+
+                                "CRS_IS_VARY_FORECAST,"+
+                                "CRS_REF_NO,"+
+                                "CRS_EXT_STATUS,"+
+                                "CRS_FUP_PK,"+
+                                "CRS_RECON_FUP_PK,"+
+                                "CRS_CREATED_BY,"+ //30
+                                "CRS_CREATED_DATE) VALUES ("+
+                                " ?,?,?,?,?,?,?,?,?,?"+
+                                ",?,?,?,?,?,?,?,?,?,?"+
+                                ",?,?,?,?,?,?,?,?,?,?"+
+                                ",?)";
+                        cmdarr.prepared = cmd;
+                        var count = 1;  
+                        $.each(clients,function(g,client){ 
+                            console.log(client);
+                            var canGen = false; //Cannot Generate CRS_S
+                            //client.CRS_ACTUAL_WEEK_NO == 0 || 
+                            if(client.CLT_STATUS == 7 || client.CLT_STATUS == 26) {
+                                canGen = true;
+
+                            }
+                            if(client.COM_CPM_STATUS_PK == 56 && canGen){
+                                var loanAmount = client.CLL_ACTUAL_LOAN;
+                            
+                                var loantype = client.CLL_LTY_PK;
+                                var repayperweek = 1000;
+                                //console.log(loan.CLL_CLT_PK+" "+loanAmount+" "+loantype);
+                              
+                                if(client.CPM_CPC_PK == null){
+                                    
+                                    if(client.loancount > 0){
+                                        
+                                        if(parseInt(loanAmount) > 4000000){
+                                            repayperweek = 5000;
+                                        } else if (parseInt(loanAmount) > 3000000){
+                                            repayperweek = 4000;
+                                        } else if (parseInt(loanAmount) > 2000000){
+                                            repayperweek = 3000;
+                                        } else if (parseInt(loanAmount) > 1000000){
+                                            repayperweek = 2000;
+                                        } else {
+                                            repayperweek = 1000;
+                                        }
+                                    } 
+                                }
+
+                                var loanPK = 0;
+                                if(client.CLL_PK != null ) loanPK = client.CLL_PK;
+                                
+                                var loanVal = [ 
+                                    maxcrs,
+                                    client.CLT_PK,
+                                    loanPK,
+                                    client.COM_CPM_PRM_PK,
+                                    'S',
+                                    1,
+                                    0,
+                                    CRS_DATE,
+                                    sessionStorage.getItem("USER_PK"),
+                                    'C', //10
+                                    '',
+                                    repayperweek,
+                                    0,
+                                    client.COM_CPM_PRM_BALANCE,
+                                    0,
+                                    0,
+                                    '',
+                                    '',
+                                    '',
+                                    '', //20
+                                    '',
+                                    '',
+                                    0,
+                                    0,
+                                    0,
+                                    null,
+                                    49,
+                                    null,
+                                    null, 
+                                    '',
+                                    '' //30
+                                ];
+                                maxcrs = maxcrs + 1; 
+                                cmdarr.values.push(loanVal);
+                            } 
+
+                            if(client.FS_CPM_STATUS_PK == 56 && canGen){
+
+                                var repayperweek = client.FS_CPM_REPAY_PER_WEEK;
+                                if(repayperweek == '') repayperweek = 3000; //Minimum
+
+                                var loanPK = 0;
+                                if(client.CLL_PK != null ) loanPK = client.CLL_PK;
+
+                                 var loanVal = [ 
+                                    maxcrs,
+                                    client.CLT_PK,
+                                    loanPK,
+                                    client.FS_CPM_PRM_PK,
+                                    'S',
+                                    1,
+                                    0,
+                                    CRS_DATE,
+                                    sessionStorage.getItem("USER_PK"),
+                                    'C', //10
+                                    '',
+                                    repayperweek,
+                                    0,
+                                    client.FS_CPM_PRM_BALANCE,
+                                    0,
+                                    0,
+                                    '',
+                                    '',
+                                    '',
+                                    '', //20
+                                    '',
+                                    '',
+                                    0,
+                                    0,
+                                    0,
+                                    null,
+                                    49,
+                                    null,
+                                    null, 
+                                    '',
+                                    '' //30
+                                ];
+                                maxcrs = maxcrs + 1; 
+                                cmdarr.values.push(loanVal);
+                            }
+                        });
+                        console.log(cmdarr);
+                        // myDB.dbShell.transaction(function(tx){ 
+                        //     for(v in cmdarr.values){ 
+                        //         console.log(cmdarr.values);
+                        //         tx.executeSql(
+                        //             cmdarr.prepared,cmdarr.values[v],  function(tx,data){ 
+                        //                 console.log(tx);
+                        //                 console.log(data);
+                        //             },function(tx, err){ 
+                        //           })
+                        //     } 
+                        // }, function(err){
+                        //     console.log("Error : " + err.message  );
+                        //     return false;
+                        // }, function(suc){
+                        //      console.log("done");
+                        //     var dt = new Date();
+                        //     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(); 
+                        // });
+                    });
+                });
+            
+        </script>
+    </body>
+</html>

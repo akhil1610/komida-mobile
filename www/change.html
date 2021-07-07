@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <body ng-controller="clientCtrl">
+        <form id="newClientForm" name="newClientForm" ng-submit="actionSubmit()" novalidate><!--newClientForm.$valid && -->
+        <!-- Applicant's Data -->
+            <div data-role="page" id="pageAppData">
+                <div data-role="header" class="header"></div>
+                <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.ApplicantData">Applicant's Data</span><br class="clear"/>
+                    <!--<div id="testdata">{{finaldata}}</div>-->
+                    <div class="ui-grid-a ui-content client-info" style="text-align:center;" >
+                        <div class="ui-block-a">
+                            <div class="ncadPhoto" style="background-color:#f6f6f6;border:1px solid #ddd;margin:auto;margin-top:1em;">
+                                <img class="ncadPhoto" id="ncadPhoto" alt="" />
+                            </div>
+                        </div>
+                        <div class="ui-block-b">
+                            
+                            <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                <thead><tr><td></td><td></td></tr></thead>
+                                <tbody>
+                                    <tr><td data-i18n="messages.FullName">Full Name</td><td>{{clientinfo.CLT_FULL_NAME}}</td></tr>
+                                    <tr><td data-i18n="messages.NickName">Nick Name</td><td>{{clientinfo.CLT_NICK_NAME}}</td></tr>
+                                    <tr><td data-i18n="messages.Gender">Gender</td><td>{{selectCodes[2][clientinfo.CLT_GENDER] | translate }}</td></tr>
+                                    <tr><td data-i18n="messages.FamilyCardNo">Family Card No.</td><td>{{clientinfo.CLT_FAMILY_CARD_NO}}</td></tr>
+                                    <tr><td data-i18n="messages.ClientID">Client ID</td><td>{{clientinfo.CLT_CLEINT_ID}}</td></tr>
+                                    <tr><td data-i18n="messages.KTPNo">Client KTP.</td><td>{{clientinfo.CLT_OTH_REG_NO}}</td></tr>
+                                    <tr><td data-i18n="messages.AccountNumber">Account No</td><td>{{clientinfo.CLL_ACCOUNT_NUNMBER}}</td></tr>
+                                    <tr><td data-i18n="messages.LoanType">Loan Type</td><td>{{clientinfo.CLL_LOAN_TYPE}}</td></tr>
+                                    <tr><td data-i18n="messages.DOB">Date of Birth</td><td>{{clientinfo.CLT_DOB}}</td></tr>
+                                    <tr><td data-i18n="messages.Age">Age</td><td>{{clientinfo.CLT_AGE}}</td></tr>
+                                    <tr><td data-i18n="messages.HighestEducation">Highest Education</td><td>
+                                        <select name="ncadHighestEducation" id="ncadHighestEducation" ng-model="clientinfo.CLT_HIGH_EDU" ng-options="option.value as option.name | translate for option in selectCodes.3" required>
+                                        </select>
+                                        </td></tr>
+                                    <tr ng-show="apHighestEdOthers()"><td data-i18n="messages.PleaseSpecify">Please specify</td><td><input type="text" ng-model="clientinfo.CLT_HIGH_EDU_OTHER" name="ncadHighestEducationOthers" id="ncadHighestEducationOthers" placeholder="Others" data-inline="true" maxlength="100" data-i18n="[placeholder]messages.Other"/></td></tr>
+                                </tbody>
+                            </table>
+                            <br class="clear"/>
+                        </div>
+                    </div>
+                </div>
+                <div data-role="footer" class="footer" style="text-align:center;">
+                </div><!-- data-position="fixed"-->
+            </div>
+    
+            <!-- Husband's Info -->
+            <div data-role="page" id="pageAppData2">
+                <div data-role="header" class="header"></div>
+                <div data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.HusbandInformation">Husband's Information</span><br class="clear"/>
+                    <div class="ui-content">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead><tr><td></td><td></td></tr></thead>
+                            <tbody>
+                                <tr><td data-i18n="messages.MaritalStatus">Marital Status</td><td>
+                                    <select name="ncadMaritalStatus" id="ncadMaritalStatus" ng-model="clientinfo.CLT_MARITAL_STATUS" ng-options="option.value as option.name | translate for option in selectCodes.1" required/>
+                                    </td></tr>
+                                <tr ng-show="showHusband()"><td data-i18n="messages.HusbandName">Husband Name</td><td><input ng-model="clientinfo.CLT_HB_NAME" type="text" name="ncadHusbandName" id="ncadHusbandName" placeholder="Husband Name" data-inline="true" maxlength="100" required/></td></tr>
+                                <tr ng-show="showHusband()"><td data-i18n="messages.HusbandIDNo">Husband ID No.</td><td><input type="number" ng-model="clientinfo.CLT_HB_ID" name="ncadHusbandIdNo" id="ncadHusbandIdNo" placeholder="Husband ID No." data-inline="true" max="9999999999999999" required/></td></tr>
+                                <tr ng-show="showHusband()"><td data-i18n="messages.LiveInHouse">Lives in House</td><td><label for="ncadLivesInHouse">{{clientinfo.CLT_HB_LIVE_IN_HOUSE | translate}}</label><input type="checkbox" ng-model="clientinfo.CLT_HB_LIVE_IN_HOUSE" ng-true-value='YES' ng-false-value='NO' name="ncadLivesInHouse" id="ncadLivesInHouse"/></td></tr>
+                                <tr ng-show="showHusband()"><td data-i18n="messages.WhereDoesHeLive">Where does he live?</td><td><input ng-model="clientinfo.CLT_HB_LIVE_PLACE" type="text" name="ncadWhereHusband" id="ncadWhereHusband" placeholder="Where does he live?" data-inline="true" maxlength="150" data-i18n="[placeholder]messages.WhereDoesHeLive" required/></td></tr>
+                                <tr ng-show="showHusband()">
+                                    <td data-i18n="messages.HowOftenDoesHeComeHome">How often does he come home?</td><td>
+                                    <select name="ncadHowOftenHusband" id="ncadHowOftenHusband" ng-model="clientinfo.CLT_HB_COME_HOUSE" ng-options="option.value as option.name | translate for option in selectCodes.6" required/>
+                                    </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="footer" data-role="footer"></div><!-- data-position="fixed"-->
+            </div>  
+        
+            <!--Household and Mother Info-->
+            <div data-role="page" id="pageAppData3">
+                <div data-role="header" class="header"></div>
+                <div data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.HouseholdMotherInfo">Household and Mother Info</span><br class="clear"/>
+                    <div class="ui-content">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead><tr><td></td><td></td></tr></thead>
+                            <tbody>
+                                <tr><td data-i18n="messages.NoOfHouseholdMember">No. of Household Members</td><td><input type="number" ng-model="clientinfo.CLT_NUM_HOUSE_MEM" name="ncadHouseholdMembers" id="ncadHouseholdMembers" placeholder="No. of Household Members" data-inline="true" max="99" required/></td></tr>
+                                <tr><td style="word-wrap:break-word;width:50%" data-i18n="messages.NoOfChildrenLessThan18YearOld">No. of Children &lt;18yrs<br/> in the household</td><td><input type="number" ng-model="clientinfo.CLT_NUM_CHILDREN" name="ncadNoChildren" id="ncadNoChildren" placeholder="No. of Children &lt;18yrs in the household" data-inline="true" max="99" required/></td></tr>
+                                <tr><td data-i18n="messages.MotherName">Mother's Name</td><td>{{clientinfo.CLT_MOTHER_NM}}</td></tr>
+                                <tr><td data-i18n="messages.MotherDOB">Mother's Birth Date</td><td>{{clientinfo.CLT_MOTHER_DOB}}</td></tr>
+                                <tr><td data-i18n="messages.MotherAge">Mother's Age</td><td>{{clientinfo.CLT_MOTHER_AGE}}</td></tr>
+                            </tbody>
+                        </table></div>
+                </div>
+                <div class="footer" data-role="footer"></div>
+            </div>
+        
+            <!--App Data Business Info-->        
+            <div data-role="page" id="pageAppData4">
+                <div data-role="header" class="header"></div>
+                <div data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.BusinessInfo">Business Info</span><br class="clear"/>
+                    <div class="ui-content">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead><tr><td></td><td></td></tr></thead>
+                            <tbody>
+                                <tr><td data-i18n="messages.BusinessType">Type of Business</td><td><input type="text" ng-model="clientinfo.CLT_BIZ" name="ncadTypeBusiness" id="ncadTypeBusiness" placeholder="Type of Business" maxlength="150" data-inline="true" data-i18n="[placeholder]messages.BusinessType" required/></td></tr>
+                                <tr><td data-i18n="messages.BusinessEquipment">Business Equipment</td><td><input type="text" ng-model="clientinfo.CLT_BIZ_EQUIPT" name="ncadBusinessEquip" id="ncadBusinessEquip" placeholder="Business Equipment" maxlength="150" data-inline="true" data-i18n="[placeholder]messages.BusinessEquipment" required/></td></tr>
+                                <tr><td data-i18n="messages.JointBusinessWithHusband">Joint Business with Husband</td><td><input type="text" ng-model="clientinfo.CLT_BOTH_BIZ" name="ncadJointBusiness" id="ncadJointBusiness" placeholder="Joint Business with Husband" maxlength="150" data-inline="true" data-i18n="[placeholder]messages.JointBusinessWithHusband" required/></td></tr>
+                                <tr><td data-i18n="messages.BusinessEquipment">Business Equipment</td><td><input type="text" ng-model="clientinfo.CLT_BOTH_BIZ_EQUIPT" name="ncadBusinessEquip2" id="ncadBusinessEquip2" placeholder="Business Equipment" maxlength="150" data-inline="true" data-i18n="[placeholder]messages.BusinessEquipment" required/></td></tr>
+                                <tr><td data-i18n="messages.HusbandBusiness">Husband's Business</td><td><input type="text" ng-model="clientinfo.CLT_HB_BIZ" name="ncadHubandBusiness" id="ncadHubandBusiness" placeholder="Husband's Business" maxlength="150" data-inline="true" data-i18n="[placeholder]messages.HusbandBusiness" required/></td></tr>
+                                <tr><td data-i18n="messages.BusinessEquipment">Business Equipment</td><td><input type="text" ng-model="clientinfo.CLT_HB_BIZ_EQUIPT" name="ncadBusinessEquip3" id="ncadBusinessEquip3" placeholder="Business Equipment" maxlength="150" data-inline="true" data-i18n="[placeholder]messages.BusinessEquipment" required/></td></tr>
+                            </tbody>
+                        </table></div>
+                </div>
+                <div class="footer" data-role="footer"></div>
+            </div>
+
+            <!--Address and Telephone Number-->               
+            <div data-role="page" id="pageAddress">
+                <div data-role="header" class="header"></div>
+                <div data-role="main" class="ui-content" data-ajax="false">
+                    <span class="label clear bold uppercase" data-i18n="messages.AddrTelNo">Address and Telephone Numbers</span><br class="clear"/>
+                    <div class="ui-content">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                            <thead><tr><td></td><td></td></tr></thead>
+                            <tbody>
+                                <tr><td data-i18n="messages.RTRW">RT/RW</td><td><input type="text" ng-model="clientinfo.CLT_RT_RW" name="adrtrw" id="adrtrw" placeholder="RT/RW" data-inline="true" maxlength="100" data-i18n="[placeholder]messages.RTRW" required/></td></tr>
+                                <tr><td data-i18n="messages.StreetArea">Street/Area</td><td><input type="text" ng-model="clientinfo.CLT_STREET_AREA_NM" name="adstreetarea" id="adstreetarea" placeholder="Street/Area" maxlength="50" data-inline="true" data-i18n="[placeholder]messages.StreetArea" required/></td></tr>
+                                <tr>
+                                    <td data-i18n="messages.Center">Center</td>
+                                    <td>
+                                        <select name="adcenter" id="adcenter" ng-model="clientinfo.centerid" ng-options="option.value as option.name for option in selectCodes.CTR" ng-change="updateAddress()" required />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td data-i18n="messages.Village">Village</td>
+                                    <td>
+                                        <input type="text" ng-model="clientinfo.CLT_VILLAGE.name" name="advillage" id="advillage" placeholder="Sub-district" maxlength="50" data-inline="true" data-i18n="[placeholder]messages.Village" required/> 
+                                    </td>
+                                </tr>
+                                <tr><td data-i18n="messages.SubDistrict">Sub-district</td><td><input type="text" ng-model="clientinfo.CLT_SUB_DISTRICT" name="adsubdistrict" id="adsubdistrict" placeholder="Sub-district" maxlength="50" data-inline="true" data-i18n="[placeholder]messages.SubDistrict" required/></td></tr>
+                                <tr><td data-i18n="messages.District">District</td><td><input type="text" ng-model="clientinfo.CLT_DISTRICT" name="addistrict" id="addistrict" placeholder="District" data-inline="true" maxlength="50" data-i18n="[placeholder]messages.District" required/></td></tr>
+                                <tr><td data-i18n="messages.Province">Province</td><td><input type="text" ng-model="clientinfo.CLT_PROVINCE" name="adprovince" id="adprovince" placeholder="Province" data-inline="true" maxlength="50" data-i18n="[placeholder]messages.Province" required/></td></tr>
+                                <tr><td data-i18n="messages.PostalCode">Post code</td><td><input type="number" ng-model="clientinfo.CLT_POSTAL_CD" name="adpostcode" id="adpostcode" placeholder="Post code" data-inline="true"  max="9999999999999999" data-i18n="[placeholder]messages.PostalCode" required/></td></tr>
+                                <tr><td data-i18n="messages.Landmark">Landmark</td><td><input type="text" ng-model="clientinfo.CLT_LAND_MARK" name="adlandmark" id="adlandmark" placeholder="Landmark" data-inline="true" maxlength="50" data-i18n="[placeholder]messages.Landmark" required/></td></tr>
+                                <tr><td data-i18n="messages.ClientMobileNo1">Client Mobile No.1</td><td><input type="text" ng-model="clientinfo.CLT_MOB_NO_1" name="admobile1" id="admobile1" placeholder="Client Mobile No.1" maxlength="20" data-inline="true" data-i18n="[placeholder]messages.ClientMobileNo1" required/></td></tr>
+                                <tr><td data-i18n="messages.ClientMobileNo2">Client Mobile No.2</td><td><input type="text" ng-model="clientinfo.CLT_MOB_NO_2" name="admobile2" id="admobile2" placeholder="Client Mobile No.2" maxlength="20" data-inline="true" data-i18n="[placeholder]messages.ClientMobileNo2" required/></td></tr>
+                                <tr><td data-i18n="messages.HusbandMobileNo">Husb. Mobile No</td><td><input type="text" ng-model="clientinfo.CLT_HUSB_MOB_NO" name="adhusbmobile" id="adhusbmobile" placeholder="Husb. Mobile No" maxlength="20" data-inline="true" data-i18n="[placeholder]messages.HusbandMobileNo" required/></td></tr>
+                            </tbody>
+                        </table></div>
+                </div>
+                <div class="footer" data-role="footer"></div>
+            </div>
+            <!-- endbody -->        
+            <!-- cancel button -->        
+            <div data-role="page" data-dialog="true" id="pageCancel" style="background:black !important;">
+                <div class="ui-content" style="background:#fff">
+                    <span data-i18n="messages.ReturnToDashboardWithoutSavingClient">Return to dashboard without saving New Client?</span>
+                    <a href="dashboard.html" class="ui-btn ui-btn-r ui-corner-all ui-shadow ui-icon-check ui-btn-icon-left" data-ajax="false" data-i18n="buttons.ReturnToDashboard">Return to Dashboard</a>
+                    <a href="#" class="ui-btn ui-btn-g ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onclick="navBack()" data-i18n="buttons.Cancel">Cancel</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- scripts -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <script type="text/javascript" src="js/filemanager.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_change.js"></script>
+		<script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+		<script type="text/javascript" src="js/ln.js"></script>
+		<script type="text/javascript" src="js/angular-translate.js"></script>		
+		<script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+    </body>
+</html>

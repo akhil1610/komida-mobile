@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" href="css/index.css" />
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" href="css/init.css" />
+        <link rel="stylesheet" href="css/angular-animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <style>
+        span.loanname {
+            background: #888;
+            padding: 1em;
+            border-radius: 5px;
+            margin-left: 10px;
+            color: white;
+        }
+    </style>
+    <style>
+        .align-center {
+            text-align: center;
+        }
+        .align-center > label {
+            left: 40%;
+        }
+        .loan-name {
+            font-weight: bold;
+            color: #444;
+        }
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+    
+        /* Modal Content */
+    
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+    
+        /* Add Animation */
+    
+        @-webkit-keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+    
+        @keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+    
+        #myModal {
+            display: none;
+        }
+    
+        /* The Close Button */
+    
+        .close {
+            color: black;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    
+        .modal-header {
+            padding: 2px 16px;
+            background-color: white;
+            color: #888;
+        }
+    
+        .modal-body {
+            padding: 2px 16px;
+        }
+    
+        #qrcode {
+            width: 160px;
+            height: 160px;
+            margin: auto;
+        }
+    
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: white;
+            color: #888;
+        }
+    </style>
+    <body ng-app="myApp" ng-controller="DisbursementCtrl">
+    
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+               
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <div>
+                    <div class="first-page">
+                        <div data-type="vertical" class="left ui-grid-50">
+                            <!-- content -->
+                            <!-- <span class="label" data-i18n="messages.Disbursement">Disbursements</span> -->
+                            <br class="clear"/>
+                            <br class="clear"/>
+                            <div class="detlabel" data-i18n="messages.Village">Village:</div>:
+                            <span class="detville" >&nbsp;&nbsp;<b>{{ sf.CLT_VILLAGE.name }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <br class="clear"/>
+                            <br class="clear"/>
+                        </div>
+                        <br class="clear"/>
+                        <!-- <select ui-select ng-model="sf.CLT_VILLAGE" name="village" id="village" placeholder="village" data-inline="true" ng-options="status.name for status in selectVillage track by status.value"></select>
+         -->
+
+                        <div class="ui-content no-hori-padding"  style="    min-height: 200px;"> 
+                            <div class="jumbotron center" ng-if="groups == undefined || groups.length == 0">
+                                <h1>No Disbursements</h1>
+                                &nbsp;
+                            </div> 
+                            <div class="load-cover">
+                                <img src="img/ripple3.gif?1" />
+                            </div>
+
+                            <div ng-repeat="group in groups" ng-show="filterdisbursementOnly(group)" class="ui-grid-33 marg-btm-20 "> 
+                                <a href="#" ng-click="viewGroup(group)" class="trans-blocks">
+                                    <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" ng-click="" trans-check  
+                                                        expected="{{ grpGetTotalApplied(group) }} "
+                                                        actual="{{ grpGetActualTotalLoan(group) }}" 
+                                                        type="bg"
+                                                        defaultcolor="#42A5F5"
+                                                        checknow="allDone(group)">
+                                        <thead>
+                                            <tr>
+                                                <th class="box-header"> 
+                                                    <div class="lineh-32 ">
+                                                        {{ group.CTR_CENTER_NAME }} {{ grouptext }} {{ group.GROUP_ID }}  
+                                                        <i ng-show="groupCompleted(group)" class="dark-blue right fa fa-check-square fa-2x"></i>
+                                                    </div>
+                                                    <div ng-if="!checkAllDone(group,false)" style="position: absolute; top: 0; right: 0;">
+                                                        <i class="dark-blue pending-signature right fa fa-pencil fa-2x"></i>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="box-body">
+                                            <tr>
+                                                <td > 
+                                                    <div class="ui-content bold center group-block-amt" >
+                                                        <h1>{{grpGetActualTotalLoan(group) | noFractionCurrency : currloc : 0}}</h1>
+                                                    </div>
+                                                    <div class="group-client left">
+                                                        <i class="fa fa-user"></i>{{ memberCount(group) }}
+                                                    </div>
+                                                    <div class="group-status right">
+                                                        <span>{{ expectedtext }}</span> :<b>{{grpGetTotalApplied(group) | noFractionCurrency : currloc : 0}}</b>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </a>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="second-wrapper"  data-ajax="false">
+                        <div class="whitecover second-page"></div>
+                        <!-- content -->
+                        <span class="label" data-i18n="messages.DisbursementForGroup">Disbursements for Group {{currGroup.id}}</span>
+                        <div class="ui-content no-hori-padding">
+                            <div data-type="vertical" class="left">
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="detailview()">Back</a>
+                            </div> 
+                            <table ng-repeat="client in currGroup.members | disburseClient " data-role="table" class="ui-responsive ui-shadow table-stroke" id="table{{currGroup.GROUP_ID}}">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="ui-content">
+                                                <span ng-class="{bold:client.CLL_IS_GROUP_LEADER=='Y'}">{{client.CLT_FULL_NAME}}</span>
+                                            </div>
+                                        </th>
+                                        <!-- <th data-i18n="messages.AmtAppliedFor">Amt. Applied For</th>
+                                        <th ng-show="checkIsCRF(currGroup)" data-i18n="messages.CRFAmt">CRF Amount</th>
+                                        <th ng-hide="checkIsCRF(currGroup)" data-i18n="messages.LoanAmt">Loan Amt.</th>
+                                        <th ng-hide="checkIsCRF(currGroup)">CRF</th>
+                                        <th ng-hide="checkIsCRF(currGroup)" data-i18n="messages.ActualAmtDisbursed">Actual Amt. Disbursed</th> -->
+
+                                        <!--CRF--><th ng-show="checkIsCRF(currGroup)">{{grpGetTotalLoan(currGroup) | noFractionCurrency : currloc : 0}}</th>  
+                                        <!--4--><th ng-show="checkIsCRF(currGroup)">{{grpGetActualTotalLoan(currGroup) | noFractionCurrency : currloc : 0}}</th> 
+                                        <th colspan="2">    
+                                            <div class="ui-content-btn right"  ng-show="BRC_DISBURSE_NOTIFICATION!='R'">
+                                                <a class="ui-btn ui-btn-bl ui-btn-i ui-btn-icon-notext ui-corner-all" ng-show="!getSMSClientStatus(client)" href="#" data-role="button" data-inline="true" ng-click="sendMsg('C', 'S', client)"><i class="fa fa-lg fa-envelope white"></i></a>
+
+                                                <a class="left ui-btn ui-btn-tl  ui-btn-i ui-btn-icon-notext ui-corner-all" href="#" data-role="button" data-inline="true" ng-show="getSMSClientStatus(client)" ng-click="sendMsg('C', 'S', client)"><i class="fa fa-lg fa-envelope white"></i></a><!--{{client.sms}}<p class="right" ng-show="getClientSMS(currGroup,$index)">SMS sent on {{client.sms}}</p>-->
+                                            </div>  
+                                            <div class="ui-content-btn right" ng-show="BRC_DISBURSE_NOTIFICATION!='S'">
+                                                <a class="ui-btn ui-btn-bl ui-btn-i ui-btn-icon-notext ui-corner-all" ng-show="!getReceiptClientClientStatus(client)" href="#" data-role="button" data-inline="true" ng-click="sendMsg('C', 'R', client)"><i class="fa fa-lg white fa-save"></i></a>
+                                                
+                                                <a class="left ui-btn ui-btn-tl  ui-btn-i ui-btn-icon-notext ui-corner-all" href="#" data-role="button" data-inline="true" ng-show="getReceiptClientClientStatus(client)" ng-click="sendMsg('C', 'R', client)" ><i class="fa fa-lg white fa-save"></i></a><!--{{client.sms}}<p class="right" ng-show="getClientSMS(currGroup,$index)">SMS sent on {{client.sms}}</p>-->
+                                            </div>
+                                        </th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!--- ui-responsive ui-shadow table-stroke ui-table ui-table-reflow sub-table light-text -->
+                                    <tr >
+                                        <td colspan="3" style="padding:0">
+                                            <div class="" >
+                                                <table data-role="table" class="ui-responsive ui-shadow table-stroke" >
+                                                    <thead>
+                                                        <td style="padding:0"></td>
+                                                        <td style="padding:0"></td>
+                                                        <td style="padding:0"></td>
+                                                        <td style="padding:0"></td>
+                                                        <td style="padding:0"></td>
+                                                    </thead>
+                                                    <tbody> 
+                                                        <tr ng-repeat="loan in client.loans track by loan.CLL_PK">
+                                                            <td colspan="5" style="padding:0;">
+                                                                <table data-role="table" class="table-stroke ui-table ui-table-reflow" > 
+                                                                    <thead style="background:#80C6C7;color:white;">
+                                                                        <td width="20%">
+                                                                            <div style="margin-left: 20px;" > {{ nametext }}</div>
+                                                                        </td>
+                                                                        <!-- <td><div class=" " data-i18n="messages.AmtAppliedFor">Amt. Applied For</div></td> -->
+                                                                        <!-- <td><div class=" " ng-show="checkIsCRF(currGroup)" data-i18n="messages.CRFAmt">CRF Amount</td> -->
+                                                                        <td>
+                                                                            <div class="align-center" ng-hide="checkIsCRF(currGroup)"  >
+                                                                                {{ loanamttext }}
+                                                                            </div>
+                                                                        </td>
+                                                                        <!-- <td><div class=" " ng-hide="checkIsCRF(currGroup)">CRF</td> -->
+                                                                        <td>
+                                                                            <div class="align-center"> 
+                                                                                {{ maturitytext }}
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="align-center">
+                                                                                {{ graceperiodtext }}
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <!-- <div class=" " ng-hide="checkIsCRF(currGroup)" data-i18n="messages.ActualAmtDisbursed">Actual Amt. Disbursed</div> -->
+                                                                            <div class="align-center">
+                                                                                {{ weeklyrepaymenttext }}
+                                                                            </div>
+                                                                        </td> 
+                                                                        <td>
+                                                                            <div class="align-center">
+                                                                                {{ nodisbursementtext }}
+                                                                            </div>
+                                                                        </td>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td width="20%">
+                                                                                <div class="ui-content loan-name" id="test">
+                                                                                    {{ loan.LTY_DESCRIPTION | translate }} 
+                                                                                </div>
+                                                                            </td>
+                                                                            <!-- <td>
+                                                                                <div class="ui-content" ng-show="loan.haveLoan">
+                                                                                    {{loan.CRS_EXP_CAPITAL_AMT | noFractionCurrency : currloc : 0}}
+                                                                                </div>
+                                                                            </td> -->
+                                                                            <!--<td ng-hide="checkIsCRF(currGroup)">{{client.CRS_DISBURSEMNT_AMT | currency}}</td>-->
+                                                                            <!-- <td>
+                                                                                <div ng-show="checkIsCRF(currGroup)"  class="ui-content">
+                                                                                    {{ loan.CRS_ACT_CAPITAL_AMT | noFractionCurrency : currloc : 0}}
+                                                                                </div>
+                                                                            </td> -->
+
+                                                                            <td >
+                                                                                <div class="align-center" ng-hide="checkIsCRF(currGroup) && loan.haveLoan">
+                                                                                    <!-- <div ng-hide="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'||loan.faildisburse">
+                                                                                        <input ng-currency currency-symbol='{{currloc}}' id="loan{{loan.CLL_PK}}" class="colVal" type="text" ng-model="loan.CRS_ACT_CAPITAL_AMT" ng-blur="validateLoanAmt(loan)"/>
+                                                                                    </div> 
+                                                                                    ng-show="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'||loan.faildisburse" -->
+                                                                                    <div  class="ui-content">
+                                                                                        {{ loan.CRS_ACT_CAPITAL_AMT | noFractionCurrency : currloc : 0}} Rp
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td> 
+                                                                            <td>
+                                                                                <div class="align-center" ng-hide="checkIsCRF(currGroup)">
+                                                                                    <!-- <div ng-hide="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'||loan.faildisburse"> 
+                                                                                        <select name="loanmat{{loan.CLL_PK}}" id="loanmat{{loan.CLL_PK}}"
+                                                                                            class="loanmat" 
+                                                                                            ng-model="loan.CLL_TOTAL_LOAN_WEEKS" 
+                                                                                            ng-options="opt as opt.name for opt in loan.matopts track by opt.value"  
+                                                                                            ng-hide="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'"
+                                                                                            ng-init="loan.CLL_TOTAL_LOAN_WEEKS == opt.value || options[0]"
+                                                                                            ng-change="refresh(loan.CLL_PK);updateInterest(loan)" ></select>  
+                                                                                    </div>   
+                                                                                    ng-show="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'||loan.faildisburse" 
+                                                                                    -->
+
+                                                                                    <div class="ui-content"> 
+                                                                                        {{ loan.CLL_TOTAL_LOAN_WEEKS }}<br>{{ weektext }}
+                                                                                    </div>
+                                                                                </div> 
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="align-center" ng-hide="checkIsCRF(currGroup)">
+                                                                                    <!-- <div ng-hide="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'||loan.faildisburse"> 
+                                                                                        <select name="loangrace{{loan.CLL_PK}}" id="loangrace{{loan.CLL_PK}}"
+                                                                                            class="loanmat" 
+                                                                                            ng-model="loan.CLL_GRACE_PERIOD_WEEKS" 
+                                                                                            ng-options="opt as opt.name for opt in loan.graceopts track by opt.value"  
+                                                                                            ng-hide="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'"
+                                                                                            ng-init="loan.CLL_GRACE_PERIOD_WEEKS == opt.value || options[1]"
+                                                                                            ng-change="refresh(loan.CLL_PK)" ></select>  
+                                                                                    </div>  
+                                                                                        ng-show="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)||loan.CRS_FLAG=='R'||loan.faildisburse"
+                                                                                     -->
+
+                                                                                    <div  class="ui-content"> 
+                                                                                        {{ loan.CLL_GRACE_PERIOD_WEEKS.value }}<br>{{ weektext }}
+                                                                                    </div>
+                                                                                </div> 
+                                                                            </td>
+                                                                            <td >
+                                                                                <!-- <div ng-hide="checkIsCRF(currGroup)" class="ui-content">
+                                                                                    {{calcAct(loan) | noFractionCurrency : currloc : 0}}
+                                                                                </div> -->
+                                                                                <div  class="ui-content align-center" ng-show="loan.haveLoan">
+                                                                                    {{ weeklyrepayment(loan) | noFractionCurrency : currloc : 0}} Rp /<br>{{ weektext }}  
+                                                                                </div>
+                                                                            </td><!--<td><a class="ui-btn ui-icon-action ui-btn-icon-notext ui-corner-all" ng-show="!getSMSClientStatus(client)" href="#" data-role="button" data-inline="true" ng-click="sendClientSMS(client)">Send SMS</a><a class="left ui-btn ui-icon-check ui-btn-icon-notext ui-corner-all" style="background-color:#D6DF23" href="#" data-role="button" data-inline="true" ng-show="getSMSClientStatus(client)">OK</a></td>--> 
+                                                                            <td>
+                                                                                <div class="ui-content align-center" ng-hide="getSMSClientStatus(client)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)">
+                                                                                    <input type="checkbox" id='cb{{$index}}{{currGroup.GROUP_ID}}{{loan.CLL_PK}}' ng-model="loan.faildisburse" data-role='none' ng-click='failDisburseToggle(loan)' ng-checked='loan.faildisburse' ng-disabled="!loan.haveLoan"   />
+                                                                                    <label for="cb{{$index}}{{currGroup.GROUP_ID}}{{loan.CLL_PK}}">&nbsp;</label>  
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr >
+                                                                            <td colspan="7" style="background:white;">
+                                                                                <div class="ng-anim animate" ng-show="!loan.faildisburse" ng-animate="ng-anim" >
+                                                                                    <table data-role="table" class="ui-responsive ui-shadow table-stroke  sub-table light-text" > 
+                                                                                        <thead>
+                                                                                            <th colspan="2">
+                                                                                                <div class="ui-content">
+                                                                                                   {{ onetimesavingstext }}
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th colspan="">
+                                                                                                <div class="ui-content">
+                                                                                                    {{ percofloantext }}
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th colspan="">
+                                                                                                <div class="ui-content">
+                                                                                                    {{ amounttext }}
+                                                                                                </div>
+                                                                                            </th>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <tr ng-repeat="product in loan.products" ng-init="product" style="background: #FFF;"
+                                                                                            ng-if="product.intPercentage > 0" >
+                                                                                                <td>
+                                                                                                    <div class="ui-content" ng-hide="getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup)">
+                                                                                                        <input type="checkbox" id='cb{{loan.CLL_PK}}pk{{product.PRM_PK}}' ng-model="product.isCompulsary"
+                                                                                                        ng-checked="product.isCompulsary"
+                                                                                                        data-role='none' ng-click="togglePrdCompulsary(product)" />
+
+                                                                                                        <label for="cb{{loan.CLL_PK}}pk{{product.PRM_PK}}">&nbsp;</label>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    <div class="ui-content">
+                                                                                                        {{ product.PRM_LOCAL_NAME }}
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                                <td> 
+                                                                                                   <!--  <div class="" ng-show="product.isCompulsary&&(!getSMSClientStatus(loan)&&!getSMSGrpStatus(currGroup)&&!getReceiptClientStatus(loan)&&!getReceiptGrpStatus(currGroup))">
+                                                                                                        <input id="loan{{loan.CLL_PK}}perc{{ product.PRM_PK }}" class="colVal" type="text" ng-model="product.intPercentage" ng-blur="validateIntAmt(loan,product)" />
+                                                                                                    </div> 
+                                                                                                    ng-show="product.isCompulsary&&
+                                                                                                    (getSMSClientStatus(loan)||getSMSGrpStatus(currGroup)||getReceiptClientStatus(loan)||getReceiptGrpStatus(currGroup))"
+                                                                                                    -->
+                                                                                                    <div ng-show="product.isCompulsary"
+                                                                                                    class="ui-content" >
+                                                                                                        {{ product.intPercentage }} %
+                                                                                                    </div>
+                                                                                                </td> 
+                                                                                                <td>
+                                                                                                    <div class="ui-content" ng-show="product.isCompulsary">
+                                                                                                        {{  AmtToPayForProduct(loan,product) | noFractionCurrency : currloc : 0 }}
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                        <tfooter>
+                                                                                            <th colspan="2">
+
+                                                                                            </th>
+                                                                                            <th>
+                                                                                                <div style="text-align:right;">
+                                                                                                    {{ ttlamtcollectedtext }} :
+                                                                                                </div>
+                                                                                            </th>
+                                                                                            <th style="padding-left: 1.5em;">
+                                                                                                <div>
+                                                                                                     {{ totalAmtToPay(loan) | noFractionCurrency : currloc : 0 }}
+                                                                                                </div>
+                                                                                            </th>
+                                                                                        </tfooter>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </td> 
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <!-- 
+                                                        {{grpGetTotalApplied(currGroup) | noFractionCurrency}} 
+                                                        {{grpGetTotalLoan(currGroup) | noFractionCurrency : currloc : 0}}
+                                                        {{grpGetActualTotalLoan(currGroup) | noFractionCurrency : currloc : 0}}
+                                                    --> 
+                                                </table> 
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                </tbody> 
+                            </table>
+                        </div> 
+                        <div class="ui-content no-hori-padding"> 
+                            <h3 ng-show="allDone(currGroup)">
+                                <p ng-click="readOutLoud(disbursementpolicy)">{{ disbursementpolicy }}</p>
+                                <p>Dengan menandatangani di bawah ini saya mengerti dan menyetujui kebijakan privasi data anggota KOMIDA.</p>
+                            </h3>
+                            <table id="client-signatures" data-role="table" class="ui-responsive" ng-show="allDone(currGroup)">
+                                <thead><tr><td></td></tr></thead>
+                                <tbody>
+                                    <tr ng-repeat="client in currGroup.members " ng-init="client" style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ client.CLT_FULL_NAME }} <span ng-show="client.CLT_IS_GROUP_LEADER == 'Y'">({{ groupleadertext }})</span> <span class="loanname"  >{{client.LTY_DESCRIPTION | translate }}</span>
+                                                
+                                            </div>
+                                        </td>
+                                        <td style="width: 30%;">
+                                            <a href="#popupSign" ng-hide="client.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(client, 'client')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                Sign
+                                            </a>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(client)" ng-hide="client.hasSigned">
+                                                Sign
+                                            </div> -->
+                                            <div class="right" ng-show="client.hasSigned">
+                                                <canvas id="the-canvas-{{client.CLT_PK}}" >
+
+                                                </canvas>  
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                    <tr ng-repeat="client in currGroup.witness " ng-init="client" style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ client.CLT_FULL_NAME }}  <span ng-show="client.CLT_IS_GROUP_LEADER == 'Y'">({{ groupleadertext }})</span>
+                                            </div>
+                                        </td>
+                                        <td style="width: 30%;">
+                                            <a href="#popupSign" ng-hide="client.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(client, 'client')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                Sign
+                                            </a>
+                                            <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(client)" ng-hide="client.hasSigned">
+                                                Sign
+                                            </div> -->
+                                            <div class="right" ng-show="client.hasSigned">
+                                                <canvas id="the-canvas-{{client.CLT_PK}}" >
+
+                                                </canvas>  
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                    <tr style="background: transparent;height: 100px;" >
+                                        <td>
+                                            <div class="ui-content">
+                                                {{ user.userName }}
+                                            </div>
+                                        </td>
+                                        <td> 
+                                            <a href="#popupSign" ng-hide="user.Signature != '' || allDone(group)" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(user, 'officer')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                                {{ signTxt }}
+                                            </a>
+                                            <div class="right" ng-show="user.Signature != '' ||  allDone(group)">
+                                                <canvas id="the-canvas-officer" >
+
+                                                </canvas>  
+                                            </div>
+                                        </td>
+                                        <!-- <td>
+                                            <div class="ui-btn ui-btn-r white ui-corner-all" ng-show="user.Signature !='' " ng-click="clearSignature($index, 'officer')">
+                                                <i class="fa fa-times"></i>
+                                            </div>
+                                        </td> -->
+                                    </tr> 
+                                </tbody> 
+                            </table>
+                            <div class="ui-content no-hori-padding signature-screen" ng-show="showSign">  
+                                <canvas id="the-canvas" >
+
+                                </canvas>   
+                                <div id="signature" style="text-align:center;">
+
+                                </div>
+                                <p id="signingperson" style="text-align: center;"></p>
+                                <Br><Br>
+                                <p id="sigbtn" style="display:none;">
+                                    <button type="button" ng-click="clearSigPad()" data-i18n="messages.Clear">Clear</button>
+                                    <!-- <button type="button" onclick="alert($('#signature').jSignature('getData', 'base30'))">Export</button> -->
+                                    <button type="button" ng-click="importImg()" data-i18n="messages.ConfirmSignature"> 
+                                        Confirm Signature 
+                                    </button>
+                                    <!-- <a href="$" ng-click="updateStatus()" id="download" class="ui-btn" download >Download Form</a> -->
+                                    <!-- <button type="button" ng-click="updateStatus()" >Save</button> -->
+                                </p>
+                                <div class="displayarea"></div> 
+                            </div>
+                        </div>
+                        <br class="clear"/>
+                        <br class="clear"/>
+                        <a href="statement.html" ng-show="allDone(group) && groupHasStatement()" data-ajax="false" class="acd-link">
+                            <div class="addclientdone"  data.i18n="message.ProcceedToStatement">
+                                Proceed to Statement
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+            <div data-role="footer" class="footer"></div>
+            <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close" ng-click="closeQR()">&times;</span>
+                        <h2>QR Code</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div id="qrcode"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <!--  <h3>Modal Footer</h3> -->
+                    </div>
+                </div>
+            </div>
+            <div id="signaturePops">
+                <style>
+                    #popupSign-popup {
+                        width: 80%;
+                    }
+                    #popup-signingperson {
+                        text-align: center;
+                    }
+                </style>
+                
+                <div data-role="popup" id="popupSign" class="ui-corner-all" ng-controller="signCtrl" >
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <h1>Sign</h1>
+                    <div class="ui-content no-hori-padding signature-screen" >
+                        <canvas id="popup-the-canvas" ng-show="showCanvas">
+                    
+                        </canvas>
+                        <div id="popup-signature" style="text-align:center;">
+                    
+                        </div>
+                        <p id="popup-signingperson"></p>
+                        <br><br>
+                        <p id="popup-sigbtn">
+                            <button type="button" ng-click="clearSigPad()">Clear</button>
+                            <button type="button" ng-click="importImg()">Confirm Signature</button>
+                        </p>
+                        <div class="popup-displayarea"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- each page-->
+        
+
+
+        <!-- script --> 
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_disbursements.js?V=1.1.15"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js?v=1.0"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>     
+        <script type="text/javascript" src="js/angular-animate.min.js"></script>      
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+        <script type="text/javascript" src="js/qrcode.min.js"></script>  
+        <script type="text/javascript" src="js/app_signature.js?V=1.1"></script>
+    </body>
+</html>

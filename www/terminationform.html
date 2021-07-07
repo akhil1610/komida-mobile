@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .inline {
+                display: inline-block;
+                width: auto;
+            }
+            .refundable {
+              width: 100%;
+              font-size: 2em;
+            }
+            .res_margin {
+                width: 85%;
+            }
+            .res_margin div {
+                display: inline-block;
+            }
+            .blockhide.ng-hide { /*override for this page only*/
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+            .ui-block-a {
+              width: 48%;
+              margin-right: 4%;
+            }
+            .ui-block-b {
+              width: 48%;
+            }
+            label {
+              height: 60px;
+              font-size: .8em !important;
+            }
+            label.middle {
+              line-height: 54px !important;
+            }
+            .ui-checkbox-on {
+                background: #38c!important;
+                color: white !important;
+            }
+            label[for="financestatus"] {
+                padding: 0px 36px;
+            }
+            .ui-table td .ui-btn {
+                vertical-align: middle;
+                width: 341px;
+                display: table-cell;
+            }
+            td.coloured {
+              background:#e9e9ff;;
+            }
+            td.white {
+              background:white;
+            }
+        </style>
+    </head>
+    <body ng-controller="clientCtrl">
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page">
+
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <!-- content -->
+                <div class="ui-content">
+                    <h2></h2>
+                    <div class="ui-block-a">
+                      <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                          <thead><tr><td></td><td></td></tr></thead>
+                          <tbody>
+                              <tr><td style='width:50%;font-weight: bold' data-i18n="messages.FullName">Full Name</td><td>{{clientinfo.CLT_FULL_NAME}}</td></tr>
+                              <tr><td style='width:50%;font-weight: bold' data-i18n="messages.ClientID">Client ID</td><td>{{clientinfo.CLT_CLEINT_ID}}</td></tr>
+                              <tr><td style='width:50%;font-weight: bold' data-i18n="messages.GroupID">Group ID</td><td>{{clientinfo.CLT_GROUP_ID}}</td></tr>
+                          </tbody>
+                      </table>
+                    </div>
+                    <div class="ui-block-b">
+                      <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                          <thead><tr><td></td><td></td></tr></thead>
+                          <tbody>
+                              <tr><td style='width:50%;font-weight: bold' data-i18n="messages.HusbandName">Husband Name</td><td>{{clientinfo.CLT_HB_NAME}}</td></tr>
+                              <tr><td style='width:50%;font-weight: bold' data-i18n="messages.Center">Center</td><td>{{clientinfo.CTR_CENTER_NAME }} {{clientinfo.CTR_CENTER_ID }}</td></tr>
+                              <tr><td style='width:50%;font-weight: bold' data-i18n="messages.RegistrationDate">Registration Date</td><td>{{ createdDate | date : 'dd MMM yyyy'  }}</td></tr>
+                          </tbody>
+                      </table>
+                    </div>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr><td></td></tr>
+                            <tr>
+                              <td style='width:24%;font-weight: bold' data-i18n="messages.Address">Address</td>
+                              <td>{{clientinfo.CLT_VILLAGE}} {{ clientinfo.CLT_STREET_AREA_NM }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <p data-i18n="messages.QuitWithdrawalPolicy">In accordance with the institution's regulations, after completing all the financing and margins, I want to take my savings funds at the Koperasi Mitra Dhuafa.</p>
+                    <Br>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke" >
+                        <thead>
+                          <tr>
+                            <th data-i18n="messages.ClientExitFundingInfo">Final Financing Information</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="loan in loans" style="background: white" >
+                                <td>
+                                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="3" style="background: #777">{{ loan.LTY_DESCRIPTION | translate }}</th>
+                                                <th style="background: #777">
+                                                    <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-bl btn-group-9 ui-btn-icon-left  ui-corner-all" link-disabled="isGroupSelected" style="width: auto;color: white; float: right" ng-click="loan.showRepay = !loan.showRepay">{{'Repayments' | translate }}</a>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style='width:24%; font-weight: bold;'>
+                                                    <div  class="ui-content" data-i18n="messages.FinanceTypes">{{ 'Financing Types' | translate }}</div>
+                                                </td>
+                                                <td style='width:26%;'><div  class="ui-content">{{ loan.CLL_LOAN_NUMBER }}</div></td>
+                                                <td style='width:24%; font-weight: bold;'  ><div  class="ui-content" data-18n="messages.LoanCycle">{{ 'Loan Cycle' | translate }}</div></td>
+                                                <td style='width:26%;'><div  class="ui-content">{{ loan.CLL_LOAN_CYCLE }}</div></td>
+                                            </tr>
+                                            <tr>
+                                                <td style='width:24%; font-weight: bold;'  ><div  class="ui-content" data-18n="messages.FinancingStatus">{{ 'Financing Status' | translate }}</div></td>
+                                                <td style='width:26%;'>
+                                                    <label class="middle" for="financestatus">{{ loan.LOANPAID | translate}}</label>
+                                                    <input type="checkbox" ng-model="loan.LOANPAID" name="financestatus" id="financestatus" ng-true-value='PAID' ng-false-value='NOT PAID'/>
+                                                </td>
+                                                <td style='width:24%; font-weight: bold;'><div  class="ui-content" data-18n="messages.AmountOfFinancing">{{ 'Total Financing' | translate }}</div></td>
+                                                <td style='width:26%;'><div  class="ui-content">Rp. {{ loan.CLL_ACTUAL_LOAN | currency : ''}}</div></td>
+                                            </tr>
+                                            <tr>
+                                                <td style='width:24%; font-weight: bold;'><div  class="ui-content" data-18n="messages.Principal">{{ 'Principal' | translate }}</div></td>
+                                                <td style='width:26%;'><div  class="ui-content">Rp. {{ loan.totalPrincipal | currency : ''}}</div></td>
+                                                <td style='width:24%; font-weight: bold;'><div  class="ui-content" data-18n="messages.Interest">{{ 'Interest' | translate }}</div></td>
+                                                <td style='width:26%;'>
+                                                    <div  class="ui-content">
+                                                        Rp. {{ loan.totalInterest | currency : ''}}
+                                                    </div>
+                                                    <!-- <div ng-show="loan.LOANPAID !== 'PAID'">
+                                                        <div class="inline">Rp.</div><div class="res_margin inline"><input type="text" ng-model="loan.totalInterest" placeholder="Interest"/></div>
+                                                    </div> -->
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table data-role="table" class="ui-responsive ui-shadow table-stroke"         
+                                            cashonhand-bg trans-check
+                                            expected="0"
+                                            actual="0"
+                                            type="final"
+                                            defaultcolor="#FFF"
+                                            groupid="{{ttlcol}}"
+                                            checknow="true">
+                                    <thead>
+                                        <tr>
+                                            <th data-18n="messages.TotalPayable">{{ 'Total Payable' | translate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody  class="box-body" >
+                                        <tr>
+                                            <td>
+                                                <div class="bold center group-block-amt" >
+                                                    <div class="refundable inline">
+                                                        {{ totalLoanRepayable(loan) | currency : '' }} 
+                                                    </div>
+                                                </div>
+                                                <div class="group-status right">
+                                                    &nbsp;
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                    <table data-role="table" class="ui-responsive ui-shadow table-stroke" ng-show="loan.showRepay">
+                                        <thead>
+                                            <tr>
+                                                <th style="background: #777" data-18n="messages.Week">{{ 'Week' | translate }}</th>
+                                                <th style="background: #777" data-18n="messages.Principal">{{ 'Principal' | translate }}</th>
+                                                <th style="background: #777" data-18n="messages.OriginalInterest">{{ 'Original Interest' | translate }}</th>
+                                                <th style="background: #777" data-18n="messages.Interest">{{ 'Interest' | translate }}</th>
+                                                <th style="background: #777"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat=" repay in repays | filter: { CRS_CLL_PK: loan.CLL_PK }">
+                                                <td style='width:14%;'>
+                                                    <div  class="ui-content">
+                                                        {{ repay.CRS_ACTUAL_WEEK_NO }}
+                                                    </div>
+                                                </td>
+                                                <td style='width:26%;'>
+                                                    <div  class="ui-content">
+                                                        RP.{{ repay.CRS_EXP_CAPITAL_AMT | currency : '' }}
+                                                    </div>
+                                                </td>
+                                                <td style='width:26%;'>
+                                                    <div  class="ui-content">
+                                                        RP.{{ repay.ORI_EXP_PROFIT_AMT | currency : '' }}
+                                                    </div>
+                                                </td>
+                                                <td style='width:24%;'>
+                                                    <div ng-show="loan.LOANPAID !== 'PAID'">
+                                                            <div class="inline">Rp.</div><div class="res_margin inline"><input type="text" 
+                                                                ng-blur="checkZeroRepayValue($index, repay.CRS_EXP_PROFIT_AMT)"
+                                                                ng-model="repay.CRS_EXP_PROFIT_AMT" placeholder=" " /></div>
+                                                    </div>
+                                                    <div ng-show="loan.LOANPAID == 'PAID'" class="ui-content">
+                                                        Rp.{{ repay.CRS_EXP_PROFIT_AMT | currency : '' }}
+                                                    </div>
+                                                </td> 
+                                                <td style='width:14%;'>
+                                                    <div  class="ui-content" ng-show="repay.CRS_EXP_PROFIT_AMT != 0">
+                                                        <a class="ui-btn ui-btn-gr ui-btn-icon-left ui-corner-all btn-group-9" href="#" data-role="button" ng-click="repay.CRS_EXP_PROFIT_AMT = 0"  data-inline="true">
+                                                            <i class="fa fa-close left" style="color:white"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr> 
+                                        </tbody>
+                                    </table>
+                                </td>
+                        </tbody>
+                    </table>
+
+                    <br><br>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead>
+                            <tr>
+                                <th data-18n="messages.SavingWithdrawals">{{ 'Saving Withdrawals' | translate }}</th>
+                                <th data-18n="messages.Balance">{{ 'Balance' | translate }}</th>
+                                <th data-18n="messages.ClosingAmt">{{ 'Closing Amt' | translate }}</th>
+                                <th data-18n="messages.WithdrawalAmt">{{ 'Withdrawal Amt' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style='width:25%;font-weight: bold;' id="volsaving"> {{ 'Voluntary Savings' | translate }} {{'Balance' | translate }}</td>
+                                <td style='width:24%;'>Rp.{{ voluntarySavings.CPM_PRM_BALANCE | currency: '' }}</td>
+                                <td style='width:26%;'>Rp.{{ voluntarySavings.CPM_PRM_BALANCE - voluntarySavings.WITHDRAWAL_AMT | currency: '' }}</td>
+                                <td style='width:26%;'>
+                                    <div class="inline">Rp.</div><div class="res_margin inline"><input type="text" 
+                                        ng-blur="checkZeroSavingValue('vol',voluntarySavings.WITHDRAWAL_AMT)"
+                                        ng-model="voluntarySavings.WITHDRAWAL_AMT" placeholder="Withdraw Amount" /></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style='width:25%;font-weight: bold;'  id="mansaving">{{ 'Mandatory Savings' | translate }} {{'Balance' | translate }}</td>
+                                <td style='width:24%;'>Rp.{{ mandatorySavings.CPM_PRM_BALANCE | currency: '' }}</td>
+                                <td style='width:26%;'>Rp.{{ mandatorySavings.CPM_PRM_BALANCE - mandatorySavings.WITHDRAWAL_AMT | currency: '' }}</td>
+                                <td style='width:26%;'><div class="inline">Rp.</div><div class="res_margin inline"><input type="text" 
+                                    ng-blur="checkZeroSavingValue('man',mandatorySavings.WITHDRAWAL_AMT)"
+                                    ng-model="mandatorySavings.WITHDRAWAL_AMT" placeholder="Withdraw Amount" /></div></td>
+                            </tr>
+                            <tr>
+                                <td style='width:25%;font-weight: bold;' id="pensaving">{{ 'Pension Savings' | translate }} {{'Balance' | translate }}</td>
+                                <td style='width:24%;'>Rp.{{ pensionSavings.CPM_PRM_BALANCE | currency: '' }}</td>
+                                <td style='width:26%;'>Rp.{{ pensionSavings.CPM_PRM_BALANCE - pensionSavings.WITHDRAWAL_AMT | currency: '' }}</td>
+                                <td style='width:26%;'><div class="inline">Rp.</div><div class="res_margin inline"><input type="text" 
+                                    ng-blur="checkZeroSavingValue('pen',pensionSavings.WITHDRAWAL_AMT)"
+                                    ng-model="pensionSavings.WITHDRAWAL_AMT" placeholder="Withdraw Amount" /></div></td>
+                            </tr>
+                            <tr>
+                                <td style='width:25%;font-weight: bold;' id="feastsaving">{{ 'Feast Day Savings' | translate }} {{'Balance' | translate }}</td>
+                                <td style='width:24%;'>Rp.{{ feastdaySavings.CPM_PRM_BALANCE | currency: '' }}</td>
+                                <td style='width:26%;'>Rp.{{ feastdaySavings.CPM_PRM_BALANCE - feastdaySavings.WITHDRAWAL_AMT | currency: '' }}</td>
+                                <td style='width:26%;'><div class="inline">Rp.</div><div class="res_margin inline"><input type="text" 
+                                    ng-blur="checkZeroSavingValue('fea',feastdaySavings.WITHDRAWAL_AMT)"
+                                    ng-model="feastdaySavings.WITHDRAWAL_AMT" placeholder="Withdraw Amount" /></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br><br>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke" cashonhand-bg trans-check
+                                        expected="0"
+                                        actual="0"
+                                        type="final"
+                                        defaultcolor="#FFF"
+                                        groupid="{{ttlcol}}"
+                                        checknow="true">
+                        <thead>
+                            <tr>
+                                <th data-18n="messages.TotalRefundable">{{ 'Total Refundable Deposit Rp.' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody  class="box-body" >
+                            <tr>
+                                <td>
+                                    <div class="bold center group-block-amt" >
+                                        <div class="refundable inline">
+                                            {{ totalRefund() | currency: '' }}
+                                            <!-- <input type="text" ng-model="form.totalrefundable"  /> -->
+                                        </div>
+                                    </div>
+                                     <div class="group-status right">
+                                        &nbsp;
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead><tr><td></td><td></td></tr></thead>
+                        <tbody>
+                            <tr>
+                            <td style='width:25%;font-weight: bold' data-18n="messages.Information" >{{ 'Information' | translate }}</td>
+                            <td>
+                                <input type="text" ng-model="reason" name="reason" id="reason" placeholder="Information" data-i18n="[placeholder]messages.Information" data-dependency="reason" data-inline="true" maxlength="100" required/>
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table data-role="table" class="ui-responsive ui-shadow table-stroke">
+                        <thead>
+                            <tr>
+                                <th colspan="3" data-18n="messages.ExitReason">{{ 'Member Exit Reasons' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="coloured" style='width:33%;font-weight: bold' data-18n="messages.APersonalReasons" >{{ 'A. Personal Reasons' | translate }}</td>
+                                <td style='width:33%;font-weight: bold'  data-18n="messages.BPressureFromFamily">{{ 'B. Pressure From Family' | translate }}</td>
+                                <td class="coloured" style='width:33%;font-weight: bold'  data-18n="messages.CRelatedBusiness">{{ 'C. Related Enterprises / Business' | translate }}</td>
+                            </tr>
+                            <tr>
+                                <td class="coloured">
+                                    <label for="er_otherloaninstitue" data-18n="messages.ThereIsOtherInst">{{ 'There is a loan at another instituition' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_otherloaninstitue" name="er_otherloaninstitue" id="er_otherloaninstitue" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    <label class="middle" for="er_nohusbandpermission" data-18n="messages.NoHusbandPermission">{{ 'No permission from husband' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_nohusbandpermission" name="er_nohusbandpermission" id="er_nohusbandpermission" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_bankrupt" data-18n="messages.Bankrupt">{{ 'Bankrupt' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_bankrupt" name="er_bankrupt" id="er_bankrupt" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="coloured">
+                                    <label class="middle" for="er_sick" data-18n="messages.Sick">{{ 'Sick' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_sick" name="er_sick" id="er_sick" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    <label class="middle" for="er_movinghouse" data-18n="messages.MovingHouse">{{'Moving house' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_movinghouse" name="er_movinghouse" id="er_movinghouse" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_badbusiness" data-18n="messages.BadBusiness">{{'Enterprise not going well / loss' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_badbusiness" name="er_badbusiness" id="er_badbusiness" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="coloured">
+                                    &nbsp;
+                                </td>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                                <td class="coloured">
+                                    <label for="er_higherloanfromotherinstitution" data-18n="messages.LoanFromOthInst">{{'Get higher loan from other institution' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_higherloanfromotherinstitution" name="er_higherloanfromotherinstitution" id="er_higherloanfromotherinstitution" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style='width:33%;font-weight: bold' data-18n="messages.DUnsatisfiedKomida"></td>
+                                <td class="coloured" style='width:33%;font-weight: bold'  data-18n="messages.EGroupRelated">{{'E. Group Related' | translate }}</td>
+                                <td style='width:33%;font-weight: bold'  data-18n="messages.FOther">{{'F. Others' | translate }}</td>
+                            </tr>
+                            <tr>
+                                <td class="white">
+                                    <label class="middle" for="er_unhappywithproduct" data-18n="messages.UnhappyProduct">{{'Unhappy with the product' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_unhappywithproduct" name="er_unhappywithproduct" id="er_unhappywithproduct" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_groupout" data-18n="messages.GroupAskOut">{{'The group asked me out' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_groupout" name="er_groupout" id="er_groupout" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    <label class="middle" for="er_noneedloanagain" data-18n="messages.NoNeedLoanAgain">{{'Do not need a loan again' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_noneedloanagain" name="er_noneedloanagain" id="er_noneedloanagain" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="white">
+                                    <label class="middle" for="er_unhappywithservice" data-18n="messages.UnhappyService">{{'Unhappy with the service' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_unhappywithservice" name="er_unhappywithservice" id="er_unhappywithservice" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="groupdisband" data-18n="messages.GroupDisbandedExit">{{'The group disbanded' | translate }}</label>
+                                    <input type="checkbox" ng-model="groupdisband" name="groupdisband" id="groupdisband" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    <label for="er_needmoneywithdrawmansaving" data-18n="messages.NeedingMoney">{{'Need money / want to withdraw mandatory saving' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_needmoneywithdrawmansaving" name="er_needmoneywithdrawmansaving" id="er_needmoneywithdrawmansaving" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                </tr>
+                                <tr>
+                                <td class="white">
+                                    <label for="er_unhappywithregreq" data-18n="messages.UnhappyRegulation">{{'Unhappy with the regulation and requirements' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_unhappywithregreq" name="er_unhappywithregreq" id="er_unhappywithregreq" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_conflictwithmember" data-18n="messages.GroupMemberConflict">{{'Conflict with group member' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_conflictwithmember" name="er_conflictwithmember" id="er_conflictwithmember" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_conflictwithgroupleader" data-18n="messages.GroupLeaderConflict">{{'Conflict with group leader' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_conflictwithgroupleader" name="er_conflictwithgroupleader" id="er_conflictwithgroupleader" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_uncomfortableingroup" data-18n="messages.GroupUncomfortable">{{'Uncomfortable in group' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_uncomfortableingroup" name="er_uncomfortableingroup" id="er_uncomfortableingroup" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                                </tr>
+                                <tr>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="er_unabletoattendcenter" data-18n="messages.UnableToAttendMeeting">{{'Unable to attend at the center' | translate }}</label>
+                                    <input type="checkbox" ng-model="er_unabletoattendcenter" name="er_unabletoattendcenter" id="er_unabletoattendcenter" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="white">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style='width:33%;font-weight: bold' data-18n="messages.IssuedByKomida" >{{'Issued by Komida' | translate }}</td>
+                            </tr>
+                            <tr>
+                                <td class="coloured">
+                                    <label class="middle" for="ik_centerattendanceproblem" data-18n="messages.AttendanceProblem">{{'Center attendance problem' | translate }}</label>
+                                    <input type="checkbox" ng-model="ik_centerattendanceproblem" name="ik_centerattendanceproblem" id="ik_centerattendanceproblem" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="ik_parchangeaddress" data-18n="messages.ChangeOfAddress">{{'PAR / Changed address' | translate }}</label>
+                                    <input type="checkbox" ng-model="ik_parchangeaddress" name="ik_parchangeaddress" id="ik_parchangeaddress" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label class="middle" for="ik_passaway" data-18n="messages.PassAway">{{'Pass away' | translate }}</label>
+                                    <input type="checkbox" ng-model="ik_passaway" name="ik_passaway" id="ik_passaway" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                </tr>
+                                <tr>
+                                <td class="coloured">
+                                    <label class="middle" for="ik_arreas" data-18n="messages.InstallmentProblem">{{'Problem with installment' | translate }}</label>
+                                    <input type="checkbox" ng-model="ik_arreas" name="ik_arreas" id="ik_arreas" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    <label for="ik_indobluecollarworkers" data-18n="messages.BeingWorker">{{'Being Indonesian blue collar workers' | translate }}</label>
+                                    <input type="checkbox" ng-model="ik_indobluecollarworkers" name="ik_indobluecollarworkers" id="ik_indobluecollarworkers" ng-true-value='1' ng-false-value='0'/>
+                                </td>
+                                <td class="coloured">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p data-18n="messages.ClientExitSigningPolicy">{{'By signing this form then i have received number of deposits mentioned above. Such letter of this statement I signed without coercion from any party.' | translate }}</p>
+
+                    <table id="client-signatures" data-role="table" class="ui-responsive ui-shadow table-stroke ui-table"  >
+                        <thead><tr><td></td></tr></thead>
+                        <tbody>
+                            <tr ng-init="client" style="background: transparent;height: 100px;" >
+                                <td>
+                                    <div class="ui-content" data-i18n="messages.Member">
+                                        Client
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-content">
+                                        {{ clientinfo.CLT_FULL_NAME }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="#popupSign" ng-hide="clientinfo.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(clientinfo, 'client')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                        Sign
+                                    </a>
+                                    <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(0)" ng-hide="selectedClient.hasSigned" data-i18n="messages.Sign">
+                                        Sign
+                                    </div> -->
+                                    <div class="right" ng-show="clientinfo.hasSigned">
+                                        <canvas id="the-canvas-{{clientinfo.CLT_PK}}" >
+
+                                        </canvas>
+                                    </div>
+                                </td>
+                            </tr> 
+                            <tr style="background: transparent;height: 100px;" >
+                                <td>
+                                    <div class="ui-content" data-18n="messages.FieldOfficer">
+                                        Field Officer
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-content">
+                                        {{ user.userName }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="#popupSign" ng-hide="user.hasSigned" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="emitLoadSignature(user, 'officer')" data-rel="popup" data-position-to="window" data-theme="a" data-transition="pop" data-i18n="messages.Sign">
+                                        Sign
+                                    </a>
+                                    <!-- <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index, 'officer')" ng-hide="user.Signature != ''" data-i18n="messages.Sign">
+                                        Sign
+                                    </div> -->
+                                    <div class="right" ng-show="user.hasSigned">
+                                        <canvas id="the-canvas-officer" >
+                                            
+                                        </canvas>
+                                    </div>
+                                </td>
+                            </tr> 
+                        </tbody>
+                    </table>
+                    <div ng-if="allSigned()"> 
+                        <div style="width: 49%; display: inline-block;">
+                            <a href="#" class="ui-btn white ui-btn-bl ui-corner-all" ng-click="printReceipt()">
+                                Print
+                            </a> 
+                        </div>
+                        <div style="width: 49%; display: inline-block;">
+                            <a href="#" style="background: #4DBD33;" class="ui-btn white ui-btn-gr ui-corner-all" ng-click="goBackClientPage()"> 
+                                Done
+                            </a> 
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <canvas id="the-canvas" ng-show="false" >
+
+            </canvas>
+            <div id="signaturePops">
+                <style>
+                    #popupSign-popup {
+                        width: 80%;
+                    }
+                    #popup-signingperson {
+                        text-align: center;
+                    }
+                </style>
+                
+                <div data-role="popup" id="popupSign" class="ui-corner-all" ng-controller="signCtrl" >
+                    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+                    <h1>Sign</h1>
+                    <div class="ui-content no-hori-padding signature-screen" >
+                        <canvas id="popup-the-canvas" ng-show="showCanvas">
+                    
+                        </canvas>
+                        <div id="popup-signature" style="text-align:center;">
+                    
+                        </div>
+                        <p id="popup-signingperson"></p>
+                        <br><br>
+                        <p id="popup-sigbtn">
+                            <button type="button" ng-click="clearSigPad()">Clear</button>
+                            <button type="button" ng-click="importImg()">Confirm Signature</button>
+                        </p>
+                        <div class="popup-displayarea"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- scripts -->
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/load_template.js?Version=1"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <script type="text/javascript" src="js/filemanager.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_termination.js?V=1.2.1"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+        <script type="text/javascript" src="js/app_signature.js?V=1.1"></script>
+    </body>
+</html>

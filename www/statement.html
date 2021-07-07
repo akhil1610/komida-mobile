@@ -1,0 +1,317 @@
+    <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jSignature.min.noconflict.js"></script>
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .reason.ng-hide { /*override for this page only*/
+              display:block!important;
+              visibility:hidden;
+              position:relative!important;
+              top:0px!important;
+              left:0px!important;
+            }
+            select .option {
+                color: black;
+                background-color: white;
+            }
+            optgroup {
+                background-color: white;
+                color: black;
+            }
+            canvas {
+                height: 75px;
+                width: 200px;
+                padding-top: 25px;
+            }
+            #signingperson {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body ng-app="myApp" ng-controller="TransactionsCtrl">
+        <div data-role="header" class="header"></div>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+            <div id="content1" data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page">
+                    <div data-type="vertical" class="left ui-grid-50">
+
+                        <br class="clear"/>
+                        <div class="detlabel" data-i18n="messages.Village">Village:</div>:
+                        <span class="detville">&nbsp;&nbsp;<b class="">{{ curr_village.name }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <br class="clear"/>
+                        <br class="clear"/>
+                    </div>
+
+                    <br class="clear"/>
+
+                    <div class=""> 
+                        <centerlist control="centers" updateC="updateCenter"></centerlist>   
+                        <div ng-repeat="group in groups" class="ui-grid-33 marg-btm-20 " >
+                            <a href="#" ng-click="detailview()" class="trans-blocks">
+                                <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" ng-click="changeGroup(group)"    trans-check
+                                            expected="group.clientcount"
+                                            actual="{{ getClientCompleted(group) }}"
+                                            type="bg"
+                                            defaultcolor="#42A5F5"
+                                            checknow="groupCompleted(group)">
+                                    <thead>
+                                        <tr>
+                                            <th class="box-header">
+                                                <div class="lineh-32 ">
+                                                    {{ group.CTR_CENTER_NAME }} GROUP {{ group.CLT_GROUP_ID }}
+                                                    <i ng-show="groupCompleted(group)" class="dark-blue right fa fa-check-square fa-2x"></i>
+                                                </div>
+                                                <div ng-if="!checkAllSigDone(group)" style="position: absolute; top: 0; right: 0;">
+                                                    <i class="dark-blue pending-signature right fa fa-pencil fa-2x"></i>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="box-body" >
+                                        <tr>
+                                            <td >
+                                                <div class="ui-content bold center group-block-amt" >
+                                                    <h1 data-i18n="messages.Statements">Statements</h1>
+                                                </div>
+                                                <div class="group-client left">
+                                                    <i class="fa fa-user"></i>{{group.clientcount }}
+                                                </div>
+                                                <div class="group-status right">
+                                                    <span>{{ expected }}</span> :<b><!-- {{ group.loan_total_exp + group.savings_total_exp  | noFractionCurrency : currloc : 0 }} --> {{ group.clientcount }}  </b>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-content second-wrapper row" data-ajax="false">
+                    <div class="whitecover second-page" >
+                        <div class="coverwrap">
+
+                        </div>
+                    </div>
+
+                    <div class="ui-content no-hori-padding" id="indivInfoTable" ng-show="true">
+                        <div class="ui-content">
+                            <div data-type="vertical" class="left">
+                                <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="detailview()">Back</a>
+                            </div>
+                            <div data-type="vertical" class="right" ng-show="isGroupSelected" ng-model="user">
+
+                                 
+                            </div>
+                        </div>
+                
+                        <table data-role="table" class="ui-responsive">
+                            <thead>
+                                <tr>
+                                    <th > Name</th>
+                                    <th> Loan Name </th> 
+                                    <th >Signature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="client in clients | orderBy : 'hasSigned':true | filter: {  CLT_GROUP_ID: selectedGroup }" class="valign-middle" >
+                                    <td>
+                                        {{client.CLT_FULL_NAME}} 
+                                    </td>
+                                    <td>   
+                                        <div class="ui-content">
+                                            {{ client.LTY_DESCRIPTION }} 
+                                        </div>
+                                    </td>  
+                                    <td>
+                                        <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="selectGroup(client)" ng-show="!client.hasSigned && selectedLoan == null">
+                                            Sign
+                                        </div>
+                                        <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="selectGroup(client)" ng-show="!client.hasSigned && selectedLoan == client.CLL_PK">
+                                            <i class="fa fa-undo" aria-hidden="true"></i>
+                                        </div> 
+                                        <div ng-show="client.hasSigned" style="height: 100px;text-align: right;">
+                                            <canvas id="clients-canvas-{{client.CLL_PK}}" >
+
+                                            </canvas>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> 
+                        <h3 ng-show="selectedGroup !== null"><p data-i18n="messages.AfterTestLoanProposalSign">I hereby declare that I am willing to comply with the prevailing regulations in KOMIDA.If my obligation to pay for the financing and margin is not granted, then I am ready to accept the policy decisions at KOMIDA.In the event that the financing is being used by others, then I am fully responsible for the financing.I understand and authorize KOMIDA to share personal and financial information with the credit bureaus or other government agencies in accordance with applicable laws, such as banks, services from third parties, including IT companies, telecommunications, consultants, donors, students, research institutions And surveys that can provide recommendations for better service.I understand that KOMIDA will keep my data confidential, as submitted in the Member Data Privacy SOP.I understand and agree to the data privacy policy of members of KOMIDA.</p></h3>
+                        <table id="client-signatures" data-role="table" class="ui-responsive" ng-show="selectedGroup !== null" >
+                            <thead><tr><td></td></tr></thead>
+                            <tbody>
+                                <tr ng-repeat="client in witnesses " ng-init="client" style="background: transparent;height: 100px;" >
+                                    <td>
+                                        <div class="ui-content">
+                                            <span ng-show="client.CLT_IS_GROUP_LEADER == 'Y'">Group Leader</span>
+                                            <span ng-show="client.CLT_IS_GROUP_LEADER != 'Y'">Client</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                            {{ client.CLT_FULL_NAME }}
+                                    </td>
+                                    <td>
+                                        <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(client)" ng-hide="client.hasSigned">
+                                            Sign
+                                        </div>
+                                        <div class="right" ng-show="client.hasSigned">
+                                            <canvas id="the-canvas-{{client.CLT_PK}}" >
+
+                                            </canvas>
+                                        </div>
+                                    </td> 
+                                </tr>
+                                <tr  style="background: transparent;height: 100px;" >
+                                            <td>
+                                                <div class="ui-content">
+                                                    Center Leader
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="ui-content" ng-show="!ctr_lead.hasSigned">
+                                                  <select ng-model="selectedCtrLeader"
+                                                        ng-change="updateCtrLeader()"
+                                                        ng-options="(item) as (item.CLT_FULL_NAME||item) for item in ctr_lead.ctr_leaders">
+
+                                                  </select>
+                                                </div>
+                                                <div class="ui-content" ng-show="ctr_lead.hasSigned">
+                                                    {{ ctr_lead.ctr_lead_name }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(0,'ctr_lead')" ng-hide="ctr_lead.hasSigned">
+                                                    Sign
+                                                </div>
+                                                <div class="right" ng-show="ctr_lead.hasSigned">
+                                                    <canvas id="the-canvas-ctr_lead" >
+
+                                                    </canvas>
+                                                </div>
+                                            </td> 
+                                        </tr>
+                                <tr style="background: transparent;height: 100px;" ng-show="user.Signature != '' || user.hasSigned == false  ">
+                                    <td>
+                                        <div class="ui-content">
+                                            {{ user.userName }}
+                                        </div>
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+                                        <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index, 'officer')" ng-hide="user.Signature != ''">
+                                            Sign
+                                        </div>
+                                        <div class="right" ng-show="user.Signature != ''">
+                                            <canvas id="the-canvas-officer" >
+
+                                            </canvas>
+                                        </div>
+                                    </td> 
+                                </tr>
+                                <tr style="background: transparent;height: 100px;" ng-show="MGR.mgrname != '' && ( MGR.Signature != '' || !MGR.hasSigned )") >
+                                    <td>
+                                        <div class="ui-content">
+                                            {{ MGR.mgrname }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen($index, 'mgr')" ng-hide="MGR.hasSigned && MGR.Signature != ''">
+                                            Sign
+                                        </div>
+                                        <div class="right" ng-show="MGR.Signature != ''">
+                                            <canvas id="the-canvas-mgr" >
+
+                                            </canvas>
+                                        </div>
+                                    </td>
+                                    <!-- <td>
+                                        <div class="ui-btn ui-btn-r white ui-corner-all" ng-show="MGR.Signature != ''" ng-click="clearSignature($index, 'mgr')">
+                                            <i class="fa fa-times"></i>
+                                        </div>
+                                    </td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="ui-content no-hori-padding signature-screen" ng-show="showSign">
+                            <canvas id="the-canvas" >
+
+                            </canvas>
+                            <div id="signature" style="text-align:center;">
+
+                            </div>
+                            <p id="signingperson"></p>
+                            <Br><Br>
+                            <p id="sigbtn" style="display:none;">
+                                <button type="button" ng-click="clearSigPad()">Clear</button>
+                                <!-- <button type="button" onclick="alert($('#signature').jSignature('getData', 'base30'))">Export</button> -->
+                                <button type="button" ng-click="importImg()">Confirm Signature</button>
+                                <!-- <a href="$" ng-click="updateStatus()" id="download" class="ui-btn" download >Download Form</a> -->
+                                <!-- <button type="button" ng-click="updateStatus()" >Save</button> -->
+                            </p>
+                            <div class="displayarea"></div>
+                        </div>
+                    </div>
+                </div>
+                <div data-role="footer" class="footer"></div>
+            </div>
+
+        </div>
+
+        <!-- scripts -->
+
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script>
+            var myDB = new properDB("TBOP",1,"TBOP Client Database", 10*1024*1024); //10MB
+        </script>
+
+        <script src='libs/png_support/zlib.js' type='text/javascript'></script>
+        <script src='libs/png_support/png.js' type='text/javascript'></script>
+        <script src='js/pdf.js' type='text/javascript'></script>
+        <script src='js/jspdf.js' type='text/javascript'></script>
+        <script src='js/addimage.js' type='text/javascript'></script>
+        <script src='js/png_support.js' type='text/javascript'></script>
+
+        <script type="text/javascript" src="js/moment.min.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/ng-currency.min.js"></script>
+        <script type="text/javascript" src="js/app_util.js"></script>
+        <script type="text/javascript" src="js/app_statement.js?V=1.1.1"></script>
+        <script type="text/javascript" src="js/app_header.js?V=1.1.2"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+        <script type="text/javascript" src="js/chart.min.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+    </body>
+</html>

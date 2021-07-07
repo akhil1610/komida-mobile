@@ -1,0 +1,151 @@
+s<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <style>
+        multiselect {
+            display: block;
+        }
+
+        multiselect > .btn-group {
+            min-width: 180px;
+        }
+
+        multiselect .btn {
+            width: 100%;
+            background-color: #FFF;
+        }
+
+        multiselect .btn.has-error {
+            border: 1px solid #a94442 !important;
+            color: #db524b;
+        }
+
+        multiselect .dropdown-menu {
+            max-height: 300px;
+            min-width: 200px;
+            overflow-y: auto;
+        }
+
+        multiselect .dropdown-menu .filter > input {
+            width: 99%;
+        }
+
+        multiselect .dropdown-menu .filter .glyphicon {
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        multiselect .dropdown-menu {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 2px;
+        }
+
+        multiselect > .btn-group > button {
+            padding-right: 20px;
+        }
+
+        multiselect > .btn-group > button > .caret {
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid black;
+            right: 5px;
+            top: 45%;
+            position: absolute;
+        }
+
+        multiselect .dropdown-menu > li > a {
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+
+        multiselect .dropdown-menu > li > a i {
+            margin-right: 4px;
+        }
+
+        .glyphicon-none:before {
+            content: "\e013";
+            color: transparent !important;
+        }
+    </style>
+    <body ng-app="myApp" ng-controller="CheckCtrl">
+        <!-- body -->
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page" data-prefetch="true">
+
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+
+            <div data-role="main" class="ui-content" data-ajax="false">
+                <style>
+                  .col-33 {
+                      width: 28%;
+                      display: inline-block;
+                  }
+                </style>
+                <div class="aniview"  av-animation="slideInLeft">
+                    <!-- <div class="padding  col-33" ng-show="villages.length > 0">
+                        <label class="no-margin" for="village" data-i18n="messages.Village">Village:</label>
+                        <select ng-model="selectedvillage" name="village" id="village" data-inline="true" ng-change="check()" ng-options="item as item.VLM_NAME for item in villages track by item.VLM_PK ">
+                            <option value="all">Select Village</option>
+                        </select>
+                    </div> -->
+                    <div class="  padding col-33" ng-show="centers.length > 0">
+                        <label class="no-margin" for="center">{{ centerTxt }} :</label>
+                        <select ng-model="selectedcenter" name="center" id="center" ng-change="check()"  data-inline="true" ng-options="item as ('(' + item.CTR_CENTER_ID + ') ' + item.CTR_CENTER_NAME) for item in centers | filter: { CTR_VLM_PK: selectedvillage.VLM_PK } track by item.CTR_PK ">
+                            <option value="all" data-i18n="messages.PleaseSelectCenter">{{ selectcenterTxt }}</option>
+                        </select>
+                    </div>
+                    <div class="  padding col-33" ng-show="centers.length > 0">
+                        <a href="#" ng-click="download()" class="ui-btn ui-btn-bl ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left" style="top: 1.5em;" data-i18n="messages.Download">Download</a>
+                    </div>
+                </div>
+                <br class="clear"/>
+                <div class="ui-content no-hori-padding aniview slow"  av-animation="fadeInUp" ng-show="clients.length> 0">
+                    <a href="client.html" data-ajax="false" class="acd-link">
+                        <div class="addclientdone" data.i18n="messages.ProceedToViewClients">
+                            {{ viewclientTxt }}
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+
+        <!-- scripts -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js?V=1.1.1"></script>
+        <script type="application/javascript" src="js/fastclick.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/app_spotcheck.js?V=1.3"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+	    <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+	    <script type="text/javascript" src="js/angular-translate.js"></script>
+        <script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+
+
+    </body>
+</html>

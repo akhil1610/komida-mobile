@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){
+	alert("document is ready");	
+	$.ajax({		
+		url: "https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150608T073136Z.e8cb243ba98c7e12.f5e71db33f062739b4019108cc3f290d45871647&lang=en-id&text=thank+you",		
+		dataType: "jsonp",
+		success: function (data) {
+			alert("English to Indonesian Conversion : " + data.text);
+		}
+	});
+	
+	
+	/*
+	$("button").click(function(){
+        alert("test");
+    });
+	*/
+});
+</script>
+</head>
+<body>
+
+<div id="div1"><h2>Let jQuery AJAX Change This Text</h2></div>
+
+<button>Get External Content</button>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<tr style="background: transparent;height: 100px;">
+    <td>
+        <div class="ui-content">
+            Center Leader 
+        </div>
+    </td>
+    <td>
+        <div class="ui-content" ng-show="!ctr_lead.hasSigned">
+          <select ng-model="selectedCtrLeader"
+                ng-change="updateCtrLeader()"
+                ng-options="(item) as (item.CLT_FULL_NAME||item) for item in ctr_lead.ctr_leaders">
+
+          </select>
+        </div>
+        <div class="ui-content" ng-show="ctr_lead.hasSigned">
+            {{ ctr_lead.ctr_lead_name }}
+        </div>
+    </td>
+    <td>
+        <div class="ui-btn white ui-btn-bl ui-corner-all" ng-click="showSignscreen(0,'ctr_lead')" ng-hide="ctr_lead.hasSigned">
+            Sign
+        </div>
+        <div class="right" ng-show="ctr_lead.hasSigned">
+            <canvas id="the-canvas-ctr_lead" >
+
+            </canvas>
+        </div>
+    </td> 
+</tr>

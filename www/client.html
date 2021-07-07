@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <link rel="stylesheet" type="text/css" href="css/animate.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+        <style>
+            .inline {
+                display: inline-block;
+            }
+        </style>
+    </head>
+
+    <body ng-app="myApp" ng-controller="ClientCtrl">
+        <!-- body -->
+        <div data-role="header" class="header"></div>
+        <div data-role="page" id="page" data-prefetch="true">
+
+
+            <div data-role="panel" id="mypanel" data-display="overlay" data-dismissible="false">
+
+            </div>
+            <div class="menupop-wrapper">
+                <div class="menu-pop" id="menu-pop">
+
+                </div>
+            </div>
+
+            <div data-role="main" class="ui-content" data-ajax="false">
+                <div class="first-page">
+                    <!-- content -->
+                    <div data-role="controlgroup" data-type="horizontal" class="left" style="display:none">
+                        <a href="#" class="ui-btn ui-icon-edit ui-btn-icon-left">Update</a>
+                        <a href="#" class="ui-btn ui-icon-minus ui-btn-icon-left">Delete</a>
+                        <a href="#" class="ui-btn ui-icon-refresh ui-btn-icon-left">Reset</a>
+                    </div>
+                    <div data-role="controlgroup" data-type="horizontal" class="right aniview slow" av-animation="slideInRight" >
+                        <a href="newclient.html" class="ui-btn ui-btn-g ui-icon-plus ui-btn-icon-left" data-ajax="false" data-i18n="buttons.Add">Add</a>
+                        <a href="#" class="ui-btn ui-btn-g ui-icon-search ui-btn-icon-left" ng-click="runQuery(true,0)" data-i18n="buttons.Search">Search</a>
+                        <a href="client.html" class="ui-btn ui-btn-g ui-icon-refresh ui-btn-icon-left" data-ajax="false" data-i18n="buttons.Reset">Reset</a>
+                    </div>
+                    <br />
+                    <div class="detlabel no-margin" data-i18n="messages.Village">Village:</div>
+                    <span class="detville"><b>{{ sf.CLT_VILLAGE.name }}</b></span>
+                    <br class="clear"/>
+                    <div class="ui-grid-a aniview"  av-animation="slideInLeft">
+                        <div class="ui-block-a padding no-hori-padding">
+                            <label for="clientid" data-i18n="messages.ClientID">Client ID:</label>
+                            <input type="text" ng-model="sf.CLT_OTH_REG_NO" ng-model-options="{debounce: 500}" name="clientid" id="clientid" placeholder="Client ID" data-inline="true" data-i18n="[placeholder]messages.ClientID"/>
+
+                            <label for="clientname" data-i18n="messages.ClientName">Client Name:</label>
+                            <input type="text" ng-model="sf.CLT_FULL_NAME" ng-model-options="{debounce: 500}" name="clientname" id="clientname" placeholder="Client Name" data-inline="true"  data-i18n="[placeholder]messages.ClientName"/>
+                        </div>
+                        <div class="ui-block-b padding">
+                            <div class="ui-grid-a">
+                                <div class="ui-block-a padding no-hori-padding" style="padding-top: 0">
+                                    <label class="no-margin" for="status" data-i18n="messages.LoanStatus">Loan Status:</label>
+                                    <select ng-model="sf.CLT_STATUS" name="status" id="status" placeholder="Status" data-inline="true" ng-options="status.value as status.name | translate for (key, status) in selectCodes track by status.TST_PK"></select>
+
+                                    <label class="no-margin" for="villages" data-i18n="messages.Village"> Village:</label>
+                                    <select ng-model="sf.CLT_VILLAGE" name="vilalges" id="villages" placeholder="villages" data-inline="true" ng-change="updateQuery()" ng-options="ville as ville.name | translate for ville in selectVillage track by ville.value"></select>
+                                </div>
+                                <div class="ui-block-b padding no-hori-padding" style="padding-top: 0">
+                                    <div ng-show="sf.CLT_VILLAGE != null">
+                                        <label class="no-margin" for="centers" data-i18n="messages.Center">Centers:</label>
+                                        <select ng-model="filter.CLT_CENTER" name="centers" id="centers" placeholder="Center" data-inline="true" ng-change="updateQuery();loadGroups()" ng-options="center as center.name + ' ' + center.id for center in selectCenter track by center.value"></select>
+                                    </div>
+                                    <!-- <div ng-show="filter.CLT_CENTER != null">
+                                        <label class="no-margin" for="groups" data-i18n="messages.Group"> Groups:</label>
+                                        <select ng-model="filter.CLT_GROUP" name="groups" id="groups" placeholder="Groups" data-inline="true" ng-change="updateQuery()" ng-options="group as group.name for group in selectGroup track by group.value"></select>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br class="clear"/>
+                    <span class="label" data-i18n="messages.SearchResult">{{TOTAL_RECORDS}} Search Results</span> <!--{{clients.length}}-->
+                    <br class="clear"/>
+                    <div class="ui-content no-hori-padding aniview slow"  av-animation="fadeInUp">
+                        <table data-role="table" class="ui-responsive ui-shadow table-stroke 1-5vw">
+                        <thead><tr>
+                            <th data-i18n="messages.Client">Client</th>
+                            <th data-i18n="messages.Review">Ev.</th>
+                            <th data-i18n="messages.ChangeRequest">Chg.</th>
+                            <!-- <th data-i18n="messages.NewLoan">New Loan</th> -->
+                            <th data-i18n="messages.Village">Village</th>
+                            <!-- <th data-i18n="messages.StreetDistrict">Street/District</th> -->
+                            <!-- <th data-i18n="messages.PostalCode">Postal</th> -->
+                            <!-- <th data-i18n="messages.MobileNo">Mobile No.</th> -->
+                            <th data-i18n="messages.Status">Status</th><th data-i18n="messages.Action">Action</th></tr></thead>
+                            <tbody>
+                                <tr ng-repeat="c in filteredClients" class="valign-middle" >
+                                    <td>
+                                        <a href="#" ng-click="view(c.CLL_PK,c.CLL_PARENT_CLL_PK,c.CLT_PK)">
+                                            {{c.CLT_FULL_NAME}}
+                                        </a> 
+                                        <br/>{{ c.CLT_CLEINT_ID.slice(-6) }}
+                                    </td>
+                                    <td>
+                                        <a ng-show='isReviewDay(c)' ng-click="evaluate(c.CLT_PK,c.CLT_FULL_NAME)" href="#" class="ui-btn ui-btn-bl ui-shadow ui-corner-all ui-btn-i " data-ajax="false"><span style="color: white;line-height: 1.8em;font-weight: 900;">{{ loanReviewCount(c.CLT_PK) }}</span></a>
+
+                                        <a ng-show="toDoPPIform(c)" data-ajax="false" ng-click="doPPI(c.CLT_PK, c.CLT_FULL_NAME)" href="#" class="ui-btn ui-btn-tl ui-shadow ui-corner-all ui-icon-check white ui-btn-i inline">PPI</a>
+                                        
+                                        <a ng-show='c.CLL_STATUS==41||c.CLL_STATUS==42' href="#" class="ui-btn ui-btn-i ui-shadow ui-corner-all  ui-btn-tl " data-ajax="false"><i class="fa fa-lg small white fa-check"></i></a> 
+                                    </td>
+                                    <td>
+                                        <a data-ajax="false" ng-show='c.CLT_STATUS!=1&&c.CCR_CLT_PK==null&&c.CLT_STATUS!=2' ng-click="changeRequest(c.CLT_PK,c.CLT_GROUP_ID)" href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-edit ui-btn-i inline"><i class="fa fa-lg small fa-pencil-square-o"></i></a>
+
+                                        <a data-ajax="false" ng-hide='c.CCR_CLT_PK==null||c.CLT_STATUS==2' ng-click="changeRequest(c.CLT_PK,c.CLT_GROUP_ID)" href="#" class="ui-btn ui-btn-tl ui-shadow ui-corner-all ui-icon-check white ui-btn-i inline"><i class="fa fa-lg small fa-check"></i></a> 
+                                    </td>
+                                    <!-- <td>
+                                        <a data-ajax="false" ng-hide="c.CLT_MOB_NEW!=0" ng-click="newLoanRequest(c)" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-i"><i class="fa fa-lg small fa-plus"></i></a>
+                                    </td> -->
+                                    <td>
+                                        <div class="ui-content">
+                                            {{c.VLM_NAME}}
+                                        </div>
+                                    </td>
+                                    <!-- <td>
+                                        <div class="ui-content">
+                                            {{ checkNull(c.CLT_STREET_AREA_NM) }} {{c.CLT_DISTRICT}}
+                                        </div>
+                                    </td> -->
+                                    <!-- <td>
+                                        <div class="ui-content">
+                                            {{ checkNull(c.CLT_POSTAL_CD) }}
+                                        </div>
+                                    </td> -->
+                                    <!-- <td>
+                                        <div class="ui-content">
+                                            {{ checkNull(c.CLT_MOB_NO_1) }}
+                                        </div>
+                                    </td> -->
+                                    <!--  <td>{{c.STATUS_NAME | translate }}</td> -->
+                                    <td>
+                                        <div class="ui-content">
+                                            {{ c.STATUS_NAME | translate }} 
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a data-ajax="false"  ng-click="terminate(c)" href="#" class="ui-btn ui-btn-gr ui-shadow ui-corner-all ui-icon-check white ui-btn-i"><i class="fa fa-lg small fa-times"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class='right' ng-show='numPages()!=0'><strong>Page</strong> {{currentPage+1}} <strong>of</strong> {{numPages()}} &nbsp;<a href="#" class="ui-btn ui-btn-h ui-icon-check ui-btn-inline ui-" ng-repeat="i in getPages() track by $index" ng-click="changePage($index)">{{$index+1}}</a></div>
+                </div>
+            </div>
+            <div class="ui-content second-wrapper row" data-ajax="false">
+                <div class="whitecover second-page" >
+                    <div class="coverwrap">
+
+                    </div>
+                </div>
+                <div class="ui-content no-hori-padding" id="indivInfoTable">
+                    <div class="ui-content">
+                        <div data-type="vertical" class="left">
+                            <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="detailview(0)">Back</a>
+                        </div>
+                        <br class="clear"/>
+                        <div data-type="vertical" class="left ui-grid-50">
+
+                            <br class="clear"/>
+                            <div class="detlabel" data-i18n="messages.ClientName">Client :</div>:
+                            <span class="detville">&nbsp;&nbsp;<b class="">{{ getClientName() }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <br class="clear"/>
+                            <br class="clear"/>
+
+                        </div>
+
+                        <br class="clear"/>
+
+                        <div class="">
+                            <div 
+                                ng-repeat="loan in loans" 
+                                class="ui-grid-33 marg-btm-20 ">
+                                <a href="#" class="trans-blocks">
+                                    <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" ng-click="EvalLoan(loan)" trans-check
+                                    expected="1"
+                                    actual="{{ loanEvalAct(loan) }}"
+                                    type="bg"
+                                    defaultcolor="#42A5F5"
+                                    checknow="evalCompleted(loan)">
+                                        <thead>
+                                            <tr>
+                                                <th class="box-header">
+                                                    <div class="lineh-32 ">
+                                                        {{ grouptext }} {{ loan.LTY_DESCRIPTION | translate }}
+                                                        <i ng-show="groupCompleted(group)" class="dark-blue right fa fa-check-square fa-2x"></i>
+                                                    </div>
+
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="box-body">
+                                            <tr>
+                                                <td >
+                                                    <div class="ui-content bold center group-block-amt" >
+                                                        <h1 
+                                                            style="line-height: 1em;" 
+                                                            ng-if="loan.CLL_STATUS != 42 && loan.CLL_STATUS != 19">
+                                                            {{ "Monitoring" | translate }}
+                                                        </h1>
+                                                        <h1 
+                                                            style="line-height: 1em;"  
+                                                            ng-if="loan.CLL_STATUS == 42 || loan.CLL_STATUS == 19">
+                                                            {{ "SecondReview"  | translate }}
+                                                        </h1>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-content third-wrapper row" data-ajax="false">
+                <div class="whitecover third-page" >
+                    <div class="coverwrap">
+
+                    </div>
+                </div>
+                <div class="ui-content no-hori-padding" id="indivInfoTable">
+                    <div class="ui-content">
+                        <div data-type="vertical" class="left">
+                            <a href="#" data-role="button" data-inline="true" class="ui-btn ui-btn-g btn-group-9 ui-btn-icon-left  ui-corner-all" data-i18n="buttons.Back" data-inline="true" ng-click="detailview(0)">Back</a>
+                        </div>
+                        <br class="clear"/>
+                        <div data-type="vertical" class="left ui-grid-50">
+
+                            <br class="clear"/>
+                            <div class="detlabel" data-i18n="messages.ClientName">Client :</div>:
+                            <span class="detville">&nbsp;&nbsp;<b class="">{{ getClientName() }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <br class="clear"/>
+                            <br class="clear"/>
+
+                        </div>
+
+                        <br class="clear"/>
+
+                        <div class="">
+                            <div ng-repeat="loan in loans" class="ui-grid-33 marg-btm-20 ">
+                                <a href="#" class="trans-blocks">
+                                    <table data-role="table" class="ui-responsive box-active mater-box ui-shadow table-stroke" ng-click="gotoTerminate(loan)" trans-check
+                                    expected="1"
+                                    actual="{{ loanEvalAct(loan) }}"
+                                    type="bg"
+                                    defaultcolor="#42A5F5"
+                                    checknow="evalCompleted(loan)">
+                                        <thead>
+                                            <tr>
+                                                <th class="box-header">
+                                                    <div class="lineh-32 ">
+                                                        {{ grouptext }} {{ loan.LTY_DESCRIPTION | translate }}
+                                                        <i ng-show="groupCompleted(group)" class="dark-blue right fa fa-check-square fa-2x"></i>
+                                                    </div>
+
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="box-body">
+                                            <tr>
+                                                <td >
+                                                    <div class="ui-content bold center group-block-amt" >
+                                                        <h1 style="line-height: 1em;" >{{ loan.CLL_LOAN_WEEKS }} <br> Weeks</h1>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-role="footer" class="footer"></div>
+        </div>
+
+
+        <!-- scripts -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/angular.min.js"></script>
+        <script type="text/javascript" src="js/app_client.js?V=1.1.5"></script>
+        <script type="text/javascript" src="js/app_header.js"></script>
+		<script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+		<script type="text/javascript" src="js/ln.js"></script>
+        <script type="text/javascript" src="js/jquery.aniview.min.js"></script>
+		<script type="text/javascript" src="js/angular-translate.js"></script>
+		<script type="text/javascript" src="js/angular-translate-loader-static-files.js"></script>
+    </body>
+</html>

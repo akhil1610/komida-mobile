@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/init.css" />
+        <title>TBOP MOBILE APPLICATION</title>
+    </head>
+    <style>
+        .disp_data {
+            text-transform: initial; 
+        }
+    </style>
+    <body>
+        <!-- body -->
+        <div data-role="page" id="page">
+            <div data-role="header" class="header"></div>
+            <div id="content" data-role="main" class="ui-content" data-ajax="false">
+                <!-- content -->
+                <h1 style="color:#009fcf;">
+                    <strong data-i18n="messages.welcomeBack">Welcome Back</strong> &nbsp; <strong class="username"></strong>
+                </h1> 
+                <h3 style="color:#009fcf;text-align: center;">
+                    <strong data-i18n="messages.cashieradvancecash">Cash in Advance from Cashier</strong>
+                </h3>
+
+                <div class="ui-content center" >
+                    <div class="ui-content ui-grid-60 center" style="margin: 5px auto;">
+                        <div class="ui-grid-50 left">
+                            <div class="ui-shadow table-stroke">
+                                <div class="lightbluebackground ui-content" data-i18n="messages.cashforwithdrawal" >
+                                    Cash for withdrawal
+                                </div>
+                                <div class="ui-content bold center" id="amtforwidthdraw">
+                                    <h2>0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-grid-50 left">
+                            <div class="ui-shadow table-stroke">
+                                <div class="lightbluebackground ui-content" data-i18n="messages.cashfordisbursement">
+                                    Cash for Disbursement
+                                </div>
+                                <div class="ui-content bold center" id="amtfordisburse">
+                                    <h2>0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          
+                <p class="center ">
+                    <strong  class="purple" data-i18n="messages.TermsConditions7">By clicking "Agree", I acknowledge that I have received </strong>
+                    <strong id="amttoreceive" style="color: green;font-size: 25px;font-weight: 900;" >&nbsp;IRD 0</strong>.
+                </p>
+                <p class="center">
+                    <button id="btnAgree" type="button" class="ui-btn ui-btn-g ui-icon-check ui-btn-icon-right ui-btn-inline" data-i18n="buttons.Agree">Agree</button>
+                    <button id="btnCancel" type="button" class="ui-btn ui-btn-r ui-icon-delete ui-btn-icon-right ui-btn-inline" data-i18n="buttons.Cancel">Cancel</button>
+                </p>
+            </div>
+            <div data-role="footer" class="footer" data-position="fixed"></div>
+        </div>
+
+        <div class="disp_data">
+
+        </div>
+        
+        <!-- script -->
+        <script type="text/javascript" src="phonegap.js"></script>
+        <script src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/load_template.js"></script>
+        <script type='application/javascript' src='js/fastclick.js'></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/properDB.js"></script>
+        <script type="text/javascript" src="js/initDB.js"></script>
+        <script type="text/javascript" src="js/i18next-1.8.0.js"></script>
+        <script type="text/javascript" src="js/ln.js"></script>
+        
+        <script>
+            function init(){
+                $('.username').html(localStorage.getItem("USER_NAME"));
+                var language = sessionStorage.LANGUAGE;
+                i18n.setLng(language, function(t) { 
+                    $('body').i18n();                   
+                });
+                
+                initTemplate.load();
+                $("#btnCancel").on("click",function(){
+                    $("#btnCancel").fadeOut();
+                    swal({
+                        title: i18n.t("messages.Alert"),
+                        text: i18n.t("messages.ConfirmReset"),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#80C6C7",
+                        confirmButtonText: i18n.t("messages.Yes"),
+                    }).then(function(isConfirm){
+                        console.log(isConfirm); 
+                        if(isConfirm.value){
+                            var userid = localStorage.getItem("RESET_USERID");
+                            var userpw = localStorage.getItem("RESET_USERPW");
+                            var mgrid  = localStorage.getItem("RESET_MGRID");
+                            var mgrpw  = localStorage.getItem("RESET_MGRPW");
+
+                            var obj = {
+                                DATA: [localStorage.getItem("USER_PK"),'Post'],
+                                CRED: [userid, userpw, mgrid, mgrpw]
+                            };
+                            
+                            swal.queue([{
+                                title: i18n.t("messages.loggingOut"),  
+                                text: i18n.t("messages.seeYouAgain") + ' ' + localStorage.getItem("USER_NAME"),
+                                onOpen: () => {
+                                    swal.showLoading();
+                                },
+                                showConfirmButton: false,
+                                allowOutsideClick: () => !this.$swal.isLoading()
+                            }]);  
+                            console.log("start ");
+                            console.log(new Date());
+                            $.ajax({
+                                url: localStorage.getItem("SYNC_SERVER"),
+                                cache: false,
+                                type: "POST",
+                                data: "strMode=reset&data="+JSON.stringify(obj),
+                                crossDomain: true,
+                                processData: false,
+                                success: function(result){
+                                    console.log("end ");
+                                    console.log(new Date());
+                                    if(result=="Success"){ 
+                                        myDB.reset();
+                                        setTimeout(function(){ 
+                                            swal.close();
+                                            sessionStorage.clear(); 
+                                            localStorage.clear();
+                                            window.location.href = 'newlogin.html';
+                                        },300);
+                                    }else{
+                                        swal({
+                                            type: 'error',
+                                            title: i18n.t("messages.FOResetFail")
+                                        });
+                                        $("#btnCancel").fadeIn();
+                                    }
+                                },
+                                error: function(jqXHR,textStatus,errorThrown){
+                                    swal({
+                                        type: 'error',
+                                        title: i18n.t("messages.FOResetFail")
+                                    });
+                                    $("#btnCancel").fadeIn();
+                                }
+                            });
+                        }
+                    },function(dismiss) {
+                        $("#btnCancel").fadeIn();
+                    }); 
+                });
+                $("#btnAgree").on("click",function(){
+                    localStorage.removeItem("RESET_USERID");
+                    localStorage.removeItem("RESET_USERPW");
+                    localStorage.removeItem("RESET_MGRID");
+                    localStorage.removeItem("RESET_MGRPW");
+                    window.location.href = "dashboard.html";
+                });
+
+                var ttlclsdis = 0;
+                var ttwthdis = 0;
+                var ttldis = 0;
+                var ttrcv = 0;
+
+                var date = new Date();
+                date = ("0"+date.getDate()).slice(-2)+"/"+("0"+(date.getMonth()+1)).slice(-2)+"/"+date.getFullYear();
+                //18/02//16
+
+                var anotherdate = new Date();
+                anotherdate = anotherdate.getFullYear()+"-"+("0"+(anotherdate.getMonth()+1)).slice(-2)+"-"+("0"+anotherdate.getDate()).slice(-2);
+                //2015-02-18
+
+
+                // Get Cash on Hand 
+
+                var cmd =   ' SELECT CRS_FLAG,CLT_FULL_NAME, CLT_PK, CLT_STATUS, CLL_CLT_PK, CLL_STATUS, CLL_PK,CRS_BALANCE_CAPITAL, CRS_ATTENDED,CRS_DATE,CRS_PK,'+
+                    ' (SUM(CAST(CRS_EXP_CAPITAL_AMT AS UNSIGNED)) + SUM(CAST(CRS_EXP_PROFIT_AMT AS UNSIGNED))) as savings_total_exp, '+
+                    ' (SUM(CAST(CRS_ACT_CAPITAL_AMT AS UNSIGNED)) + SUM(CAST(CRS_ACT_PROFIT_AMT AS UNSIGNED))) as savings_total_act'+
+                    ' FROM T_CLIENT, T_CLIENT_LOAN,T_CLIENT_REPAY_SCHEDULE '+
+                    ' WHERE CLT_PK=CRS_CLT_PK AND CLL_PK=CRS_CLL_PK AND CLT_STATUS in (7,21,26,27,40) AND CLL_STATUS in (12,36) AND CRS_FLAG in ("R","D") AND CRS_DATE="'+date+'"'+//CLT_STATUS!=8 AND 
+                    ' GROUP BY CLT_PK';
+ 
+                //ParseFloat() all values for mathematical equations
+                cmd = 'SELECT SUM(CAST(CRS_EXP_CAPITAL_AMT AS UNSIGNED)) as total_exp_disbursed, SUM(CAST(CRS_ACT_CAPITAL_AMT AS '+
+                    ' UNSIGNED)) as total_act_disbursed, CLL_CRF_PERCENTAGE, CLT_STATUS '+
+                    ' FROM T_CLIENT, T_CLIENT_LOAN, T_CLIENT_REPAY_SCHEDULE  '+
+                    ' WHERE CLT_PK = CLL_CLT_PK AND (CLT_STATUS in(7,21,26,27,40) AND CLL_STATUS in (12,36)) '+
+                    '   AND CRS_CLL_PK = CLL_PK AND CRS_LOAN_SAVING_FLAG = "L" AND CRS_FLAG = "D" AND CRS_DATE = "'+date+'"  '; 
+                
+                myDB.execute(cmd, function(results){
+                    console.log(results);
+ 
+                    if(results.length > 0){ 
+                        $.each(results, function(i, record){
+                            if(record.total_exp_disbursed != null){
+                                var crf = (parseFloat(100))/100;
+                                var disamt = parseFloat(record.total_exp_disbursed);
+                                disamt *= parseFloat(crf);
+                                ttldis += parseFloat(disamt);
+                            } 
+                        });
+                        var ttldis_text = parseFloat(ttldis, 10).toFixed(0).toString();
+                        $('#amtfordisburse').html('<h2>'+ttldis_text+'</h2>');
+                    }
+                    updateTotal();
+                });
+
+                //Get Withdrawal Amt
+
+                var withdrawal = "SELECT CPT_TXN_AMOUNT, CPT_EXP_AMOUNT, CPT_STATUS,CPT_DATETIME FROM T_CLIENT_PRD_TXN WHERE CPT_STATUS IN (47,48) and CPT_FLAG in ('D','W') and DATE(CPT_DATETIME)='"+anotherdate+"'";
+
+                myDB.execute(withdrawal, function(results){
+                    
+                    for(w in results){
+                        if(results[w].CPT_TXN_AMOUNT == "") results[w].CPT_EXP_AMOUNT = 0;
+                        if(results[w].CPT_STATUS == 48){
+                            
+                        } else {
+                            ttwthdis += parseFloat(results[w].CPT_EXP_AMOUNT);
+                        }
+                    }
+
+                    var ttwthdis_txt = parseFloat(ttwthdis, 10).toFixed(0).toString();
+                    $('#amtforwidthdraw').html('<h2>'+ttwthdis_txt+'</h2>');
+                    updateTotal();
+                });
+
+                // Get Disburse Amt for Account CLosure
+
+                var closedisburse = "select cpc_disburse_amt from t_client_product_close_info where cpc_status=3 AND DATE(cpc_disburse_date)='"+anotherdate+"'";
+
+
+                myDB.execute(closedisburse, function(results){
+                    //console.log(results);
+                  
+                    if(results.length > 0){
+                        for(cls in results){
+
+                            ttlclsdis += parseFloat(results[cls].CPC_DISBURSE_AMT);
+                        
+                        }
+                        
+                    }
+                   
+                    var temp_val =  parseFloat(ttwthdis + ttlclsdis);
+
+                    var ttwthdis_txt = parseFloat(temp_val, 10).toFixed(0).toString();
+                    $('#amtforwidthdraw').html('<h2>'+ttwthdis_txt+'</h2>');
+                    updateTotal();
+                });
+                // var DBLiST = [];
+                // DBLiST.push('T_COMPANY');
+                // DBLiST.push('T_BRANCH');
+                // DBLiST.push('T_USER'); 
+                // DBLiST.push('T_CLIENT');
+                // DBLiST.push('T_CLIENT_ASSET_LIST');
+                // DBLiST.push('T_CLIENT_BORROWED_FUNDS');
+                // DBLiST.push('T_CLIENT_GROUP');
+                // DBLiST.push('T_CLIENT_INCOME');
+                // DBLiST.push('T_CLIENT_LOAN');
+                // DBLiST.push('T_CLIENT_PRODUCT_MAPPING');
+                // DBLiST.push('T_CODE');
+                // DBLiST.push('T_DISTRICT_MASTER');
+                // DBLiST.push('T_FAMILY_WELFARE');
+                // DBLiST.push('T_LOAN_PURPOSE');
+                // DBLiST.push('T_LOAN_SAVING_PRD_MAPPING');
+                // DBLiST.push('T_LOAN_TYPE');
+                // DBLiST.push('T_PRODUCT_MASTER');
+                // DBLiST.push('T_PRODUCT_MASTER_DETAILS');
+                // DBLiST.push('T_SUB_DISTRICT_MASTER');
+                // DBLiST.push('T_TXN_STATUS');
+                // DBLiST.push('T_VILLAGE_MASTER'); 
+                // console.log(DBLiST);
+                // $.each(DBLiST,function(i,dbname){
+                //     var dcmd = "SELECT * FROM "+dbname;
+                //     myDB.execute(dcmd,function(res){
+                //         console.log(res);
+                //         var com_txt ="";
+                //         $.each(res,function(i,val){
+                //             com_txt += "myDB['"+dbname+"'].add(";
+                //             var fld_txt = "";
+                //             $.each(val,function(i,key){
+                //                 if(i != 'P_ID'){
+                //                     if(fld_txt != "") fld_txt += ",";
+
+                //                     var inpu = ""; 
+                //                     if(key == '' || isNaN(key) || key == undefined){ 
+
+                //                         if(key == 'null' || key == '' || key == null || key == undefined){ 
+                //                             inpu = null;
+                //                         } else {
+                //                             inpu = "'"+key+"'"; 
+                //                         } 
+                //                     } else {
+                //                         var str_key = key.toString();
+                //                         if( str_key.indexOf('.') > -1 || key.length > 5 || key[0] == 0){
+                //                             inpu = "'"+key+"'"; 
+                //                         } else {
+                //                             inpu = key;
+                //                         }
+                //                     } 
+                //                     fld_txt += inpu;
+                //                 }  
+                //             });
+                //             com_txt += fld_txt + ");\n";
+
+                //         });
+                //         console.log(com_txt);
+                //         $(".disp_data").append(com_txt);
+                //     })
+                // });
+
+
+
+                function updateTotal(){
+                    ttrcv = parseFloat(ttwthdis + ttldis + ttlclsdis);
+                    var ttrcv_text = parseFloat(ttrcv, 10).toFixed(0).toString();
+                    $('#amttoreceive').html('&nbsp; RP '+ttrcv_text);
+                }
+
+            }           
+            
+        </script>
+    </body>
+</html>
